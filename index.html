@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAKUN — High-Tech Household Chemicals</title>
+  <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- NAV DESKTOP -->
+  <nav id="main-nav">
+    <a href="#hero" class="nav-logo">
+      <img src="https://i.postimg.cc/6300cGYs/IMG-20260319-125902.png" alt="RAKUN Logo">
+    </a>
+    <ul class="nav-links">
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#hero">About us</a></li>
+      <li><a href="catalog.html">Catalog</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="#contacts">Contacts</a></li>
+    </ul>
+    <div class="lang-switcher">
+      <a href="#" class="active">EN</a>
+      <span class="lang-separator">|</span>
+      <a href="#">RU</a>
+      <span class="lang-separator">|</span>
+      <a href="#">GE</a>
+      <span class="lang-separator">|</span>
+      <a href="#">AM</a>
+    </div>
+  </nav>
+
+  <!-- MOBILE HEADER -->
+  <header class="mobile-header" id="mobile-header">
+    <a href="#hero" class="mobile-logo">
+      <img src="https://i.postimg.cc/6300cGYs/IMG-20260319-125902.png" alt="RAKUN Logo" style="height:24px; display:block;">
+    </a>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()">
+      <span class="line-1"></span>
+      <span class="line-2"></span>
+    </button>
+  </header>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay">
+    <div class="mobile-menu-top">
+      <img src="https://i.postimg.cc/6300cGYs/IMG-20260319-125902.png" alt="RAKUN Logo" style="height:24px; display:block;">
+      <button class="mobile-close" onclick="toggleMobileMenu()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <nav class="mobile-menu-nav">
+      <a href="#hero" onclick="toggleMobileMenu()">Home</a>
+      <a href="#hero" onclick="toggleMobileMenu()">About us</a>
+      <a href="catalog.html" onclick="toggleMobileMenu()">Catalog</a>
+      <a href="blog.html" onclick="toggleMobileMenu()">Blog</a>
+      <a href="#contacts" onclick="toggleMobileMenu()">Contacts</a>
+    </nav>
+    <div class="mobile-menu-bottom">
+      <div class="mobile-lang">
+        <a href="#" class="active">EN</a>
+        <a href="#">RU</a>
+        <a href="#">GE</a>
+        <a href="#">AM</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-slider" data-carousel>
+      <div class="carousel-cell" style="background-image:url('https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?auto=format&fit=crop&w=1600&q=80');">
+        <div class="overlay"></div>
+        <div class="inner">
+          <span class="subtitle">Smart 8X Technology</span>
+          <h1 class="title">Flawless Washing<br>In Every Drop</h1>
+          <a href="catalog.html" class="btn">View Catalog</a>
+        </div>
+      </div>
+      <div class="carousel-cell" style="background-image:url('https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&w=1600&q=80');">
+        <div class="overlay"></div>
+        <div class="inner">
+          <span class="subtitle">Innovative Care</span>
+          <h1 class="title">Next-Gen Gels<br>&amp; Capsules</h1>
+          <a href="catalog.html" class="btn">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products" class="drag-section">
+    <div class="section-header fade-in">
+      <span class="section-label">Professional Line</span>
+      <h2 class="section-title">RAKUN Catalog</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="drag-track-container">
+      <!-- Контейнер для товаров из БД -->
+      <div class="image-track" id="rooms-track"></div>
+    </div>
+    <p class="drag-hint">Swipe to view</p>
+  </section>
+
+  <!-- BLOG -->
+  <section id="blog" class="drag-section" style="background:var(--bg-light);">
+    <div class="section-header fade-in">
+      <span class="section-label">RAKUN Innovations</span>
+      <h2 class="section-title">Technologies of Cleanliness</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="drag-track-container">
+      <!-- Контейнер для постов блога из БД -->
+      <div class="image-track" id="services-track"></div>
+    </div>
+    <p class="drag-hint">Swipe to view</p>
+  </section>
+
+  <!-- REVIEWS (Оставляем статичными) -->
+  <section id="reviews">
+    <div class="section-header fade-in">
+      <span class="section-label">Professionals' Choice</span>
+      <h2 class="section-title">Customer Reviews</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card fade-in">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">Excellent perfumed gel. The scent lasts incredibly long, just as advertised. Very economical usage due to the concentrated formula.</p>
+        <div class="review-author">
+          <span class="review-name">Marina V.</span>
+          <span class="review-from">Wholesale Buyer</span>
+        </div>
+      </div>
+      <div class="review-card fade-in" style="transition-delay:0.15s;">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">The "5 in 1" capsules have become a top seller in our store. Clients highlight the vibrant fragrance and superb stain removal.</p>
+        <div class="review-author">
+          <span class="review-name">David G.</span>
+          <span class="review-from">Supermarket Chain</span>
+        </div>
+      </div>
+      <div class="review-card fade-in" style="transition-delay:0.3s;">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="review-text">The safe, phosphate-free composition is the main advantage for us. The gel does a perfect job even in hard water.</p>
+        <div class="review-author">
+          <span class="review-name">Anna K.</span>
+          <span class="review-from">Distributor</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTS -->
+  <section id="contacts">
+    <div class="contact-map">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47720.97905296636!2d44.74920095!3d41.69411365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40440cd7c4f87d35%3A0xa1729e07e07c32be!2sTbilisi%2C%20Georgia!5e0!3m2!1sen!2sus!4v1710000000000" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+    <div class="contact-info">
+      <span class="section-label">Cooperation</span>
+      <h2 class="section-title">Contacts &amp; Wholesale</h2>
+      <div class="section-divider"></div>
+      <div class="contact-detail" style="margin-top:32px;">
+        <div class="contact-detail-label">Phone / WhatsApp</div>
+        <a href="tel:+995591028083" class="contact-detail-value">+995 591 028 083</a>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-label">Email</div>
+        <a href="mailto:info@rakun.ge" class="contact-detail-value">info@rakun.ge</a>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-label">Logistics Terms (Ex-warehouse Tbilisi)</div>
+        <span class="contact-detail-value" style="font-size:0.95rem;">Household chemicals — from 2,000 units<br>Washing gel — from 500 bottles<br>Capsules — from 1,250 packs</span>
+      </div>
+      <a href="mailto:info@rakun.ge" class="btn-accent">Request Price List</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-logo"><img src="https://i.postimg.cc/6300cGYs/IMG-20260319-125902.png" alt="RAKUN Logo"></span>
+    <div class="footer-links">
+      <a href="catalog.html">Catalog</a>
+      <a href="blog.html">Technology</a>
+      <a href="#contacts">Wholesale</a>
+    </div>
+    <span>&#169; 2025 RAKUN · Smart Laundry Solutions</span>
+  </footer>
+
+  <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+  <script>
+    var carousel = document.querySelector('[data-carousel]');
+    if (carousel) {
+      new Flickity(carousel, { accessibility: true, prevNextButtons: true, pageDots: true, setGallerySize: false, wrapAround: true, autoPlay: 6000 });
+    }
+
+    var nav = document.getElementById('main-nav');
+    var mobileHeader = document.getElementById('mobile-header');
+    window.addEventListener('scroll', function() {
+      if (nav) nav.classList.toggle('scrolled', window.scrollY > 50);
+      if (mobileHeader) mobileHeader.classList.toggle('scrolled', window.scrollY > 50);
+    }, { passive: true });
+
+    window.toggleMobileMenu = function() {
+      var menu = document.getElementById('mobile-menu-overlay');
+      var isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    };
+
+    // Функция вынесена в window, чтобы main.js мог вызвать её после добавления карточек
+    window.initDragTrack = function(trackId) {
+      var track = document.getElementById(trackId);
+      if (!track) return;
+      var isDown = false, startX = 0, currentPx = 0, startPx = 0;
+
+      function clampedPx(px) {
+        var maxTravel = Math.max(0, track.scrollWidth - track.parentElement.offsetWidth + 64);
+        return Math.max(-maxTravel, Math.min(0, px));
+      }
+      function getClientX(e) { return e.clientX !== undefined ? e.clientX : (e.touches ? e.touches[0].clientX : null); }
+      function startDrag(e) {
+        var cx = getClientX(e); if (cx === null) return;
+        isDown = true; startX = cx; startPx = currentPx;
+        track.style.cursor = 'grabbing'; track.style.transition = 'none';
+      }
+      function endDrag() {
+        if (!isDown) return; isDown = false;
+        track.style.cursor = 'grab';
+        track.style.transition = 'transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)';
+        currentPx = clampedPx(currentPx);
+        track.style.transform = 'translateX(' + currentPx + 'px)';
+      }
+      function moveDrag(e) {
+        if (!isDown) return;
+        var cx = getClientX(e); if (cx === null) return;
+        currentPx = startPx + (cx - startX);
+        track.style.transform = 'translateX(' + currentPx + 'px)';
+      }
+      track.addEventListener('mousedown', startDrag);
+      window.addEventListener('mouseup', endDrag);
+      window.addEventListener('mousemove', moveDrag);
+      track.addEventListener('touchstart', startDrag, { passive: true });
+      track.addEventListener('touchend', endDrag);
+      track.addEventListener('touchmove', moveDrag, { passive: true });
+      track.querySelectorAll('img').forEach(function(img) {
+        img.addEventListener('dragstart', function(e) { e.preventDefault(); });
+      });
+    }
+
+    var fadeEls = document.querySelectorAll('.fade-in');
+    var observer = new IntersectionObserver
+    (function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+    fadeEls.forEach(function(el) { observer.observe(el); });
+  </script>
+  
+  <!-- ИНИЦИАЛИЗАЦИЯ БАЗЫ ДАННЫХ И СКРИПТОВ -->
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="main.js"></script>
+
+</body>
+</html>
