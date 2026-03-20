@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Firestore Test</title>
+    <style>
+        body { font-family: sans-serif; background: #2c3e50; color: #ecf0f1; padding: 20px; }
+        h1 { color: #3498db; }
+        #status, #result, #error {
+            background: #34495e;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            white-space: pre-wrap; /* Для красивого вывода объекта */
+            word-wrap: break-word;
+            font-family: monospace;
+        }
+        #status { background: #f39c12; color: #2c3e50; font-weight: bold; }
+        #result { background: #27ae60; color: #fff; }
+        #error { background: #c0392b; color: #fff; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <h1>Firebase Firestore Connection Test</h1>
+
+    <div id="status">Connecting to Firebase...</div>
+    <div id="result" class="hidden"></div>
+    <div id="error" class="hidden"></div>
+
+    <script type="module">
+        // 1. Импортируем необходимые функции Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, limit, query } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        // 2. Ваша конфигурация Firebase (из вашего скриншота)
+        const firebaseConfig = {
+            apiKey: "AIzaSyAGXs4wc4vcxxy2cMoHMC8_MlD9S_chSQY",
+            authDomain: "racun-shop.firebaseapp.com",
+            projectId: "racun-shop",
+            storageBucket: "racun-shop.appspot.com",
+            messagingSenderId: "569457770232",
+            appId: "1:569457770232:web:5a2737d1ee270459f3050d",
+            measurementId: "G-NCTM22413W"
+        };
+        
+        // Элементы для вывода сообщений
+        const statusEl = document.getElementById('status');
+        const resultEl = document.getElementById('result');
+        const errorEl = document.getElementById('error');
+
+        async function runTest() {
+            try {
+                // 3. Инициализация Firebase
+                statusEl.textContent = 'Initializing Firebase app...';
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+                console.log('Firebase App Initialized:', app.name);
+                
+                // 4. Пытаемся прочитать ОДИН документ из коллекции 'products'
+                //    ВАЖНО: Убедитесь, что коллекция называется именно 'products'
+                const collectionName = 'products'; 
+                statusEl.textContent = `Attempting to read 1 document from collection: "${collectionName}"...`;
+                console.log(`Querying collection: ${collectionName}`);
+
+                const q = query(collection(db, collectionName), limit(1));
+                const querySnapshot = await getDocs(q);
+                
+                statusEl.textContent = 'Query executed. Processing results...';
+
+                // 5. Анализ результата
+                if (querySnapshot.empty) {
+                    // Ошибки нет, но коллекция пуста или называется иначе
+                    throw new Error(`Connection successful, but no documents were found in the '${collectionName}' collection. \n\nPossible reasons:\n1. The collection is actually empty.\n2. The collection name is incorrect. Check for typos or different capitalization (e.g., 'Products' instead of 'products').`);
+                } else {
+                    // Успех!
+                    const doc = querySnapshot.docs[0];
+                    const docData = doc.data();
+
+                    statusEl.textContent = '✅ SUCCESS!';
+                    statusEl.style.background = '#27ae60';
+                    statusEl.style.color = '#fff';
+
+                    resultEl.classList.remove('hidden');
+                    resultEl.innerHTML = `
+                        <h3>Successfully read one document!</h3>
+                        <p><strong>Document ID:</strong> ${doc.id}</p>
+                        <p><strong>Document Data:</strong></p>
+                        <pre>${JSON.stringify(docData, null, 2)}</pre>
+                    `;
+                    console.log('Document ID:', doc.id);
+                    console.log('Document Data:', docData);
+                }
+
+            } catch (err) {
+                // 6. Обработка ошибки
+                statusEl.textContent = '❌ TEST FAILED!';
+                statusEl.style.background = '#c0392b';
+                statusEl.style.color = '#fff';
+
+                errorEl.classList.remove('hidden');
+                errorEl.innerHTML = `
+                    <h3>An error occurred:</h3>
+                    <p><strong>Error Type:</strong> ${err.name}</p>
+                    <p><strong>Error Message:</strong></p>
+                    <pre>${err.message}</pre>
+                `;
+                console.error('Firebase Test Failed:', err);
+            }
+        }
+
+        // Запускаем тест
+        runTest();
+    </script>
+</body>
+</html>
