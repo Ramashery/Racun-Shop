@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAKUN — Product Catalog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- NAV DESKTOP -->
+  <nav id="main-nav">
+    <a href="index.html" class="nav-logo">
+      <img src="https://i.postimg.cc/6300cGYs/IMG-20260319-125902.png" alt="RAKUN Logo">
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#about">About us</a></li>
+      <li><a href="catalog.html" class="active">Catalog</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="index.html#contacts">Contacts</a></li>
+    </ul>
+    <div class="lang-switcher">
+      <a href="#" class="active">EN</a>
+      <span class="lang-separator">|</span>
+      <a href="#">RU</a>
+      <span class="lang-separator">|</span>
+      <a href="#">GE</a>
+      <span class="lang-separator">|</span>
+      <a href="#">AM</a>
+    </div>
+  </nav>
+
+  <!-- MOBILE HEADER -->
+  <header class="mobile-header" id="mobile-header">
+    <a href="index.html" class="nav-logo">
+      <img src="https://i.postimg.cc/6300cGYs/IMG-20260319-125902.png" alt="RAKUN Logo" style="height:24px; display:block;">
+    </a>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()">
+      <span class="line-1"></span><span class="line-2"></span>
+    </button>
+  </header>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay">
+    <div class="mobile-menu-top">
+      <img src="https://i.postimg.cc/6300cGYs/IMG-20260319-125902.png" alt="RAKUN Logo" style="height:24px; display:block;">
+      <button class="mobile-close" onclick="toggleMobileMenu()">
+        <span class="material-symbols-outlined" style="font-size:32px;">close</span>
+      </button>
+    </div>
+    <nav class="mobile-menu-nav">
+      <a href="index.html">Home</a>
+      <a href="index.html#about">About us</a>
+      <a href="catalog.html">Catalog</a>
+      <a href="blog.html">Blog</a>
+      <a href="index.html#contacts">Contacts</a>
+    </nav>
+    <div class="mobile-menu-bottom">
+      <div class="mobile-lang">
+        <a href="#" class="active">EN</a>
+        <a href="#">RU</a>
+        <a href="#">GE</a>
+        <a href="#">AM</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATALOG HERO -->
+  <div class="catalog-hero">
+    <div class="catalog-hero-inner">
+      <div class="catalog-hero-left">
+        <div class="breadcrumb">
+          <a href="index.html">Home</a>
+          <span class="breadcrumb-sep">/</span>
+          <span>Catalog</span>
+        </div>
+        <span class="catalog-hero-label">Full Product Range</span>
+        <h1>Our <em>Catalog</em></h1>
+        <p>Professional household chemistry with smart technologies. Wholesale supply from the warehouse in Tbilisi.</p>
+      </div>
+      <!-- Счетчики могут быть тоже динамическими, но пока оставляем как элемент декора -->
+      <div class="catalog-hero-tags" id="catalog-hero-tags">
+        <div class="catalog-hero-tag"><div class="catalog-hero-tag-dot"></div><span>Laundry Line</span></div>
+        <div class="catalog-hero-tag"><div class="catalog-hero-tag-dot" style="background:var(--brand-yellow)"></div><span>Household Cleaners</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE FILTER BAR -->
+  <div class="mobile-filter-bar">
+    <button class="mobile-filter-btn" onclick="openSidebar()">
+      <span class="material-symbols-outlined" style="font-size:18px;">tune</span>
+      Filters
+    </button>
+    <span class="mobile-results-count" id="mobile-count">... products</span>
+  </div>
+
+  <!-- MOBILE SIDEBAR OVERLAY -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <div class="sidebar-drawer" id="sidebar-drawer">
+    <button class="sidebar-drawer-close" onclick="closeSidebar()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <div id="mobile-sidebar-content"></div>
+  </div>
+
+  <!-- CATALOG BODY -->
+  <div class="catalog-body">
+
+    <!-- SIDEBAR -->
+    <aside class="catalog-sidebar" id="catalog-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-header-title">Filters</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Category</div>
+        <div class="filter-cat-list" id="cat-list">
+          <button class="filter-cat-btn active" data-cat="all" onclick="filterCat('all', this)">
+            <span class="filter-cat-label">All Products</span>
+          </button>
+          <button class="filter-cat-btn" data-cat="laundry" onclick="filterCat('laundry', this)">
+            <span class="filter-cat-label">Laundry</span>
+          </button>
+          <button class="filter-cat-btn" data-cat="cleaners" onclick="filterCat('cleaners', this)">
+            <span class="filter-cat-label">Household Cleaners</span>
+          </button>
+          <button class="filter-cat-btn" data-cat="dishwash" onclick="filterCat('dishwash', this)">
+            <span class="filter-cat-label">Dishwashing</span>
+          </button>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Features</div>
+        <div class="filter-check-list">
+          <label class="filter-check-item">
+            <input type="checkbox" onchange="applyFeature(this, 'phosphate-free')">
+            <div class="filter-check-box"></div><span class="filter-check-text">Phosphate-Free</span>
+          </label>
+          <label class="filter-check-item">
+            <input type="checkbox" onchange="applyFeature(this, 'enzyme')">
+            <div class="filter-check-box"></div><span class="filter-check-text">Enzyme Formula</span>
+          </label>
+          <label class="filter-check-item">
+            <input type="checkbox" onchange="applyFeature(this, 'concentrated')">
+            <div class="filter-check-box"></div><span class="filter-check-text">Concentrated</span>
+          </label>
+          <label class="filter-check-item">
+            <input type="checkbox" onchange="applyFeature(this, 'eco')">
+            <div class="filter-check-box"></div><span class="filter-check-text">Eco-Friendly</span>
+          </label>
+        </div>
+      </div>
+      <button class="filter-reset" onclick="resetFilters()">Reset all filters</button>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <main class="catalog-main">
+      <div class="catalog-toolbar">
+        <span class="catalog-results-count" id="results-count"><strong>...</strong> products found</span>
+        <div class="toolbar-right">
+          <select class="sort-select" onchange="sortProducts(this.value)" id="sort-select">
+            <option value="default">Default</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="name-asc">Name: A–Z</option>
+          </select>
+          <div class="view-toggle">
+            <button class="view-btn active" id="btn-grid" onclick="setView('grid')" title="Grid view">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="0" y="0" width="6" height="6" fill="currentColor" rx="1"/><rect x="8" y="0" width="6" height="6" fill="currentColor" rx="1"/><rect x="0" y="8" width="6" height="6" fill="currentColor" rx="1"/><rect x="8" y="8" width="6" height="6" fill="currentColor" rx="1"/></svg>
+            </button>
+            <button class="view-btn" id="btn-list" onclick="setView('list')" title="List view">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="0" y="0" width="14" height="3" fill="currentColor" rx="1"/><rect x="0" y="5.5" width="14" height="3" fill="currentColor" rx="1"/><rect x="0" y="11" width="14" height="3" fill="currentColor" rx="1"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active filter chips -->
+      <div class="active-filters" id="active-filters"></div>
+
+      <!-- Products Grid (Контейнер для БД) -->
+      <div class="products-grid" id="products-grid"></div>
+
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-logo"><img src="https://i.postimg.cc/6300cGYs/IMG-20260319-125902.png" alt="RAKUN Logo"></span>
+    <div class="footer-links">
+      <a href="catalog.html">Catalog</a>
+      <a href="blog.html">Technology</a>
+      <a href="index.html#contacts">Wholesale</a>
+    </div>
+    <span>© 2025 RAKUN · Smart Laundry Solutions</span>
+  </footer>
+
+  <script>
+    window.currentCat = 'all';
+    window.activeFeatures = [];
+    window.currentSort = 'default';
+
+    window.toggleMobileMenu = function () {
+      var menu = document.getElementById('mobile-menu-overlay');
+      var isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    };
+
+    window.openSidebar = function () {
+      document.getElementById('sidebar-overlay').classList.add('open');
+      document.getElementById('sidebar-drawer').classList.add('open');
+      var sidebar = document.getElementById('catalog-sidebar');
+      var mobile = document.getElementById('mobile-sidebar-content');
+      mobile.innerHTML = sidebar.innerHTML;
+      document.body.style.overflow = 'hidden';
+    };
+    
+    window.closeSidebar = function () {
+      document.getElementById('sidebar-overlay').classList.remove('open');
+      document.getElementById('sidebar-drawer').classList.remove('open');
+      document.body.style.overflow = '';
+    };
+
+    window.filterCat = function (cat, btn) {
+      window.currentCat = cat;
+      document.querySelectorAll('.filter-cat-btn').forEach(function (b) { b.classList.remove('active'); });
+      if (btn) btn.classList.add('active');
+      if (window.applyFilters) window.applyFilters();
+      if (window.updateChips) window.updateChips();
+    };
+
+    window.applyFeature = function (checkbox, feature) {
+      if (checkbox.checked) {
+        if (!window.activeFeatures.includes(feature)) window.activeFeatures.push(feature);
+      } else {
+        window.activeFeatures = window.activeFeatures.filter(function (f) { return f !== feature; });
+      }
+      if (window.applyFilters) window.applyFilters();
+      if (window.updateChips) window.updateChips();
+    };
+
+    window.sortProducts = function (val) {
+      window.currentSort = val;
+      if (window.applyFilters) window.applyFilters();
+    };
+
+    window.setView = function (view) {
+      var grid = document.getElementById('products-grid');
+      if (!grid) return;
+      if (view === 'list') {
+        grid.classList.add('list-view');
+        document.getElementById('btn-list').classList.add('active');
+        document.getElementById('btn-grid').classList.remove('active');
+      } else {
+        grid.classList.remove('list-view');
+        document.getElementById('btn-grid').classList.add('active');
+        document.getElementById('btn-list').classList.remove('active');
+      }
+    };
+
+    window.resetFilters = function () {
+      window.currentCat = 'all';
+      window.activeFeatures = [];
+      document.querySelectorAll('.filter-cat-btn').forEach(function (b) { b.classList.remove('active'); });
+      var allBtn = document.querySelector('[data-cat="all"]');
+      if (allBtn) allBtn.classList.add('active');
+      document.querySelectorAll('.filter-check-item input').forEach(function (cb) { cb.checked = false; });
+      document.getElementById('sort-select').value = 'default';
+      window.currentSort = 'default';
+      if (window.applyFilters) window.applyFilters();
+      if (window.updateChips) window.updateChips();
+    };
+
+    window.applyFilters = function() {
+      var grid = document.getElementById('products-grid');
+      if(!grid) return;
+      var cards = Array.from(grid.querySelectorAll('.card-room-new'));
+
+      var visible = cards.filter(function (card) {
+        var cat = card.getAttribute('data-cat');
+        var tags = card.getAttribute('data-tags') || '';
+        if (window.currentCat !== 'all' && cat !== window.currentCat) return false;
+        if (window.activeFeatures.length > 0) {
+          var tagArr = tags.split(' ');
+          for (var i = 0; i < window.activeFeatures.length; i++) {
+            if (!tagArr.includes(window.activeFeatures[i])) return false;
+          }
+        }
+        return true;
+      });
+
+      if (window.currentSort === 'price-asc') {
+        visible.sort(function (a, b) { return parseFloat(a.dataset.price) - parseFloat(b.dataset.price); });
+      } else if (window.currentSort === 'price-desc') {
+        visible.sort(function (a, b) { return parseFloat(b.dataset.price) - parseFloat(a.dataset.price); });
+      } else if (window.currentSort === 'name-asc') {
+        visible.sort(function (a, b) { return a.dataset.name.localeCompare(b.dataset.name); });
+      }
+
+      grid.classList.add('filtering');
+      setTimeout(function () {
+        cards.forEach(function (card) { card.style.display = 'none'; });
+        visible.forEach(function (card, i) {
+          card.style.display = '';
+          card.style.animationDelay = (i * 0.05) + 's';
+          card.style.animation = 'none';
+          card.offsetHeight; 
+          card.style.animation = '';
+        });
+        grid.classList.remove('filtering');
+
+        var count = visible.length;
+        document.getElementById('results-count').innerHTML = '<strong>' + count + '</strong> product' + (count !== 1 ? 's' : '') + ' found';
+        document.getElementById('mobile-count').textContent = count + ' products';
+
+        var existing = grid.querySelector('.empty-state');
+        if (existing) existing.remove();
+        if (count === 0) {
+          var empty = document.createElement('div');
+          empty.className = 'empty-state';
+          empty.innerHTML = '<div class="empty-state-icon">0</div><h3>No products found</h3><p>Try changing or resetting your filters.</p>';
+          grid.appendChild(empty);
+        }
+      }, 200);
+    }
+
+    window.updateChips = function() {
+      var container = document.getElementById('active-filters');
+      if(!container) return;
+      container.innerHTML = '';
+
+      if (window.currentCat !== 'all') {
+        var btn = document.querySelector('[data-cat="' + window.currentCat + '"]');
+        var label = btn ? btn.querySelector('.filter-cat-label').textContent : window.currentCat;
+        container.appendChild(makeChip(label, function () {
+          window.filterCat('all', document.querySelector('[data-cat="all"]'));
+        }));
+      }
+
+      window.activeFeatures.forEach(function (f) {
+        container.appendChild(makeChip(f, function () {
+          window.activeFeatures = window.activeFeatures.filter(function (x) { return x !== f; });
+          document.querySelectorAll('.filter-check-item input').forEach(function (cb) {
+            var featureAttr = cb.getAttribute('onchange') || '';
+            if (featureAttr.includes("'" + f + "'")) cb.checked = false;
+          });
+          if(window.applyFilters) window.applyFilters();
+          window.updateChips();
+        }));
+      });
+    }
+
+    function makeChip (label, removeFn) {
+      var chip = document.createElement('div');
+      chip.className = 'filter-chip';
+      chip.innerHTML = label + ' <span class="filter-chip-x">×</span>';
+      chip.addEventListener('click', removeFn);
+      return chip;
+    }
+  </script>
+
+  <!-- ИНИЦИАЛИЗАЦИЯ БАЗЫ ДАННЫХ И СКРИПТОВ -->
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="main.js"></script>
+
+</body>
+</html>
