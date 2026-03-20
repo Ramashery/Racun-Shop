@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAKUN — Product Details</title>
+  <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <nav id="main-nav">
+    <a href="index.html" class="nav-logo"><img src="https://i.postimg.cc/6300cGYs/IMG-20260319-125902.png" alt="RAKUN Logo"></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="catalog.html" class="active">Catalog</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="index.html#contacts">Contacts</a></li>
+    </ul>
+  </nav>
+
+  <header class="mobile-header" id="mobile-header">
+    <a href="index.html" class="nav-logo"><img src="https://i.postimg.cc/6300cGYs/IMG-20260319-125902.png" alt="Logo" style="height:24px;"></a>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()"><span class="line-1"></span><span class="line-2"></span></button>
+  </header>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="index.html">Home</a>
+    <span class="breadcrumb-sep">/</span>
+    <a href="catalog.html">Catalog</a>
+    <span class="breadcrumb-sep">/</span>
+    <span id="breadcrumb-product-name">...</span>
+  </div>
+
+  <!-- PRODUCT HERO -->
+  <section class="product-hero">
+    <div class="product-images">
+      <div class="product-main-img-wrap">
+        <!-- Эти бейджи скроем в CSS если они пустые из БД -->
+        <div class="product-badge" id="prod-badge" style="display:none;"></div>
+        <div class="product-badge-washes" id="prod-washes" style="display:none;"></div>
+        
+        <!-- Контейнер для слайдера картинок из БД -->
+        <div class="product-carousel" data-product-carousel id="prod-carousel"></div>
+      </div>
+    </div>
+    
+    <div class="product-info">
+      <span class="product-category" id="prod-category">Loading...</span>
+      <h1 class="product-name" id="prod-name">Loading...</h1>
+      <p class="product-subtitle" id="prod-short-desc"></p>
+      
+      <!-- Контейнер для фич -->
+      <div class="product-features" id="prod-features"></div>
+      
+      <!-- Динамический блок для дополнительных данных (аромат, дозировка), если нужно -->
+      <div id="prod-dynamic-details"></div>
+      
+      <div class="product-cta">
+        <a href="mailto:info@rakun.ge" class="btn-accent" id="prod-cta-btn">Request Wholesale Price</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TABS -->
+  <div class="product-details">
+    <div class="tabs-header">
+      <button class="tab-btn active" onclick="switchTab('description', this)">Description</button>
+      <button class="tab-btn" onclick="switchTab('ingredients', this)">Ingredients</button>
+      <button class="tab-btn" onclick="switchTab('safety', this)">Safety & Storage</button>
+    </div>
+    <div class="tabs-content">
+      <!-- Контент вкладок (заполняется из БД) -->
+      <div class="tab-panel active" id="tab-description">
+        <div id="prod-desc-content">Loading description...</div>
+      </div>
+      <div class="tab-panel" id="tab-ingredients">
+        <div id="prod-ingredients-content">Loading ingredients...</div>
+      </div>
+      <div class="tab-panel" id="tab-safety">
+        <div id="prod-safety-content">Loading safety info...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RELATED PRODUCTS -->
+  <section class="related-section">
+    <span class="section-label">Complete your order</span>
+    <h2 class="section-title">Other products</h2>
+    <div class="related-grid" id="related-products-grid">
+      <!-- Сюда вставляются товары -->
+    </div>
+  </section>
+
+  <footer>
+    <span class="footer-logo"><img src="https://i.postimg.cc/6300cGYs/IMG-20260319-125902.png" alt="RAKUN Logo"></span>
+    <div class="footer-links">
+      <a href="catalog.html">Catalog</a>
+      <a href="blog.html">Technology</a>
+      <a href="index.html#contacts">Wholesale</a>
+    </div>
+    <span>© 2025 RAKUN · Smart Laundry Solutions</span>
+  </footer>
+
+  <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+  <script>
+    window.toggleMobileMenu = function() {
+      var menu = document.getElementById('mobile-menu-overlay');
+      var isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    };
+
+    window.switchTab = function(tabId, btn) {
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.getElementById('tab-' + tabId).classList.add('active');
+      btn.classList.add('active');
+    };
+
+    // Вызываем это из main.js после добавления картинок в #prod-carousel
+    window.initProductCarousel = function() {
+      var productCarousel = document.querySelector('[data-product-carousel]');
+      if (productCarousel && productCarousel.children.length > 0) {
+        new Flickity(productCarousel, {
+          accessibility: true,
+          prevNextButtons: true,
+          pageDots: true,
+          wrapAround: true
+        });
+      }
+    };
+  </script>
+
+  <!-- ИНИЦИАЛИЗАЦИЯ БАЗЫ ДАННЫХ И СКРИПТОВ -->
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="main.js"></script>
+
+</body>
+</html>
