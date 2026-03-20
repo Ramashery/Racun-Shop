@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">RAKUN — Blog Post</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="read-progress"><div class="read-progress-bar" id="progress-bar"></div></div>
+
+  <nav id="main-nav">
+    <a href="index.html" class="nav-logo"><img src="https://i.postimg.cc/6300cGYs/IMG-20260319-125902.png" alt="Logo"></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="catalog.html">Catalog</a></li>
+      <li><a href="blog.html" class="active">Blog</a></li>
+      <li><a href="index.html#contacts">Contacts</a></li>
+    </ul>
+  </nav>
+
+  <header class="mobile-header" id="mobile-header">
+    <a href="index.html" class="nav-logo"><img src="https://i.postimg.cc/6300cGYs/IMG-20260319-125902.png" style="height:24px;"></a>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()"><span class="line-1"></span><span class="line-2"></span></button>
+  </header>
+
+  <section class="post-hero">
+    <div class="post-hero-inner">
+      <div class="post-breadcrumb">
+        <a href="index.html">Home</a><span class="post-breadcrumb-sep">/</span>
+        <a href="blog.html">Blog</a><span class="post-breadcrumb-sep">/</span>
+        <span id="post-breadcrumb-title">...</span>
+      </div>
+      <div class="post-hero-meta">
+        <span class="post-tag tag-tech" id="post-tag">Tech</span>
+        <span class="post-hero-dot"></span>
+        <span class="post-hero-date" id="post-date">...</span>
+        <span class="post-hero-dot"></span>
+        <span class="post-hero-read" id="post-read-time">...</span>
+      </div>
+      <h1 id="post-title">Loading...</h1>
+      <p class="post-hero-lead" id="post-lead"></p>
+      
+      <div class="post-hero-author">
+        <div class="post-author-avatar" id="post-author-avatar">...</div>
+        <div>
+          <div class="post-author-name" id="post-author-name">...</div>
+          <div class="post-author-role" id="post-author-role">...</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POST LAYOUT -->
+  <div class="post-layout">
+    <article class="post-body" id="post-body-content">
+      <!-- Контент из БД вставляется сюда (HTML код) -->
+    </article>
+
+    <aside class="post-sidebar">
+      <!-- Author -->
+      <div class="sidebar-widget">
+        <div class="sidebar-widget-head">Author</div>
+        <div class="author-widget">
+          <div class="author-widget-avatar" id="sidebar-author-avatar">...</div>
+          <div class="author-widget-name" id="sidebar-author-name">...</div>
+          <div class="author-widget-role" id="sidebar-author-role">...</div>
+          <p class="author-widget-bio" id="sidebar-author-bio">...</p>
+        </div>
+      </div>
+
+      <!-- Related Posts Sidebar -->
+      <div class="sidebar-widget">
+        <div class="sidebar-widget-head">Related</div>
+        <div class="sidebar-widget-body" id="sidebar-related-list">
+           <!-- Заполняется из БД -->
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <section class="related-section">
+    <div class="related-section-header">
+      <div class="related-section-label">Continue Reading</div>
+      <h2 class="related-section-title">More Articles</h2>
+      <div class="related-section-divider"></div>
+    </div>
+    <div class="related-cards" id="bottom-related-grid">
+      <!-- Заполняется из БД -->
+    </div>
+  </section>
+
+  <div class="back-to-blog">
+    <a href="blog.html" class="back-btn">
+      <span class="material-symbols-outlined">arrow_back</span> Back to Blog
+    </a>
+  </div>
+
+  <footer>
+    <span class="footer-logo"><img src="https://i.postimg.cc/6300cGYs/IMG-20260319-125902.png" alt="Logo"></span>
+    <span class="footer-copy">© 2025 RAKUN · Smart Laundry Solutions</span>
+  </footer>
+
+  <script>
+    window.toggleMobileMenu = function () {
+      var menu = document.getElementById('mobile-menu-overlay');
+      var isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    };
+
+    var bar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', function () {
+      var scrollTop = window.scrollY;
+      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      var pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      bar.style.width = Math.min(pct, 100) + '%';
+    }, { passive: true });
+  </script>
+
+  <!-- ИНИЦИАЛИЗАЦИЯ БАЗЫ ДАННЫХ И СКРИПТОВ -->
+  <script type="module" src="firebase-config.js"></script>
+  <script type="module" src="main.js"></script>
+
+</body>
+</html>
