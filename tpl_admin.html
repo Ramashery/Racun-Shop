@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>RAKUN Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+
+<!-- Данные из Firestore, встроенные в момент сборки -->
+<script>
+window.__SITE_DATA__ = {{ site_data_json | safe }};
+window.__GENERATED_AT__ = "{{ generated_at }}";
+</script>
+
+<div class="sov" id="sov" onclick="closeMob()"></div>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sbl"><div class="lmark">RK</div><div class="ltxt">RAKUN<small>Admin Panel</small></div></div>
+  <nav class="snav">
+    <div class="ngl">Content</div>
+    <div class="ni on" data-p="products"><span class="material-symbols-outlined ic">inventory_2</span><span class="lbl">Products</span><span class="bdg" id="bdgp">0</span></div>
+    <div class="ni" data-p="categories"><span class="material-symbols-outlined ic">category</span><span class="lbl">Categories</span><span class="bdg" id="bdgc">0</span></div>
+    <div class="ni" data-p="blog"><span class="material-symbols-outlined ic">article</span><span class="lbl">Blog Posts</span><span class="bdg" id="bdgb">0</span></div>
+    <div class="ngl">Info</div>
+    <div class="ni" data-p="build-info"><span class="material-symbols-outlined ic">info</span><span class="lbl">Build Info</span></div>
+  </nav>
+  <div class="sft">
+    <div class="av">RK</div>
+    <div class="ui">
+      <div class="un">Admin</div>
+      <div class="ur">Static Build Panel</div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <button class="tbt" id="dtt" onclick="toggleSidebar()"><span class="material-symbols-outlined">menu</span></button>
+    <button class="tbt" id="mbt" style="display:none" onclick="openMob()"><span class="material-symbols-outlined">menu</span></button>
+    <span class="tt" id="tptitle">Products</span>
+    <span class="tc" id="tpcrumb">/ Catalog</span>
+    <div class="tr">
+      <a href="/" target="_blank" class="btn bg2b bxs bv"><span class="material-symbols-outlined ic" style="font-size:15px">open_in_new</span>Visit Site</a>
+      <div class="av tav">RK</div>
+    </div>
+  </div>
+
+  <div class="ct">
+
+    <!-- ═══════════════════════════════════════════════════════
+         PRODUCTS
+    ═══════════════════════════════════════════════════════ -->
+    <div class="pn on" id="pn-products">
+      <div class="ph">
+        <div class="pht">
+          <h1>Products</h1>
+          <p>URL: /en/products/<strong>[category-slug]</strong>/<strong>[product-slug]</strong></p>
+        </div>
+        <div class="pha">
+          <a href="https://console.firebase.google.com/project/racun-shop/firestore/data/~2Fproducts"
+             target="_blank" class="btn bp">
+            <span class="material-symbols-outlined ic">add</span>Add in Firebase
+          </a>
+        </div>
+      </div>
+      <div class="tw">
+        <div class="ttb">
+          <div class="sbox">
+            <span class="material-symbols-outlined ic">search</span>
+            <input type="text" id="prod-search" placeholder="Search products…" oninput="filterProds()">
+          </div>
+          <select class="fs" id="pf-cat" onchange="filterProds()">
+            <option value="">All categories</option>
+          </select>
+          <select class="fs" id="pf-status" onchange="filterProds()">
+            <option value="">All statuses</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+          </select>
+        </div>
+        <table class="dt">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Languages</th>
+              <th>Status</th>
+              <th>URL</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="products-tbody"></tbody>
+        </table>
+        <div class="mcl" id="products-mob"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         CATEGORIES
+    ═══════════════════════════════════════════════════════ -->
+    <div class="pn" id="pn-categories">
+      <div class="ph">
+        <div class="pht">
+          <h1>Categories</h1>
+          <p>URL: /en/products/<strong>[category-slug]</strong>/product-slug</p>
+        </div>
+        <div class="pha">
+          <a href="https://console.firebase.google.com/project/racun-shop/firestore/data/~2Fcategories"
+             target="_blank" class="btn bp">
+            <span class="material-symbols-outlined ic">add</span>Add in Firebase
+          </a>
+        </div>
+      </div>
+      <div class="nt">
+        <span class="material-symbols-outlined ic">info</span>
+        Category slug is part of every product URL. Changing it breaks existing links — set up redirects in firebase.json.
+      </div>
+      <div class="cg2" id="catgrid"></div>
+      <div class="tw">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between">
+          All Categories
+          <span style="font-size:12px;color:var(--text2);font-weight:500" id="catcntlbl">0 categories</span>
+        </div>
+        <table class="dt">
+          <thead>
+            <tr><th>Name (EN)</th><th>Slug</th><th>Products</th><th>Languages</th><th>Status</th><th>URL</th><th>Firebase</th></tr>
+          </thead>
+          <tbody id="cattbody"></tbody>
+        </table>
+        <div class="mcl" id="catmob"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         BLOG POSTS
+    ═══════════════════════════════════════════════════════ -->
+    <div class="pn" id="pn-blog">
+      <div class="ph">
+        <div class="pht">
+          <h1>Blog Posts</h1>
+          <p>URL: /en/blog/<strong>[post-slug]</strong></p>
+        </div>
+        <div class="pha">
+          <a href="https://console.firebase.google.com/project/racun-shop/firestore/data/~2Fposts"
+             target="_blank" class="btn bp">
+            <span class="material-symbols-outlined ic">add</span>Add in Firebase
+          </a>
+        </div>
+      </div>
+      <div class="tw">
+        <div class="ttb">
+          <div class="sbox">
+            <span class="material-symbols-outlined ic">search</span>
+            <input type="text" id="blog-search" placeholder="Search posts…" oninput="filterPosts()">
+          </div>
+          <select class="fs" id="bf-cat" onchange="filterPosts()">
+            <option value="">All categories</option>
+            <option value="technology">Technology</option>
+            <option value="eco">Eco &amp; Safety</option>
+            <option value="guides">Guides</option>
+            <option value="science">Science</option>
+            <option value="industry">Industry</option>
+          </select>
+        </div>
+        <table class="dt">
+          <thead>
+            <tr><th>Title</th><th>Category</th><th>Author</th><th>Languages</th><th>Status</th><th>URL</th><th>Date</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="blog-tbody"></tbody>
+        </table>
+        <div class="mcl" id="blog-mob"></div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         BUILD INFO
+    ═══════════════════════════════════════════════════════ -->
+    <div class="pn" id="pn-build-info">
+      <div class="ph"><div class="pht"><h1>Build Information</h1></div></div>
+      <div class="tw" style="padding:24px;max-width:600px">
+        <div style="font-size:13px;font-weight:800;margin-bottom:16px;color:var(--text2)">LAST STATIC BUILD</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:14px;padding:14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border2);margin-bottom:24px" id="build-info-time"></div>
+        <div style="font-size:13px;font-weight:800;margin-bottom:16px;color:var(--text2)">HOW TO REBUILD</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;padding:14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border2);line-height:1.8">
+          Push to GitHub <strong>main</strong> branch<br>
+          → GitHub Actions runs <strong>generate_site.py</strong><br>
+          → Deploys to Firebase Hosting automatically<br><br>
+          Or run locally:<br>
+          <span style="color:var(--green)">$ python generate_site.py</span><br>
+          <span style="color:var(--green)">$ firebase deploy --only hosting</span>
+        </div>
+        <div style="margin-top:24px">
+          <a href="https://console.firebase.google.com/project/racun-shop/hosting" target="_blank" class="btn bp">
+            <span class="material-symbols-outlined ic">open_in_new</span>Firebase Hosting Console
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- MOBILE NAV -->
+<nav class="mn">
+  <div class="mni2">
+    <button class="mni on" data-p="products"><span class="material-symbols-outlined ic">inventory_2</span><span class="mnl">Products</span></button>
+    <button class="mni" data-p="categories"><span class="material-symbols-outlined ic">category</span><span class="mnl">Categories</span></button>
+    <button class="mni" data-p="blog"><span class="material-symbols-outlined ic">article</span><span class="mnl">Blog</span></button>
+    <button class="mni" onclick="openMob()"><span class="material-symbols-outlined ic">menu</span><span class="mnl">More</span></button>
+  </div>
+</nav>
+
+<script>
+// ────────────────────────────────────────────────────────────────────────────
+// ДАННЫЕ (встроены из Firestore в момент сборки)
+// ────────────────────────────────────────────────────────────────────────────
+const D = window.__SITE_DATA__ || {};
+const PRODUCTS   = D.products   || [];
+const POSTS      = D.posts      || [];
+const CATEGORIES = D.categories || [];
+const LANGS      = ['en','ru','ka','hy'];
+const BASE_URL   = D.base_url   || '';
+
+// ────────────────────────────────────────────────────────────────────────────
+// НАВИГАЦИЯ
+// ────────────────────────────────────────────────────────────────────────────
+const META = {
+  products:    {t:'Products',    c:'/ Catalog'},
+  categories:  {t:'Categories',  c:'/ Catalog'},
+  blog:        {t:'Blog Posts',  c:'/ Content'},
+  'build-info':{t:'Build Info',  c:''},
+};
+
+function goP(id) {
+  document.querySelectorAll('.pn').forEach(p => p.classList.remove('on'));
+  const p = document.getElementById('pn-' + id);
+  if (p) p.classList.add('on');
+  document.querySelectorAll('.ni[data-p]').forEach(n => n.classList.remove('on'));
+  const ni = document.querySelector('.ni[data-p="' + id + '"]');
+  if (ni) ni.classList.add('on');
+  document.querySelectorAll('.mni[data-p]').forEach(n => n.classList.remove('on'));
+  const mi = document.querySelector('.mni[data-p="' + id + '"]');
+  if (mi) mi.classList.add('on');
+  const m = META[id] || {t: id, c: ''};
+  document.getElementById('tptitle').textContent = m.t;
+  document.getElementById('tpcrumb').textContent = m.c;
+  document.querySelector('.ct').scrollTop = 0;
+  closeMob();
+}
+document.querySelectorAll('.ni[data-p]').forEach(el => el.addEventListener('click', () => goP(el.dataset.p)));
+document.querySelectorAll('.mni[data-p]').forEach(el => el.addEventListener('click', () => goP(el.dataset.p)));
+
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('col'); }
+function openMob()  { document.getElementById('sidebar').classList.add('mo'); document.getElementById('sov').classList.add('on'); document.body.style.overflow = 'hidden'; }
+function closeMob() { document.getElementById('sidebar').classList.remove('mo'); document.getElementById('sov').classList.remove('on'); document.body.style.overflow = ''; }
+function checkMob() {
+  const m = window.innerWidth <= 768;
+  const dt = document.getElementById('dtt'), mb = document.getElementById('mbt');
+  if (dt) dt.style.display = m ? 'none' : '';
+  if (mb) mb.style.display = m ? 'flex' : 'none';
+}
+window.addEventListener('resize', checkMob); checkMob();
+
+// ────────────────────────────────────────────────────────────────────────────
+// УТИЛИТЫ
+// ────────────────────────────────────────────────────────────────────────────
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function gf(doc) { return doc.globalFields || {}; }
+function loc(doc, lang) { return doc[lang] || doc['en'] || {}; }
+function firstImg(doc) { return (loc(doc,'en').imageUrls||[])[0] || ''; }
+function statusBadge(s) {
+  const c = {published:'#22c55e', draft:'#f59e0b', archived:'#94a3b8'};
+  return '<span class="sb2" style="background:' + (c[s]||'#94a3b8') + ';color:#fff;padding:2px 8px;border-radius:4px;font-size:11px">' + esc(s||'draft') + '</span>';
+}
+function langFlags(doc) {
+  return LANGS.map(l => {
+    const has = doc[l] && Object.keys(doc[l]).length > 0;
+    return '<span class="lfl ' + (has ? 'd' : '') + '">' + l.toUpperCase() + '</span>';
+  }).join('');
+}
+function productSlug(doc) {
+  const g = gf(doc);
+  if (g.slug) return g.slug;
+  const name = loc(doc,'en').name || doc._id || 'product';
+  return name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+function postSlug(doc) {
+  const g = gf(doc);
+  if (g.slug) return g.slug;
+  const title = loc(doc,'en').h1 || doc._id || 'post';
+  return title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+}
+function catSlugOf(doc) {
+  const g = gf(doc);
+  return g.categorySlug || (g.categoryId||'products').toLowerCase().replace(/[^a-z0-9]+/g,'-');
+}
+
+// Счётчик товаров в категории
+const prodCountByCat = {};
+PRODUCTS.forEach(p => {
+  const cs = catSlugOf(p);
+  prodCountByCat[cs] = (prodCountByCat[cs] || 0) + 1;
+});
+
+// ────────────────────────────────────────────────────────────────────────────
+// БЕЙДЖИ
+// ────────────────────────────────────────────────────────────────────────────
+document.getElementById('bdgp').textContent = PRODUCTS.length;
+document.getElementById('bdgb').textContent = POSTS.length;
+document.getElementById('bdgc').textContent = CATEGORIES.length;
+
+// ────────────────────────────────────────────────────────────────────────────
+// PRODUCTS TABLE
+// ────────────────────────────────────────────────────────────────────────────
+function renderProds(list) {
+  const tb = document.getElementById('products-tbody');
+  const mob = document.getElementById('products-mob');
+  if (!list.length) {
+    tb.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text3)">No products found</td></tr>';
+    mob.innerHTML = '<p style="padding:20px;text-align:center;color:var(--text3)">No products found</p>';
+    return;
+  }
+  tb.innerHTML = list.map(p => {
+    const en = loc(p,'en'), g = gf(p);
+    const img = firstImg(p);
+    const slug = productSlug(p);
+    const cs = catSlugOf(p);
+    const url = '/en/products/' + cs + '/' + slug + '/';
+    return '<tr>' +
+      '<td><div style="display:flex;align-items:center;gap:10px">' +
+        (img ? '<img src="'+esc(img)+'" style="width:44px;height:44px;object-fit:cover;border-radius:6px;border:1px solid var(--border)" loading="lazy">' : '<div style="width:44px;height:44px;border-radius:6px;background:var(--bg3);border:1px solid var(--border)"></div>') +
+        '<div><strong>' + esc(en.name) + '</strong><br><span style="font-size:11px;color:var(--text3);font-family:\'IBM Plex Mono\',monospace">' + esc(p._id) + '</span></div>' +
+      '</div></td>' +
+      '<td>' + esc(en.categoryLabel || g.categoryId || '—') + '</td>' +
+      '<td>' + (g.price ? esc(g.price) + ' GEL' : '—') + '</td>' +
+      '<td><div class="lf">' + langFlags(p) + '</div></td>' +
+      '<td>' + statusBadge(p.status || p._status) + '</td>' +
+      '<td><a href="' + esc(url) + '" target="_blank" class="admin-link" style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--text2)">' + esc(url) + '</a></td>' +
+      '<td><div class="ra">' +
+        '<a href="https://console.firebase.google.com/project/racun-shop/firestore/data/~2Fproducts~2F' + encodeURIComponent(p._id) + '" target="_blank" class="ib" title="Edit in Firebase"><span class="material-symbols-outlined ic">edit</span></a>' +
+        '<a href="' + esc(url) + '" target="_blank" class="ib" title="View page"><span class="material-symbols-outlined ic">open_in_new</span></a>' +
+      '</div></td>' +
+    '</tr>';
+  }).join('');
+
+  mob.innerHTML = list.map(p => {
+    const en = loc(p,'en'), g = gf(p);
+    const img = firstImg(p);
+    const slug = productSlug(p);
+    const cs = catSlugOf(p);
+    const url = '/en/products/' + cs + '/' + slug + '/';
+    return '<div class="mc">' +
+      '<div class="mc-top">' +
+        (img ? '<img src="'+esc(img)+'" style="width:48px;height:48px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">' : '<div style="width:48px;height:48px;border-radius:8px;background:var(--bg3)"></div>') +
+        '<div class="mc-i"><div class="mc-n">' + esc(en.name) + '</div><div class="mc-s">' + esc(en.categoryLabel||g.categoryId||'') + (g.price ? ' · '+g.price+' GEL' : '') + '</div></div>' +
+      '</div>' +
+      '<div class="mc-bot"><div class="mc-m">' + statusBadge(p.status||p._status) + '</div>' +
+      '<div class="mc-a"><a href="https://console.firebase.google.com/project/racun-shop/firestore/data/~2Fproducts~2F' + encodeURIComponent(p._id) + '" target="_blank" class="ib"><span class="material-symbols-outlined ic">edit</span></a>' +
+      '<a href="' + esc(url) + '" target="_blank" class="ib"><span class="material-symbols-outlined ic">open_in_new</span></a></div></div>' +
+      '<div class="mc-u" style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--text3);padding:4px 0 0">' + esc(url) + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// Заполняем фильтр категорий
+const catFilter = document.getElementById('pf-cat');
+const catMap = {};
+CATEGORIES.forEach(c => {
+  const g = gf(c), en = loc(c,'en');
+  const slug = g.slug || c._id;
+  catMap[slug] = en.name || slug;
+  const opt = document.createElement('option');
+  opt.value = slug; opt.textContent = en.name || slug;
+  catFilter.appendChild(opt);
+});
+
+function filterProds() {
+  const q = (document.getElementById('prod-search').value||'').toLowerCase().trim();
+  const cat = document.getElementById('pf-cat').value;
+  const st = document.getElementById('pf-status').value;
+  const filtered = PRODUCTS.filter(p => {
+    const en = loc(p,'en'), g = gf(p);
+    const cs = catSlugOf(p);
+    if (cat && cs !== cat) return false;
+    if (st && (p.status||'draft') !== st) return false;
+    if (q && !(en.name||'').toLowerCase().includes(q) && !(p._id||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+  renderProds(filtered);
+}
+renderProds(PRODUCTS);
+
+// ────────────────────────────────────────────────────────────────────────────
+// CATEGORIES TABLE
+// ────────────────────────────────────────────────────────────────────────────
+function renderCats() {
+  const g2 = document.getElementById('catgrid');
+  const tb = document.getElementById('cattbody');
+  const mob = document.getElementById('catmob');
+  const lbl = document.getElementById('catcntlbl');
+  if (lbl) lbl.textContent = CATEGORIES.length + ' categories';
+  document.getElementById('bdgc').textContent = CATEGORIES.length;
+
+  g2.innerHTML = CATEGORIES.map(c => {
+    const g = gf(c), en = loc(c,'en');
+    const slug = g.slug || c._id;
+    const color = g.color || '#4f7dff';
+    const cnt = prodCountByCat[slug] || 0;
+    return '<div class="cc"><div class="cdot" style="background:' + esc(color) + '"></div>' +
+      '<div class="ci2"><div class="cn">' + esc(en.name||slug) + '</div><div class="csl">/' + esc(slug) + '/</div>' +
+      '<div class="cct">' + cnt + ' product' + (cnt!==1?'s':'') + '</div></div>' +
+      '<div class="ca"><a href="https://console.firebase.google.com/project/racun-shop/firestore/data/~2Fcategories~2F' + encodeURIComponent(c._id) + '" target="_blank" class="ib"><span class="material-symbols-outlined ic">edit</span></a></div>' +
+    '</div>';
+  }).join('');
+
+  tb.innerHTML = CATEGORIES.map(c => {
+    const g = gf(c), en = loc(c,'en');
+    const slug = g.slug || c._id;
+    const cnt = prodCountByCat[slug] || 0;
+    const url = '/en/products/' + slug + '/';
+    return '<tr>' +
+      '<td><strong>' + esc(en.name||slug) + '</strong></td>' +
+      '<td style="font-family:\'IBM Plex Mono\',monospace;font-size:12px;color:var(--text2)">' + esc(slug) + '</td>' +
+      '<td>' + cnt + '</td>' +
+      '<td><div class="lf">' + langFlags(c) + '</div></td>' +
+      '<td>' + statusBadge(g.status||'active') + '</td>' +
+      '<td style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--text2)">' + esc(url) + '</td>' +
+      '<td><a href="https://console.firebase.google.com/project/racun-shop/firestore/data/~2Fcategories~2F' + encodeURIComponent(c._id) + '" target="_blank" class="ib"><span class="material-symbols-outlined ic">edit</span></a></td>' +
+    '</tr>';
+  }).join('');
+
+  mob.innerHTML = CATEGORIES.map(c => {
+    const g = gf(c), en = loc(c,'en');
+    const slug = g.slug || c._id;
+    const cnt = prodCountByCat[slug] || 0;
+    return '<div class="mc"><div class="mc-top">' +
+      '<div style="width:40px;height:40px;border-radius:10px;background:' + esc(g.color||'#4f7dff') + '20;border:2px solid ' + esc(g.color||'#4f7dff') + ';display:flex;align-items:center;justify-content:center">' +
+        '<div style="width:14px;height:14px;border-radius:50%;background:' + esc(g.color||'#4f7dff') + '"></div>' +
+      '</div>' +
+      '<div class="mc-i"><div class="mc-n">' + esc(en.name||slug) + '</div><div class="mc-s">' + cnt + ' products</div></div>' +
+      '</div><div class="mc-u" style="font-size:11px;color:var(--text3);font-family:\'IBM Plex Mono\',monospace;padding:4px 0 0">/en/products/' + esc(slug) + '/</div></div>';
+  }).join('');
+}
+renderCats();
+
+// ────────────────────────────────────────────────────────────────────────────
+// BLOG TABLE
+// ────────────────────────────────────────────────────────────────────────────
+function renderPosts(list) {
+  const tb = document.getElementById('blog-tbody');
+  const mob = document.getElementById('blog-mob');
+  if (!list.length) {
+    tb.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text3)">No posts found</td></tr>';
+    mob.innerHTML = '<p style="padding:20px;text-align:center;color:var(--text3)">No posts found</p>';
+    return;
+  }
+  tb.innerHTML = list.map(p => {
+    const en = loc(p,'en'), g = gf(p);
+    const slug = postSlug(p);
+    const url = '/en/blog/' + slug + '/';
+    return '<tr>' +
+      '<td><strong>' + esc(en.h1||en.cardTitle) + '</strong><br><span style="font-size:11px;color:var(--text3);font-family:\'IBM Plex Mono\',monospace">' + esc(p._id) + '</span></td>' +
+      '<td>' + esc(g.category||'—') + '</td>' +
+      '<td>' + esc(g.authorName||'—') + '</td>' +
+      '<td><div class="lf">' + langFlags(p) + '</div></td>' +
+      '<td>' + statusBadge(p.status||p._status) + '</td>' +
+      '<td><a href="' + esc(url) + '" target="_blank" style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--text2)">' + esc(url) + '</a></td>' +
+      '<td style="font-size:12px;color:var(--text2)">' + esc(g.publishedAt||'—') + '</td>' +
+      '<td><div class="ra"><a href="https://console.firebase.google.com/project/racun-shop/firestore/data/~2Fposts~2F' + encodeURIComponent(p._id) + '" target="_blank" class="ib"><span class="material-symbols-outlined ic">edit</span></a><a href="' + esc(url) + '" target="_blank" class="ib"><span class="material-symbols-outlined ic">open_in_new</span></a></div></td>' +
+    '</tr>';
+  }).join('');
+
+  mob.innerHTML = list.map(p => {
+    const en = loc(p,'en'), g = gf(p);
+    const slug = postSlug(p);
+    const url = '/en/blog/' + slug + '/';
+    const og = g.ogImageUrl || (loc(p,'en').mediaUrls||[])[0] || '';
+    return '<div class="mc"><div class="mc-top">' +
+      (og ? '<img src="'+esc(og)+'" style="width:60px;height:40px;object-fit:cover;border-radius:6px">' : '<div style="width:60px;height:40px;border-radius:6px;background:var(--bg3)"></div>') +
+      '<div class="mc-i"><div class="mc-n">' + esc(en.h1||en.cardTitle) + '</div><div class="mc-s">' + esc(g.category||'') + (g.authorName ? ' · '+g.authorName : '') + '</div></div>' +
+      '</div><div class="mc-bot"><div class="mc-m">' + statusBadge(p.status||p._status) + '</div>' +
+      '<div class="mc-a"><a href="https://console.firebase.google.com/project/racun-shop/firestore/data/~2Fposts~2F' + encodeURIComponent(p._id) + '" target="_blank" class="ib"><span class="material-symbols-outlined ic">edit</span></a></div></div>' +
+      '<div class="mc-u" style="font-size:11px;color:var(--text3);font-family:\'IBM Plex Mono\',monospace;padding:4px 0 0">' + esc(url) + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function filterPosts() {
+  const q = (document.getElementById('blog-search').value||'').toLowerCase().trim();
+  const cat = document.getElementById('bf-cat').value;
+  const filtered = POSTS.filter(p => {
+    const en = loc(p,'en'), g = gf(p);
+    if (cat && (g.category||'').toLowerCase().replace(/\s+/g,'-') !== cat) return false;
+    if (q && !(en.h1||'').toLowerCase().includes(q) && !(en.cardTitle||'').toLowerCase().includes(q) && !(p._id||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+  renderPosts(filtered);
+}
+renderPosts(POSTS);
+
+// ────────────────────────────────────────────────────────────────────────────
+// BUILD INFO
+// ────────────────────────────────────────────────────────────────────────────
+const biEl = document.getElementById('build-info-time');
+if (biEl) biEl.textContent = window.__GENERATED_AT__ || 'Unknown';
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMob(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if settings.seoTitle %}{{ settings.seoTitle }}{% else %}RAKUN — High-Tech Household Chemicals{% endif %}</title>
+  {% if settings.metaDescription %}<meta name="description" content="{{ settings.metaDescription }}">{% endif %}
+  <link rel="canonical" href="{{ BASE_URL }}/{{ lang }}/">
+  {% for l in SUPPORTED_LANGS %}
+  <link rel="alternate" hreflang="{{ l }}" href="{{ BASE_URL }}/{{ l }}/">
+  {% endfor %}
+  <link rel="alternate" hreflang="x-default" href="{{ BASE_URL }}/en/">
+  <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <!-- NAV DESKTOP -->
+  <nav id="main-nav">
+    <a href="/{{ lang }}/" class="nav-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo">
+    </a>
+    <ul class="nav-links">
+      <li><a href="/{{ lang }}/" class="active">Home</a></li>
+      <li><a href="/{{ lang }}/#hero">About us</a></li>
+      <li><a href="/{{ lang }}/catalog/">Catalog</a></li>
+      <li><a href="/{{ lang }}/blog/">Blog</a></li>
+      <li><a href="#contacts">Contacts</a></li>
+    </ul>
+    <div class="lang-switcher">
+      {% for l in SUPPORTED_LANGS %}
+      <a href="/{{ l }}/" {% if l == lang %}class="active"{% endif %}>{{ l | upper }}</a>
+      {% if not loop.last %}<span class="lang-separator">|</span>{% endif %}
+      {% endfor %}
+    </div>
+  </nav>
+
+  <!-- MOBILE HEADER -->
+  <header class="mobile-header" id="mobile-header">
+    <a href="/{{ lang }}/" class="mobile-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo" style="height:24px;display:block;">
+    </a>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()">
+      <span class="line-1"></span><span class="line-2"></span>
+    </button>
+  </header>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay">
+    <div class="mobile-menu-top">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo" style="height:24px;display:block;">
+      <button class="mobile-close" onclick="toggleMobileMenu()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <nav class="mobile-menu-nav">
+      <a href="/{{ lang }}/" onclick="toggleMobileMenu()">Home</a>
+      <a href="/{{ lang }}/#hero" onclick="toggleMobileMenu()">About us</a>
+      <a href="/{{ lang }}/catalog/" onclick="toggleMobileMenu()">Catalog</a>
+      <a href="/{{ lang }}/blog/" onclick="toggleMobileMenu()">Blog</a>
+      <a href="#contacts" onclick="toggleMobileMenu()">Contacts</a>
+    </nav>
+    <div class="mobile-menu-bottom">
+      <div class="mobile-lang">
+        {% for l in SUPPORTED_LANGS %}
+        <a href="/{{ l }}/" {% if l == lang %}class="active"{% endif %}>{{ l | upper }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO SLIDER -->
+  <section id="hero">
+    <div class="hero-slider" data-carousel>
+      {% if settings.heroSlides %}
+        {% for slide in settings.heroSlides %}
+        <div class="carousel-cell" style="background-image:url('{{ slide.backgroundImageUrl }}');">
+          <div class="overlay"></div>
+          <div class="inner">
+            <span class="subtitle">{{ slide.subtitle }}</span>
+            <h1 class="title">{{ slide.headline | safe }}</h1>
+            <a href="/{{ lang }}/catalog/" class="btn">{{ slide.button or 'View Catalog' }}</a>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <!-- Fallback слайды если в БД нет данных -->
+        <div class="carousel-cell" style="background-image:url('https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?auto=format&fit=crop&w=1600&q=80');">
+          <div class="overlay"></div>
+          <div class="inner">
+            <span class="subtitle">Smart 8X Technology</span>
+            <h1 class="title">Flawless Washing<br>In Every Drop</h1>
+            <a href="/{{ lang }}/catalog/" class="btn">View Catalog</a>
+          </div>
+        </div>
+        <div class="carousel-cell" style="background-image:url('https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&w=1600&q=80');">
+          <div class="overlay"></div>
+          <div class="inner">
+            <span class="subtitle">Innovative Care</span>
+            <h1 class="title">Next-Gen Gels<br>&amp; Capsules</h1>
+            <a href="/{{ lang }}/catalog/" class="btn">Learn More</a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- PRODUCTS SECTION -->
+  <section id="products" class="drag-section">
+    <div class="section-header fade-in">
+      <span class="section-label">Professional Line</span>
+      <h2 class="section-title">RAKUN Catalog</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="drag-track-container">
+      <div class="image-track" id="rooms-track">
+        {% for product in featured_products %}
+        {% set imgs = product.imageUrls or [] %}
+        <a href="/{{ lang }}/products/{{ product._cat_slug }}/{{ product._slug }}/"
+           class="card-room-new"
+           data-cat="{{ product.categoryId or product._cat_slug }}"
+           data-price="{{ product.price or 0 }}"
+           data-tags="{{ (product.features or []) | join(' ') | lower }}">
+          <div class="card-img-wrap">
+            {% if product.badge %}
+            <span class="card-badge {% if 'new' in (product.badge | lower) %}new{% elif 'best' in (product.badge | lower) or 'pop' in (product.badge | lower) %}popular{% endif %}">
+              {{ product.badge }}
+            </span>
+            {% endif %}
+            {% if imgs %}
+            <img alt="{{ product.name }}" draggable="false" src="{{ imgs[0] }}" loading="lazy"/>
+            {% endif %}
+          </div>
+          <div class="card-body">
+            {% if product.categoryLabel %}<span class="card-category">{{ product.categoryLabel }}</span>{% endif %}
+            <h3 class="card-title">{{ product.name }}</h3>
+            <p class="card-desc">{{ (product.shortDescription or '')[:120] }}</p>
+          </div>
+          <div class="card-footer">
+            {% if product.price %}<span class="card-price">{{ product.price }} GEL</span>{% endif %}
+            <span class="card-link">Details <span>&#8594;</span></span>
+          </div>
+        </a>
+        {% else %}
+        <p style="padding:20px;color:#888">No products yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+    <p class="drag-hint">Swipe to view</p>
+    <div style="text-align:center;margin-top:24px">
+      <a href="/{{ lang }}/catalog/" class="btn-accent">View Full Catalog</a>
+    </div>
+  </section>
+
+  <!-- BLOG SECTION -->
+  <section id="blog" class="drag-section" style="background:var(--bg-light);">
+    <div class="section-header fade-in">
+      <span class="section-label">RAKUN Innovations</span>
+      <h2 class="section-title">Technologies of Cleanliness</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="drag-track-container">
+      <div class="image-track" id="services-track">
+        {% for post in featured_posts %}
+        {% set og = post.ogImageUrl or (post.mediaUrls or [''])[0] %}
+        <a href="/{{ lang }}/blog/{{ post._slug }}/" class="card-room-new">
+          <div class="card-img-wrap">
+            {% if og %}<img alt="{{ post.cardTitle or post.h1 }}" draggable="false" src="{{ og }}" loading="lazy"/>{% endif %}
+          </div>
+          <div class="card-body">
+            {% if post.category %}<span class="card-category">{{ post.category }}</span>{% endif %}
+            <h3 class="card-title">{{ post.cardTitle or post.h1 }}</h3>
+            <p class="card-desc">{{ (post.cardDescription or '')[:120] }}</p>
+          </div>
+          <div class="card-footer">
+            {% if post.readTime %}<span class="card-price">{{ post.readTime }} min read</span>{% endif %}
+            <span class="card-link">Read <span>&#8594;</span></span>
+          </div>
+        </a>
+        {% else %}
+        <p style="padding:20px;color:#888">No posts yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+    <p class="drag-hint">Swipe to view</p>
+    <div style="text-align:center;margin-top:24px">
+      <a href="/{{ lang }}/blog/" class="btn-accent">All Articles</a>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section id="reviews">
+    <div class="section-header fade-in">
+      <span class="section-label">{{ settings.reviewsLabel or "Professionals' Choice" }}</span>
+      <h2 class="section-title">{{ settings.reviewsTitle or "Customer Reviews" }}</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="reviews-grid">
+      {% if settings.reviews %}
+        {% for r in settings.reviews %}
+        <div class="review-card fade-in" {% if loop.index > 1 %}style="transition-delay:{{ (loop.index - 1) * 0.15 }}s;"{% endif %}>
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">{{ r.text }}</p>
+          <div class="review-author">
+            <span class="review-name">{{ r.author }}</span>
+            <span class="review-from">{{ r.role }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <!-- Статичные отзывы-заглушки -->
+        <div class="review-card fade-in">
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">Excellent perfumed gel. The scent lasts incredibly long, just as advertised.</p>
+          <div class="review-author">
+            <span class="review-name">Marina V.</span>
+            <span class="review-from">Wholesale Buyer</span>
+          </div>
+        </div>
+        <div class="review-card fade-in" style="transition-delay:0.15s;">
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">The "5 in 1" capsules have become a top seller in our store.</p>
+          <div class="review-author">
+            <span class="review-name">David G.</span>
+            <span class="review-from">Supermarket Chain</span>
+          </div>
+        </div>
+        <div class="review-card fade-in" style="transition-delay:0.3s;">
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">Safe, phosphate-free composition. Perfect results even in hard water.</p>
+          <div class="review-author">
+            <span class="review-name">Anna K.</span>
+            <span class="review-from">Distributor</span>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- CONTACTS -->
+  <section id="contacts">
+    <div class="contact-map">
+      <iframe src="{{ settings.mapsEmbedUrl or 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47720.97905296636!2d44.74920095!3d41.69411365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40440cd7c4f87d35%3A0xa1729e07e07c32be!2sTbilisi%2C%20Georgia!5e0!3m2!1sen!2sus!4v1710000000000' }}"
+              allowfullscreen="" loading="lazy"></iframe>
+    </div>
+    <div class="contact-info">
+      <span class="section-label">{{ settings.contactLabel or "Cooperation" }}</span>
+      <h2 class="section-title">{{ settings.contactTitle or "Contacts &amp; Wholesale" }}</h2>
+      <div class="section-divider"></div>
+      {% if settings.phone %}
+      <div class="contact-detail" style="margin-top:32px;">
+        <div class="contact-detail-label">Phone / WhatsApp</div>
+        <a href="tel:{{ settings.phone }}" class="contact-detail-value">{{ settings.phone }}</a>
+      </div>
+      {% endif %}
+      {% if settings.email %}
+      <div class="contact-detail">
+        <div class="contact-detail-label">Email</div>
+        <a href="mailto:{{ settings.email }}" class="contact-detail-value">{{ settings.email }}</a>
+      </div>
+      {% endif %}
+      {% if settings.logisticsTerms %}
+      <div class="contact-detail">
+        <div class="contact-detail-label">Logistics Terms (Ex-warehouse Tbilisi)</div>
+        <span class="contact-detail-value" style="font-size:0.95rem;">{{ settings.logisticsTerms | safe }}</span>
+      </div>
+      {% else %}
+      <div class="contact-detail">
+        <div class="contact-detail-label">Logistics Terms (Ex-warehouse Tbilisi)</div>
+        <span class="contact-detail-value" style="font-size:0.95rem;">
+          Household chemicals — from 2,000 units<br>
+          Washing gel — from 500 bottles<br>
+          Capsules — from 1,250 packs
+        </span>
+      </div>
+      {% endif %}
+      <a href="mailto:{{ settings.ctaEmail or settings.email or 'info@rakun.ge' }}" class="btn-accent">
+        {{ settings.ctaButtonText or 'Request Price List' }}
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <span class="footer-logo"><img src="{{ LOGO_URL }}" alt="RAKUN Logo"></span>
+    <div class="footer-links">
+      <a href="/{{ lang }}/catalog/">Catalog</a>
+      <a href="/{{ lang }}/blog/">Technology</a>
+      <a href="#contacts">Wholesale</a>
+    </div>
+    <span>{{ settings.footerCopy or '© 2025 RAKUN · Smart Laundry Solutions' }}</span>
+  </footer>
+
+  <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+  <script>
+    var carousel = document.querySelector('[data-carousel]');
+    if (carousel) {
+      new Flickity(carousel, {
+        accessibility: true, prevNextButtons: true, pageDots: true,
+        setGallerySize: false, wrapAround: true, autoPlay: 6000
+      });
+    }
+
+    var nav = document.getElementById('main-nav');
+    var mobileHeader = document.getElementById('mobile-header');
+    window.addEventListener('scroll', function() {
+      if (nav) nav.classList.toggle('scrolled', window.scrollY > 50);
+      if (mobileHeader) mobileHeader.classList.toggle('scrolled', window.scrollY > 50);
+    }, { passive: true });
+
+    window.toggleMobileMenu = function() {
+      var menu = document.getElementById('mobile-menu-overlay');
+      var isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    };
+
+    window.initDragTrack = function(trackId) {
+      var track = document.getElementById(trackId);
+      if (!track) return;
+      var isDown = false, startX = 0, currentPx = 0, startPx = 0;
+      function clampedPx(px) {
+        var maxTravel = Math.max(0, track.scrollWidth - track.parentElement.offsetWidth + 64);
+        return Math.max(-maxTravel, Math.min(0, px));
+      }
+      function getClientX(e) { return e.clientX !== undefined ? e.clientX : (e.touches ? e.touches[0].clientX : null); }
+      function startDrag(e) { var cx = getClientX(e); if (!cx) return; isDown = true; startX = cx; startPx = currentPx; track.style.cursor = 'grabbing'; track.style.transition = 'none'; }
+      function endDrag() { if (!isDown) return; isDown = false; track.style.cursor = 'grab'; track.style.transition = 'transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)'; currentPx = clampedPx(currentPx); track.style.transform = 'translateX(' + currentPx + 'px)'; }
+      function moveDrag(e) { if (!isDown) return; var cx = getClientX(e); if (!cx) return; currentPx = startPx + (cx - startX); track.style.transform = 'translateX(' + currentPx + 'px)'; }
+      track.addEventListener('mousedown', startDrag);
+      window.addEventListener('mouseup', endDrag);
+      window.addEventListener('mousemove', moveDrag);
+      track.addEventListener('touchstart', startDrag, { passive: true });
+      track.addEventListener('touchend', endDrag);
+      track.addEventListener('touchmove', moveDrag, { passive: true });
+      track.querySelectorAll('img').forEach(function(img) { img.addEventListener('dragstart', function(e) { e.preventDefault(); }); });
+    };
+
+    // Инициализация drag треков
+    ['rooms-track', 'services-track'].forEach(function(id) {
+      if (document.getElementById(id)) window.initDragTrack(id);
+    });
+
+    // Fade-in анимация
+    var fadeEls = document.querySelectorAll('.fade-in');
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    fadeEls.forEach(function(el) { observer.observe(el); });
+  </script>
+
+</body>
+</html>
