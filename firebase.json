@@ -1,0 +1,116 @@
+{
+  "hosting": {
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "cleanUrls": true,
+    "trailingSlash": true,
+    "rewrites": [
+      {
+        "source": "/admin",
+        "destination": "/admin/index.html"
+      },
+      {
+        "source": "/admin/**",
+        "destination": "/admin/index.html"
+      },
+      {
+        "source": "/en",
+        "destination": "/en/index.html"
+      },
+      {
+        "source": "/ru",
+        "destination": "/ru/index.html"
+      },
+      {
+        "source": "/ka",
+        "destination": "/ka/index.html"
+      },
+      {
+        "source": "/hy",
+        "destination": "/hy/index.html"
+      },
+      {
+        "source": "/",
+        "destination": "/en/index.html"
+      }
+    ],
+    "redirects": [
+      {
+        "source": "/index.html",
+        "destination": "/en/",
+        "type": 301
+      },
+      {
+        "source": "/catalog",
+        "destination": "/en/catalog/",
+        "type": 301
+      },
+      {
+        "source": "/blog",
+        "destination": "/en/blog/",
+        "type": 301
+      },
+      {
+        "source": "/catalog.html",
+        "destination": "/en/catalog/",
+        "type": 301
+      },
+      {
+        "source": "/blog.html",
+        "destination": "/en/blog/",
+        "type": 301
+      },
+      {
+        "source": "/product.html",
+        "destination": "/en/catalog/",
+        "type": 301
+      },
+      {
+        "source": "/post.html",
+        "destination": "/en/blog/",
+        "type": 301
+      }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(jpg|jpeg|png|gif|webp|svg|ico|woff2)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=86400"
+          }
+        ]
+      },
+      {
+        "source": "**",
+        "headers": [
+          {
+            "key": "X-Frame-Options",
+            "value": "SAMEORIGIN"
+          },
+          {
+            "key": "X-Content-Type-Options",
+            "value": "nosniff"
+          },
+          {
+            "key": "Referrer-Policy",
+            "value": "strict-origin-when-cross-origin"
+          }
+        ]
+      }
+    ]
+  }
+}
