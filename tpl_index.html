@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{{ page.seoTitle or 'RAKUN — High-Tech Household Chemicals' }}</title>
+  <meta name="description" content="{{ page.metaDescription or 'Professional household chemicals: washing gels, capsules, sprays. Wholesale from Tbilisi.' }}">
+  <link rel="canonical" href="{{ BASE_URL }}/{{ lang }}/">
+
+  <!-- hreflang -->
+  {% for l in SUPPORTED_LANGS %}
+  <link rel="alternate" hreflang="{{ l }}" href="{{ BASE_URL }}/{{ l }}/">
+  {% endfor %}
+  <link rel="alternate" hreflang="x-default" href="{{ BASE_URL }}/en/">
+
+  <!-- OG -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="{{ BASE_URL }}/{{ lang }}/">
+  <meta property="og:title"       content="{{ page.ogTitle or page.seoTitle or 'RAKUN' }}">
+  <meta property="og:description" content="{{ page.ogDescription or page.metaDescription or '' }}">
+  <meta property="og:image"       content="{{ page.ogImageUrl or LOGO_URL }}">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <!-- ── NAV DESKTOP ─────────────────────────────────────────── -->
+  <nav id="main-nav">
+    <a href="/{{ lang }}/" class="nav-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo">
+    </a>
+    <ul class="nav-links">
+      <li><a href="/{{ lang }}/">{{ nav.home or 'Home' }}</a></li>
+      <li><a href="/{{ lang }}/#hero">{{ nav.about or 'About us' }}</a></li>
+      <li><a href="/{{ lang }}/catalog/">{{ nav.catalog or 'Catalog' }}</a></li>
+      <li><a href="/{{ lang }}/blog/">{{ nav.blog or 'Blog' }}</a></li>
+      <li><a href="#contacts">{{ nav.contacts or 'Contacts' }}</a></li>
+    </ul>
+    <div class="lang-switcher">
+      {% for l in SUPPORTED_LANGS %}
+      <a href="/{{ l }}/"{% if l == lang %} class="active"{% endif %}>{{ l | upper }}</a>
+      {% if not loop.last %}<span class="lang-separator">|</span>{% endif %}
+      {% endfor %}
+    </div>
+  </nav>
+
+  <!-- ── MOBILE HEADER ───────────────────────────────────────── -->
+  <header class="mobile-header" id="mobile-header">
+    <a href="/{{ lang }}/" class="mobile-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo" style="height:24px;display:block;">
+    </a>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()">
+      <span class="line-1"></span>
+      <span class="line-2"></span>
+    </button>
+  </header>
+
+  <!-- ── MOBILE MENU ─────────────────────────────────────────── -->
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay">
+    <div class="mobile-menu-top">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo" style="height:24px;display:block;">
+      <button class="mobile-close" onclick="toggleMobileMenu()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <nav class="mobile-menu-nav">
+      <a href="/{{ lang }}/"           onclick="toggleMobileMenu()">{{ nav.home    or 'Home' }}</a>
+      <a href="/{{ lang }}/#hero"      onclick="toggleMobileMenu()">{{ nav.about   or 'About us' }}</a>
+      <a href="/{{ lang }}/catalog/"   onclick="toggleMobileMenu()">{{ nav.catalog or 'Catalog' }}</a>
+      <a href="/{{ lang }}/blog/"      onclick="toggleMobileMenu()">{{ nav.blog    or 'Blog' }}</a>
+      <a href="#contacts"              onclick="toggleMobileMenu()">{{ nav.contacts or 'Contacts' }}</a>
+    </nav>
+    <div class="mobile-menu-bottom">
+      <div class="mobile-lang">
+        {% for l in SUPPORTED_LANGS %}
+        <a href="/{{ l }}/"{% if l == lang %} class="active"{% endif %}>{{ l | upper }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HERO SLIDER ─────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="hero-slider" data-carousel>
+      {% if slides %}
+        {% for slide in slides %}
+        <div class="carousel-cell" style="background-image:url('{{ slide.bgImage }}');">
+          <div class="overlay"></div>
+          <div class="inner">
+            <span class="subtitle">{{ slide.subtitle }}</span>
+            <h1 class="title">{{ slide.headline | replace('\n', '<br>') | safe }}</h1>
+            <a href="{{ slide.btnUrl or ('/' + lang + '/catalog/') }}" class="btn">{{ slide.btnText or nav.catalog or 'View Catalog' }}</a>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        {# Fallback если слайдер не настроен в Pages #}
+        <div class="carousel-cell" style="background-image:url('https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?auto=format&fit=crop&w=1600&q=80');">
+          <div class="overlay"></div>
+          <div class="inner">
+            <span class="subtitle">Smart 8X Technology</span>
+            <h1 class="title">Flawless Washing<br>In Every Drop</h1>
+            <a href="/{{ lang }}/catalog/" class="btn">{{ nav.catalog or 'View Catalog' }}</a>
+          </div>
+        </div>
+        <div class="carousel-cell" style="background-image:url('https://images.unsplash.com/photo-1563453392212-326f5e854473?auto=format&fit=crop&w=1600&q=80');">
+          <div class="overlay"></div>
+          <div class="inner">
+            <span class="subtitle">Innovative Care</span>
+            <h1 class="title">Next-Gen Gels<br>&amp; Capsules</h1>
+            <a href="/{{ lang }}/catalog/" class="btn">{{ nav.catalog or 'View Catalog' }}</a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ── PRODUCTS ────────────────────────────────────────────── -->
+  <section id="products" class="drag-section">
+    <div class="section-header fade-in">
+      <span class="section-label">{{ products_section.label or 'Professional Line' }}</span>
+      <h2 class="section-title">{{ products_section.title or 'RAKUN Catalog' }}</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="drag-track-container">
+      <div class="image-track" id="rooms-track">
+        {% for p in products %}
+        <a class="card-room-new" href="/{{ lang }}/products/{{ p._cat_slug }}/{{ p._slug }}/" style="text-decoration:none;">
+          <div class="card-img-wrap">
+            {% if p.firstImage %}
+            <img src="{{ p.firstImage }}" alt="{{ p.name }}" loading="lazy">
+            {% endif %}
+          </div>
+          <div class="card-body">
+            {% if p.categoryLabel or p._cat_slug %}
+            <span class="card-category">{{ p.categoryLabel or p._cat_slug }}</span>
+            {% endif %}
+            <div class="card-title">{{ p.name }}</div>
+            {% if p.shortDescription %}
+            <div class="card-desc">{{ p.shortDescription }}</div>
+            {% endif %}
+          </div>
+          {% if p.price %}
+          <div class="card-footer">
+            <span class="card-price">{{ p.priceRaw }}</span>
+            <span class="card-link">View →</span>
+          </div>
+          {% endif %}
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    <p class="drag-hint">Swipe to view</p>
+    <div style="text-align:center;margin-top:32px;">
+      <a href="/{{ lang }}/catalog/" class="btn-accent">{{ nav.catalog or 'View All Products' }}</a>
+    </div>
+  </section>
+
+  <!-- ── BLOG ────────────────────────────────────────────────── -->
+  <section id="blog" class="drag-section" style="background:var(--bg-light);">
+    <div class="section-header fade-in">
+      <span class="section-label">{{ blog_section.label or 'RAKUN Innovations' }}</span>
+      <h2 class="section-title">{{ blog_section.title or 'Technologies of Cleanliness' }}</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="drag-track-container">
+      <div class="image-track" id="services-track">
+        {% for post in posts %}
+        <a class="service-card" href="/{{ lang }}/blog/{{ post._slug }}/">
+          <div class="service-card-img">
+            {% if post.firstImage %}
+            <img src="{{ post.firstImage }}" alt="{{ post.cardTitle or post.name }}" loading="lazy">
+            {% endif %}
+          </div>
+          <div class="service-card-body">
+            {% if post.categoryLabel or post.categoryId %}
+            <span class="service-card-cat">{{ post.categoryLabel or post.categoryId }}</span>
+            {% endif %}
+            <span class="service-card-title">{{ post.cardTitle or post.name }}</span>
+            {% if post.cardDescription or post.shortDescription %}
+            <p class="service-card-desc">{{ post.cardDescription or post.shortDescription }}</p>
+            {% endif %}
+            <span class="service-card-link">
+              Read more
+              {% if post.readTime %} · {{ post.readTime }}{% endif %}
+            </span>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    <p class="drag-hint">Swipe to view</p>
+    <div style="text-align:center;margin-top:32px;">
+      <a href="/{{ lang }}/blog/" class="btn-accent">{{ nav.blog or 'All Articles' }}</a>
+    </div>
+  </section>
+
+  <!-- ── REVIEWS ──────────────────────────────────────────────── -->
+  <section id="reviews">
+    <div class="section-header fade-in">
+      <span class="section-label">{{ reviews_section.label or "Professionals' Choice" }}</span>
+      <h2 class="section-title">{{ reviews_section.title or 'Customer Reviews' }}</h2>
+      <div class="section-divider"></div>
+    </div>
+    <div class="reviews-grid">
+      {% if reviews %}
+        {% for r in reviews %}
+        <div class="review-card fade-in" {% if loop.index0 > 0 %}style="transition-delay:{{ loop.index0 * 0.15 }}s;"{% endif %}>
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">{{ r.text }}</p>
+          <div class="review-author">
+            <span class="review-name">{{ r.author }}</span>
+            <span class="review-from">{{ r.role }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        {# Статичные отзывы как fallback #}
+        <div class="review-card fade-in">
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">Excellent perfumed gel. The scent lasts incredibly long, just as advertised. Very economical usage due to the concentrated formula.</p>
+          <div class="review-author">
+            <span class="review-name">Marina V.</span>
+            <span class="review-from">Wholesale Buyer</span>
+          </div>
+        </div>
+        <div class="review-card fade-in" style="transition-delay:0.15s;">
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">The "5 in 1" capsules have become a top seller in our store. Clients highlight the vibrant fragrance and superb stain removal.</p>
+          <div class="review-author">
+            <span class="review-name">David G.</span>
+            <span class="review-from">Supermarket Chain</span>
+          </div>
+        </div>
+        <div class="review-card fade-in" style="transition-delay:0.3s;">
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p class="review-text">The safe, phosphate-free composition is the main advantage for us. The gel does a perfect job even in hard water.</p>
+          <div class="review-author">
+            <span class="review-name">Anna K.</span>
+            <span class="review-from">Distributor</span>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ── CONTACTS ─────────────────────────────────────────────── -->
+  <section id="contacts">
+    <div class="contact-map">
+      <iframe
+        src="{{ contacts.mapsEmbed or 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47720.97905296636!2d44.74920095!3d41.69411365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40440cd7c4f87d35%3A0xa1729e07e07c32be!2sTbilisi%2C%20Georgia!5e0!3m2!1sen!2sus!4v1710000000000' }}"
+        allowfullscreen="" loading="lazy">
+      </iframe>
+    </div>
+    <div class="contact-info">
+      <span class="section-label">{{ contacts.label or 'Cooperation' }}</span>
+      <h2 class="section-title">{{ contacts.title or 'Contacts &amp; Wholesale' }}</h2>
+      <div class="section-divider"></div>
+      {% if contacts.phone %}
+      <div class="contact-detail" style="margin-top:32px;">
+        <div class="contact-detail-label">Phone / WhatsApp</div>
+        <a href="tel:{{ contacts.phone | replace(' ','') }}" class="contact-detail-value">{{ contacts.phone }}</a>
+      </div>
+      {% endif %}
+      {% if contacts.email %}
+      <div class="contact-detail">
+        <div class="contact-detail-label">Email</div>
+        <a href="/cdn-cgi/l/email-protection#c9b2b2e9aaa6a7bda8aabdbae7aca4a8a0a5e9b4b4" class="contact-detail-value">{{ contacts.email }}</a>
+      </div>
+      {% endif %}
+      {% if contacts.logisticsTerms %}
+      <div class="contact-detail">
+        <div class="contact-detail-label">Logistics Terms (Ex-warehouse Tbilisi)</div>
+        <span class="contact-detail-value" style="font-size:0.95rem;">{{ contacts.logisticsTerms | replace('\n','<br>') | safe }}</span>
+      </div>
+      {% endif %}
+      {% if contacts.ctaEmail or contacts.email %}
+      <a href="/cdn-cgi/l/email-protection#3e45451e5d51504a5f5d4a4d105d4a5f7b535f57521e514c1e5d51504a5f5d4a4d105b535f57521e4343" class="btn-accent">
+        {{ contacts.ctaButton or 'Request Price List' }}
+      </a>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ── FOOTER ───────────────────────────────────────────────── -->
+  <footer>
+    <span class="footer-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo">
+    </span>
+    <div class="footer-links">
+      <a href="/{{ lang }}/catalog/">{{ footer.link1 or nav.catalog or 'Catalog' }}</a>
+      <a href="/{{ lang }}/blog/">{{ footer.link2 or nav.blog or 'Technology' }}</a>
+      <a href="#contacts">{{ footer.link3 or nav.contacts or 'Wholesale' }}</a>
+    </div>
+    <span>{{ footer.copyright or '© 2025 RAKUN · Smart Laundry Solutions' }}</span>
+  </footer>
+
+  <!-- ── SCRIPTS ──────────────────────────────────────────────── -->
+  <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+
+    // ── Hero carousel ───────────────────────────────────────────
+    var carousel = document.querySelector('[data-carousel]');
+    if (carousel) {
+      new Flickity(carousel, {
+        accessibility: true,
+        prevNextButtons: true,
+        pageDots: true,
+        setGallerySize: false,
+        wrapAround: true,
+        autoPlay: 6000
+      });
+    }
+
+    // ── Nav scroll ──────────────────────────────────────────────
+    var nav = document.getElementById('main-nav');
+    var mobileHeader = document.getElementById('mobile-header');
+    window.addEventListener('scroll', function() {
+      if (nav) nav.classList.toggle('scrolled', window.scrollY > 50);
+      if (mobileHeader) mobileHeader.classList.toggle('scrolled', window.scrollY > 50);
+    }, { passive: true });
+
+    // ── Mobile menu ─────────────────────────────────────────────
+    window.toggleMobileMenu = function() {
+      var menu = document.getElementById('mobile-menu-overlay');
+      if (!menu) return;
+      var isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    };
+
+    // ── Drag-scroll для треков карточек ─────────────────────────
+    function initDragTrack(trackId) {
+      var track = document.getElementById(trackId);
+      if (!track) return;
+      var isDown = false, startX = 0, currentPx = 0, startPx = 0;
+
+      function clampedPx(px) {
+        var maxTravel = Math.max(0, track.scrollWidth - track.parentElement.offsetWidth + 64);
+        return Math.max(-maxTravel, Math.min(0, px));
+      }
+      function getClientX(e) {
+        return e.clientX !== undefined ? e.clientX : (e.touches ? e.touches[0].clientX : null);
+      }
+      function startDrag(e) {
+        var cx = getClientX(e); if (cx === null) return;
+        isDown = true; startX = cx; startPx = currentPx;
+        track.style.cursor = 'grabbing';
+        track.style.transition = 'none';
+      }
+      function endDrag() {
+        if (!isDown) return; isDown = false;
+        track.style.cursor = 'grab';
+        track.style.transition = 'transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)';
+        currentPx = clampedPx(currentPx);
+        track.style.transform = 'translateX(' + currentPx + 'px)';
+      }
+      function moveDrag(e) {
+        if (!isDown) return;
+        var cx = getClientX(e); if (cx === null) return;
+        currentPx = startPx + (cx - startX);
+        track.style.transform = 'translateX(' + currentPx + 'px)';
+      }
+
+      track.addEventListener('mousedown', startDrag);
+      window.addEventListener('mouseup', endDrag);
+      window.addEventListener('mousemove', moveDrag);
+      track.addEventListener('touchstart', startDrag, { passive: true });
+      track.addEventListener('touchend', endDrag);
+      track.addEventListener('touchmove', moveDrag, { passive: true });
+      track.querySelectorAll('img').forEach(function(img) {
+        img.addEventListener('dragstart', function(e) { e.preventDefault(); });
+      });
+    }
+
+    initDragTrack('rooms-track');
+    initDragTrack('services-track');
+
+    // ── Fade-in on scroll ───────────────────────────────────────
+    var fadeEls = document.querySelectorAll('.fade-in');
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.1 });
+    fadeEls.forEach(function(el) { observer.observe(el); });
+
+  }); // end DOMContentLoaded
+  </script>
+</body>
+</html>
