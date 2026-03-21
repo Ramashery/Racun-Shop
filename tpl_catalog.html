@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAKUN — Product Catalog</title>
+  <link rel="canonical" href="{{ BASE_URL }}/{{ lang }}/catalog/">
+  {% for l in SUPPORTED_LANGS %}
+  <link rel="alternate" hreflang="{{ l }}" href="{{ BASE_URL }}/{{ l }}/catalog/">
+  {% endfor %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <nav id="main-nav">
+    <a href="/{{ lang }}/" class="nav-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo">
+    </a>
+    <ul class="nav-links">
+      <li><a href="/{{ lang }}/">Home</a></li>
+      <li><a href="/{{ lang }}/#hero">About us</a></li>
+      <li><a href="/{{ lang }}/catalog/" class="active">Catalog</a></li>
+      <li><a href="/{{ lang }}/blog/">Blog</a></li>
+      <li><a href="/{{ lang }}/#contacts">Contacts</a></li>
+    </ul>
+    <div class="lang-switcher">
+      {% for l in SUPPORTED_LANGS %}
+      <a href="/{{ l }}/catalog/" {% if l == lang %}class="active"{% endif %}>{{ l | upper }}</a>
+      {% if not loop.last %}<span class="lang-separator">|</span>{% endif %}
+      {% endfor %}
+    </div>
+  </nav>
+
+  <header class="mobile-header" id="mobile-header">
+    <a href="/{{ lang }}/" class="nav-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo" style="height:24px;display:block;">
+    </a>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()">
+      <span class="line-1"></span><span class="line-2"></span>
+    </button>
+  </header>
+
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay" style="display:none;">
+    <div class="mobile-menu-top">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo" style="height:24px;display:block;">
+      <button class="mobile-close" onclick="toggleMobileMenu()">
+        <span class="material-symbols-outlined" style="font-size:32px;">close</span>
+      </button>
+    </div>
+    <nav class="mobile-menu-nav">
+      <a href="/{{ lang }}/">Home</a>
+      <a href="/{{ lang }}/#hero">About us</a>
+      <a href="/{{ lang }}/catalog/">Catalog</a>
+      <a href="/{{ lang }}/blog/">Blog</a>
+      <a href="/{{ lang }}/#contacts">Contacts</a>
+    </nav>
+    <div class="mobile-menu-bottom">
+      <div class="mobile-lang">
+        {% for l in SUPPORTED_LANGS %}
+        <a href="/{{ l }}/catalog/" {% if l == lang %}class="active"{% endif %}>{{ l | upper }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="catalog-hero">
+    <div class="catalog-hero-inner">
+      <div class="catalog-hero-left">
+        <div class="breadcrumb">
+          <a href="/{{ lang }}/">Home</a>
+          <span class="breadcrumb-sep">/</span>
+          <span>Catalog</span>
+        </div>
+        <span class="catalog-hero-label">Full Product Range</span>
+        <h1>Our <em>Catalog</em></h1>
+        <p>Professional household chemistry with smart technologies. Wholesale supply from the warehouse in Tbilisi.</p>
+      </div>
+      <div class="catalog-hero-tags" id="catalog-hero-tags">
+        {% for cat in categories %}
+        <div class="catalog-hero-tag">
+          <div class="catalog-hero-tag-dot"></div>
+          <span>{{ cat.label }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="mobile-filter-bar">
+    <button class="mobile-filter-btn" onclick="openSidebar()">
+      <span class="material-symbols-outlined" style="font-size:18px;">tune</span>
+      Filters
+    </button>
+    <span class="mobile-results-count" id="mobile-count">{{ products | length }} products</span>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <div class="sidebar-drawer" id="sidebar-drawer">
+    <button class="sidebar-drawer-close" onclick="closeSidebar()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <div id="mobile-sidebar-content"></div>
+  </div>
+
+  <div class="catalog-body">
+    <aside class="catalog-sidebar" id="catalog-sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-header-title">Filters</div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Category</div>
+        <div class="filter-cat-list" id="cat-list">
+          <button class="filter-cat-btn active" data-cat="all" onclick="filterCat('all', this)">
+            <span class="filter-cat-label">All Products</span>
+          </button>
+          {% for cat in categories %}
+          <button class="filter-cat-btn" data-cat="{{ cat.slug }}" onclick="filterCat('{{ cat.slug }}', this)">
+            <span class="filter-cat-label">{{ cat.label }}</span>
+          </button>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Features</div>
+        <div class="filter-check-list" id="features-list">
+          <!-- Динамически из данных товаров -->
+        </div>
+      </div>
+      <button class="filter-reset" onclick="resetFilters()">Reset all filters</button>
+    </aside>
+
+    <main class="catalog-main">
+      <div class="catalog-toolbar">
+        <span class="catalog-results-count" id="results-count">
+          <strong>{{ products | length }}</strong> products found
+        </span>
+        <div class="toolbar-right">
+          <select class="sort-select" onchange="sortProducts(this.value)" id="sort-select">
+            <option value="default">Default</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="name-asc">Name: A–Z</option>
+          </select>
+          <div class="view-toggle">
+            <button class="view-btn active" id="btn-grid" onclick="setView('grid')" title="Grid view">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="0" y="0" width="6" height="6" fill="currentColor" rx="1"/><rect x="8" y="0" width="6" height="6" fill="currentColor" rx="1"/><rect x="0" y="8" width="6" height="6" fill="currentColor" rx="1"/><rect x="8" y="8" width="6" height="6" fill="currentColor" rx="1"/></svg>
+            </button>
+            <button class="view-btn" id="btn-list" onclick="setView('list')" title="List view">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="0" y="0" width="14" height="3" fill="currentColor" rx="1"/><rect x="0" y="5.5" width="14" height="3" fill="currentColor" rx="1"/><rect x="0" y="11" width="14" height="3" fill="currentColor" rx="1"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="active-filters" id="active-filters"></div>
+
+      <div class="products-grid" id="products-grid">
+        {% for product in products %}
+        {% set imgs = product.imageUrls or [] %}
+        <a href="/{{ lang }}/products/{{ product._cat_slug }}/{{ product._slug }}/"
+           class="card-room-new"
+           data-cat="{{ product._cat_slug }}"
+           data-price="{{ product.price or 0 }}"
+           data-name="{{ (product.name or '') | lower }}"
+           data-tags="{{ (product.features or []) | join('|') | lower }}">
+          <div class="card-img-wrap">
+            {% if product.badge %}
+            <span class="card-badge {% if 'new' in (product.badge | lower) %}new{% elif 'best' in (product.badge | lower) or 'pop' in (product.badge | lower) %}popular{% endif %}">
+              {{ product.badge }}
+            </span>
+            {% endif %}
+            {% if imgs %}
+            <img alt="{{ product.name }}" draggable="false" src="{{ imgs[0] }}" loading="lazy"/>
+            {% endif %}
+          </div>
+          <div class="card-body">
+            {% if product.categoryLabel %}<span class="card-category">{{ product.categoryLabel }}</span>{% endif %}
+            <h3 class="card-title">{{ product.name }}</h3>
+            <p class="card-desc">{{ (product.shortDescription or '')[:120] }}</p>
+          </div>
+          <div class="card-footer">
+            {% if product.priceRaw %}<span class="card-price">{{ product.priceRaw }}</span>{% endif %}
+            <span class="card-link">Details <span>&#8594;</span></span>
+          </div>
+        </a>
+        {% else %}
+        <p style="padding:40px 20px;color:#888">No products available yet.</p>
+        {% endfor %}
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <span class="footer-logo"><img src="{{ LOGO_URL }}" alt="RAKUN Logo"></span>
+    <div class="footer-links">
+      <a href="/{{ lang }}/catalog/">Catalog</a>
+      <a href="/{{ lang }}/blog/">Technology</a>
+      <a href="/{{ lang }}/#contacts">Wholesale</a>
+    </div>
+    <span>© 2025 RAKUN · Smart Laundry Solutions</span>
+  </footer>
+
+  <script>
+    window.currentCat = 'all';
+    window.activeFeatures = [];
+    window.currentSort = 'default';
+
+    window.toggleMobileMenu = function() {
+      var menu = document.getElementById('mobile-menu-overlay');
+      var isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      menu.style.display = isOpen ? 'none' : 'flex';
+      menu.style.flexDirection = isOpen ? '' : 'column';
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    };
+    window.openSidebar = function() {
+      document.getElementById('sidebar-overlay').classList.add('open');
+      document.getElementById('sidebar-drawer').classList.add('open');
+      document.getElementById('mobile-sidebar-content').innerHTML = document.getElementById('catalog-sidebar').innerHTML;
+      document.body.style.overflow = 'hidden';
+    };
+    window.closeSidebar = function() {
+      document.getElementById('sidebar-overlay').classList.remove('open');
+      document.getElementById('sidebar-drawer').classList.remove('open');
+      document.body.style.overflow = '';
+    };
+    window.filterCat = function(cat, btn) {
+      window.currentCat = cat;
+      document.querySelectorAll('.filter-cat-btn').forEach(function(b) { b.classList.remove('active'); });
+      if (btn) btn.classList.add('active');
+      window.applyFilters();
+      window.updateChips();
+    };
+    window.applyFeature = function(checkbox, feature) {
+      if (checkbox.checked) {
+        if (!window.activeFeatures.includes(feature)) window.activeFeatures.push(feature);
+      } else {
+        window.activeFeatures = window.activeFeatures.filter(function(f) { return f !== feature; });
+      }
+      window.applyFilters();
+      window.updateChips();
+    };
+    window.sortProducts = function(val) {
+      window.currentSort = val;
+      window.applyFilters();
+    };
+    window.setView = function(view) {
+      var grid = document.getElementById('products-grid');
+      if (!grid) return;
+      grid.classList.toggle('list-view', view === 'list');
+      document.getElementById('btn-grid').classList.toggle('active', view === 'grid');
+      document.getElementById('btn-list').classList.toggle('active', view === 'list');
+    };
+    window.resetFilters = function() {
+      window.currentCat = 'all';
+      window.activeFeatures = [];
+      document.querySelectorAll('.filter-cat-btn').forEach(function(b) { b.classList.remove('active'); });
+      var allBtn = document.querySelector('[data-cat="all"]');
+      if (allBtn) allBtn.classList.add('active');
+      document.querySelectorAll('.filter-check-item input').forEach(function(cb) { cb.checked = false; });
+      document.getElementById('sort-select').value = 'default';
+      window.currentSort = 'default';
+      window.applyFilters();
+      window.updateChips();
+    };
+    window.applyFilters = function() {
+      var grid = document.getElementById('products-grid');
+      if (!grid) return;
+      var cards = Array.from(grid.querySelectorAll('.card-room-new'));
+      var visible = cards.filter(function(card) {
+        if (window.currentCat !== 'all' && card.getAttribute('data-cat') !== window.currentCat) return false;
+        if (window.activeFeatures.length > 0) {
+          var tags = (card.getAttribute('data-tags') || '').split('|').filter(Boolean);
+          for (var i = 0; i < window.activeFeatures.length; i++) {
+            if (!tags.includes(window.activeFeatures[i])) return false;
+          }
+        }
+        return true;
+      });
+      if (window.currentSort === 'price-asc') visible.sort(function(a, b) { return parseFloat(a.dataset.price) - parseFloat(b.dataset.price); });
+      else if (window.currentSort === 'price-desc') visible.sort(function(a, b) { return parseFloat(b.dataset.price) - parseFloat(a.dataset.price); });
+      else if (window.currentSort === 'name-asc') visible.sort(function(a, b) { return a.dataset.name.localeCompare(b.dataset.name); });
+
+      cards.forEach(function(c) { c.style.display = 'none'; });
+      visible.forEach(function(c, i) {
+        c.style.display = '';
+        c.style.animationDelay = (i * 0.05) + 's';
+        c.style.animation = 'none';
+        c.offsetHeight;
+        c.style.animation = '';
+      });
+      var count = visible.length;
+      var rc = document.getElementById('results-count');
+      var mc = document.getElementById('mobile-count');
+      if (rc) rc.innerHTML = '<strong>' + count + '</strong> product' + (count !== 1 ? 's' : '') + ' found';
+      if (mc) mc.textContent = count + ' products';
+
+      var existing = grid.querySelector('.empty-state');
+      if (existing) existing.remove();
+      if (count === 0) {
+        var empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.innerHTML = '<h3>No products found</h3><p>Try changing or resetting your filters.</p>';
+        grid.appendChild(empty);
+      }
+    };
+    window.updateChips = function() {
+      var container = document.getElementById('active-filters');
+      if (!container) return;
+      container.innerHTML = '';
+      if (window.currentCat !== 'all') {
+        var btn = document.querySelector('[data-cat="' + window.currentCat + '"]');
+        var label = btn ? btn.querySelector('.filter-cat-label').textContent : window.currentCat;
+        container.appendChild(makeChip(label, function() { window.filterCat('all', document.querySelector('[data-cat="all"]')); }));
+      }
+      window.activeFeatures.forEach(function(f) {
+        container.appendChild(makeChip(f, function() {
+          window.activeFeatures = window.activeFeatures.filter(function(x) { return x !== f; });
+          document.querySelectorAll('.filter-check-item input').forEach(function(cb) {
+            if ((cb.getAttribute('onchange') || '').includes("'" + f + "'")) cb.checked = false;
+          });
+          window.applyFilters();
+          window.updateChips();
+        }));
+      });
+    };
+    function makeChip(label, fn) {
+      var chip = document.createElement('div');
+      chip.className = 'filter-chip';
+      chip.innerHTML = label + ' <span class="filter-chip-x">×</span>';
+      chip.addEventListener('click', fn);
+      return chip;
+    }
+
+    // Динамически строим список фич из data-tags атрибутов карточек
+    (function buildFeatureFilters() {
+      var featureSet = {};
+      document.querySelectorAll('#products-grid .card-room-new').forEach(function(card) {
+        var tags = (card.getAttribute('data-tags') || '').split('|').filter(Boolean);
+        tags.forEach(function(t) { featureSet[t] = true; });
+      });
+      var container = document.getElementById('features-list');
+      if (!container) return;
+      var featureNames = Object.keys(featureSet);
+      if (!featureNames.length) { container.closest('.sidebar-section').style.display = 'none'; return; }
+      container.innerHTML = featureNames.map(function(f) {
+        return '<label class="filter-check-item"><input type="checkbox" onchange="applyFeature(this,\'' + f + '\')"><div class="filter-check-box"></div><span class="filter-check-text">' + f + '</span></label>';
+      }).join('');
+    })();
+
+    var nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', function() {
+      if (nav) nav.classList.toggle('scrolled', window.scrollY > 50);
+    }, { passive: true });
+  </script>
+
+</body>
+</html>
