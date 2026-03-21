@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ product.seoTitle or (product.name ~ ' — RAKUN') }}</title>
+  {% if product.metaDescription %}
+  <meta name="description" content="{{ product.metaDescription }}">
+  {% elif product.shortDescription %}
+  <meta name="description" content="{{ product.shortDescription[:160] }}">
+  {% endif %}
+  <link rel="canonical" href="{{ BASE_URL }}/{{ lang }}/products/{{ cat_slug }}/{{ product_slug }}/">
+  {% for l in SUPPORTED_LANGS %}
+  <link rel="alternate" hreflang="{{ l }}" href="{{ BASE_URL }}/{{ l }}/products/{{ cat_slug }}/{{ product_slug }}/">
+  {% endfor %}
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{ product.ogTitle or product.seoTitle or product.name }}">
+  {% if product.metaDescription or product.shortDescription %}
+  <meta property="og:description" content="{{ product.ogDescription or product.metaDescription or product.shortDescription[:160] }}">
+  {% endif %}
+  {% set imgs = product.imageUrls or [] %}
+  {% if imgs %}<meta property="og:image" content="{{ imgs[0] }}">{% endif %}
+  <meta property="og:url" content="{{ BASE_URL }}/{{ lang }}/products/{{ cat_slug }}/{{ product_slug }}/">
+  <meta property="og:type" content="product">
+  <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <nav id="main-nav">
+    <a href="/{{ lang }}/" class="nav-logo"><img src="{{ LOGO_URL }}" alt="RAKUN Logo"></a>
+    <ul class="nav-links">
+      <li><a href="/{{ lang }}/">Home</a></li>
+      <li><a href="/{{ lang }}/catalog/" class="active">Catalog</a></li>
+      <li><a href="/{{ lang }}/blog/">Blog</a></li>
+      <li><a href="/{{ lang }}/#contacts">Contacts</a></li>
+    </ul>
+    <div class="lang-switcher">
+      {% for l in SUPPORTED_LANGS %}
+      <a href="/{{ l }}/products/{{ cat_slug }}/{{ product_slug }}/" {% if l == lang %}class="active"{% endif %}>{{ l | upper }}</a>
+      {% if not loop.last %}<span class="lang-separator">|</span>{% endif %}
+      {% endfor %}
+    </div>
+  </nav>
+
+  <header class="mobile-header" id="mobile-header">
+    <a href="/{{ lang }}/" class="nav-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo" style="height:24px;display:block;">
+    </a>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()">
+      <span class="line-1"></span><span class="line-2"></span>
+    </button>
+  </header>
+
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay">
+    <div class="mobile-menu-top">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo" style="height:24px;display:block;">
+      <button class="mobile-close" onclick="toggleMobileMenu()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <nav class="mobile-menu-nav">
+      <a href="/{{ lang }}/">Home</a>
+      <a href="/{{ lang }}/catalog/">Catalog</a>
+      <a href="/{{ lang }}/blog/">Blog</a>
+      <a href="/{{ lang }}/#contacts">Contacts</a>
+    </nav>
+    <div class="mobile-menu-bottom">
+      <div class="mobile-lang">
+        {% for l in SUPPORTED_LANGS %}
+        <a href="/{{ l }}/products/{{ cat_slug }}/{{ product_slug }}/" {% if l == lang %}class="active"{% endif %}>{{ l | upper }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <div class="breadcrumb">
+    <a href="/{{ lang }}/">Home</a>
+    <span class="breadcrumb-sep">/</span>
+    <a href="/{{ lang }}/catalog/">Catalog</a>
+    <span class="breadcrumb-sep">/</span>
+    {% if product.categoryLabel %}
+    <a href="/{{ lang }}/catalog/#{{ cat_slug }}">{{ product.categoryLabel }}</a>
+    <span class="breadcrumb-sep">/</span>
+    {% endif %}
+    <span id="breadcrumb-product-name">{{ product.name }}</span>
+  </div>
+
+  <section class="product-hero">
+    <div class="product-images">
+      <div class="product-main-img-wrap">
+        {% if product.badge %}
+        <div class="product-badge" id="prod-badge">{{ product.badge }}</div>
+        {% endif %}
+
+        <!-- Статичная Flickity карусель — изображения встроены в HTML -->
+        {% set imgs = product.imageUrls or [] %}
+        {% if imgs %}
+        <div class="product-carousel" data-product-carousel id="prod-carousel">
+          {% for img_url in imgs %}
+          <div class="carousel-cell">
+            <img src="{{ img_url }}" alt="{{ product.name }}" loading="{% if loop.first %}eager{% else %}lazy{% endif %}">
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="product-carousel" id="prod-carousel" style="background:#f5f5f5;height:400px;display:flex;align-items:center;justify-content:center;color:#aaa;">
+          No image
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="product-info">
+      {% if product.categoryLabel %}
+      <span class="product-category" id="prod-category">{{ product.categoryLabel }}</span>
+      {% endif %}
+      <h1 class="product-name" id="prod-name">{{ product.name }}</h1>
+      {% if product.shortDescription %}
+      <p class="product-subtitle" id="prod-short-desc">{{ product.shortDescription }}</p>
+      {% endif %}
+
+      {% if product.features %}
+      <div class="product-features" id="prod-features">
+        {% for feat in product.features %}
+        <div class="feature-pill">{{ feat }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if product.priceRaw %}
+      <div class="product-price" style="font-size:1.5rem;font-weight:700;margin:16px 0;">
+        {{ product.priceRaw }}
+      </div>
+      {% endif %}
+
+      <div class="product-cta">
+        <a href="/cdn-cgi/l/email-protection#f08b8bd080829f94859384de938491b59d91999cd09f82d0d7999e969fb082919b859ede9795d7d08d8d" class="btn-accent" id="prod-cta-btn">
+          {{ product.ctaButtonText or 'Request Wholesale Price' }}
+        </a>
+        {% if product.secondaryButtonText %}
+        <a href="{{ product.buttonUrl or ('/'+lang+'/#contacts') }}" class="btn-secondary" style="margin-left:12px;">
+          {{ product.secondaryButtonText }}
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- TABS -->
+  <div class="product-details">
+    <div class="tabs-header">
+      <button class="tab-btn active" onclick="switchTab('description', this)">Description</button>
+      <button class="tab-btn" onclick="switchTab('ingredients', this)">Ingredients</button>
+      <button class="tab-btn" onclick="switchTab('safety', this)">Safety &amp; Storage</button>
+    </div>
+    <div class="tabs-content">
+      <div class="tab-panel active" id="tab-description">
+        {% if product.fullDescription %}
+        {{ product.fullDescription | safe }}
+        {% endif %}
+        {% if product.descriptionPoints %}
+        <div class="description-points" style="margin-top:1.5rem;">
+          {% for pt in product.descriptionPoints %}
+          <div style="margin-bottom:1rem;">
+            <strong>{{ pt.title }}</strong>
+            <p style="margin:.3rem 0 0;color:#666;">{{ pt.text }}</p>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        {% if not product.fullDescription and not product.descriptionPoints %}
+        <p style="color:#888">No description available.</p>
+        {% endif %}
+      </div>
+      <div class="tab-panel" id="tab-ingredients">
+        {% if product.ingredients %}
+        <table style="width:100%;border-collapse:collapse;">
+          {% for ing in product.ingredients %}
+          <tr style="border-bottom:1px solid #eee;">
+            <td style="padding:8px 0;">{{ ing.name }}</td>
+            <td style="padding:8px 0;text-align:right;color:#888;">{{ ing.percentage }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+        {% else %}
+        <p style="color:#888">No ingredient information available.</p>
+        {% endif %}
+      </div>
+      <div class="tab-panel" id="tab-safety">
+        {% if product.safetyStorage %}
+        {{ product.safetyStorage | safe }}
+        {% elif product.scentNotes %}
+        <div style="margin-bottom:1rem">
+          <strong>Scent Notes</strong>
+          <div style="margin-top:.5rem;display:flex;gap:12px;flex-wrap:wrap">
+            {% if product.scentNotes.top %}<div><span style="font-size:11px;color:#888;display:block">Top</span>{{ product.scentNotes.top }}</div>{% endif %}
+            {% if product.scentNotes.middle %}<div><span style="font-size:11px;color:#888;display:block">Middle</span>{{ product.scentNotes.middle }}</div>{% endif %}
+            {% if product.scentNotes.base %}<div><span style="font-size:11px;color:#888;display:block">Base</span>{{ product.scentNotes.base }}</div>{% endif %}
+          </div>
+        </div>
+        {% endif %}
+        {% if product.weightVolume or product.sku %}
+        <div style="margin-top:1rem">
+          {% if product.sku %}<p><strong>SKU:</strong> {{ product.sku }}</p>{% endif %}
+          {% if product.weightVolume %}<p><strong>Volume/Weight:</strong> {{ product.weightVolume }}</p>{% endif %}
+          {% if product.stock %}<p><strong>Stock:</strong> {{ product.stock }} units</p>{% endif %}
+        </div>
+        {% endif %}
+        {% if not product.safetyStorage and not product.scentNotes and not product.sku %}
+        <p style="color:#888">No additional information available.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- RELATED PRODUCTS -->
+  {% if related %}
+  <section class="related-section">
+    <span class="section-label">Complete your order</span>
+    <h2 class="section-title">Other products</h2>
+    <div class="related-grid" id="related-products-grid">
+      {% for r in related %}
+      {% set r_imgs = r.imageUrls or [] %}
+      <a href="/{{ lang }}/products/{{ r._cat_slug }}/{{ r._slug }}/" class="card-room-new">
+        <div class="card-img-wrap">
+          {% if r_imgs %}<img src="{{ r_imgs[0] }}" alt="{{ r.name }}" loading="lazy">{% endif %}
+        </div>
+        <div class="card-body">
+          {% if r.categoryLabel %}<span class="card-category">{{ r.categoryLabel }}</span>{% endif %}
+          <h3 class="card-title">{{ r.name }}</h3>
+          <p class="card-desc">{{ (r.shortDescription or '')[:100] }}</p>
+        </div>
+        <div class="card-footer">
+          {% if r.priceRaw %}<span class="card-price">{{ r.priceRaw }}</span>{% endif %}
+          <span class="card-link">Details →</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <footer>
+    <span class="footer-logo"><img src="{{ LOGO_URL }}" alt="RAKUN Logo"></span>
+    <div class="footer-links">
+      <a href="/{{ lang }}/catalog/">Catalog</a>
+      <a href="/{{ lang }}/blog/">Technology</a>
+      <a href="/{{ lang }}/#contacts">Wholesale</a>
+    </div>
+    <span>© 2025 RAKUN · Smart Laundry Solutions</span>
+  </footer>
+
+  <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+  <script>
+    window.toggleMobileMenu = function() {
+      var menu = document.getElementById('mobile-menu-overlay');
+      var isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    };
+    window.switchTab = function(tabId, btn) {
+      document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.getElementById('tab-' + tabId).classList.add('active');
+      btn.classList.add('active');
+    };
+    var productCarousel = document.querySelector('[data-product-carousel]');
+    if (productCarousel && productCarousel.children.length > 0) {
+      new Flickity(productCarousel, {
+        accessibility: true, prevNextButtons: true, pageDots: true, wrapAround: true
+      });
+    }
+    var nav = document.getElementById('main-nav');
+    w
