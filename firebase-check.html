@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pages Structure Checker — RAKUN</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Courier New', monospace; background: #0f1117; color: #e2e8f0; padding: 20px; }
+  h1 { color: #60a5fa; margin-bottom: 6px; font-size: 20px; }
+  .sub { color: #64748b; font-size: 13px; margin-bottom: 24px; }
+  .status { padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 600; }
+  .ok   { background: #14532d; color: #4ade80; border: 1px solid #16a34a; }
+  .err  { background: #450a0a; color: #f87171; border: 1px solid #dc2626; }
+  .warn { background: #422006; color: #fb923c; border: 1px solid #ea580c; }
+  .info { background: #1e3a5f; color: #60a5fa; border: 1px solid #3b82f6; }
+  button.refresh { background: #3b82f6; color: white; border: none; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 20px; }
+  button.refresh:hover { background: #2563eb; }
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #3b82f6; border-top-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .doc-block { background: #1e2130; border: 1px solid #2d3148; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+  .doc-head { padding: 12px 18px; background: #252840; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+  .doc-head:hover { background: #2e3354; }
+  .doc-title { font-size: 15px; font-weight: 700; color: #a78bfa; }
+  .doc-badge { font-size: 11px; padding: 2px 8px; border-radius: 4px; }
+  .badge-ok   { background: #14532d; color: #4ade80; }
+  .badge-miss { background: #450a0a; color: #f87171; }
+  .doc-body { display: none; }
+  .doc-body.open { display: block; }
+  pre { background: #0d0f1a; border: 1px solid #2d3148; padding: 16px; font-size: 11px; color: #cbd5e1; overflow-x: auto; white-space: pre-wrap; word-break: break-all; max-height: 500px; overflow-y: auto; margin: 0; }
+  .field-map { padding: 16px 18px; border-top: 1px solid #2d3148; }
+  .field-map h4 { font-size: 12px; color: #94a3b8; margin-bottom: 10px; }
+  .fr { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 5px; font-size: 12px; flex-wrap: wrap; }
+  .fk { color: #34d399; min-width: 220px; }
+  .fv { color: #e2e8f0; word-break: break-all; }
+  .fv-miss { color: #f87171; font-style: italic; }
+  .toggle { font-size: 11px; color: #60a5fa; }
+</style>
+</head>
+<body>
+
+<h1>🔍 Pages &amp; Settings Checker</h1>
+<p class="sub">RAKUN · racun-shop · Детальная структура pages/* и settings/main</p>
+
+<div id="status" class="status info"><span class="spinner"></span>Подключение...</div>
+<button class="refresh" onclick="runCheck()">🔄 Перезапустить</button>
+<div id="output"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getFirestore, doc, getDoc }
+  from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyAGXs4wc4vcxxy2cMoHMC8_MlD9S_chSQY",
+  authDomain: "racun-shop.firebaseapp.com",
+  projectId: "racun-shop",
+  storageBucket: "racun-shop.appspot.com",
+  messagingSenderId: "569457770232",
+  appId: "1:569457770232:web:5a2737d1ee270459f3050d"
+});
+const db = getFirestore(app);
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function getPath(obj, path) {
+  return path.split('.').reduce((o,k) => (o && o[k] !== undefined ? o[k] : undefined), obj);
+}
+function badge(val, label) {
+  if (val !== undefined && val !== null && val !== '') {
+    const preview = typeof val === 'object'
+      ? (Array.isArray(val) ? `[array, ${val.length} items]` : JSON.stringify(val).slice(0,60))
+      : String(val).slice(0,80);
+    return `<div class="fr"><span class="fk">${label}</span><span class="fv">✅ ${esc(preview)}</span></div>`;
+  }
+  return `<div class="fr"><span class="fk">${label}</span><span class="fv-miss">❌ отсутствует</span></div>`;
+}
+
+const EXPECTED = {
+  'pages/home': {
+    global: ['globalFields.ogImageUrl'],
+    localized: [
+      'translations.en.productsLabel','translations.en.productsTitle',
+      'translations.en.blogLabel','translations.en.blogTitle',
+      'translations.en.reviewsLabel','translations.en.reviewsTitle',
+      'translations.en.seoTitle','translations.en.metaDescription',
+      'translations.en.slides','translations.en.reviews',
+    ],
+    note: 'slides и reviews — массивы. Если их нет, слайдер и отзывы не заполнятся.'
+  },
+  'pages/catalog': {
+    global: [],
+    localized: [
+      'translations.en.title','translations.en.subtitle',
+      'translations.en.description','translations.en.seoTitle',
+      'translations.en.metaDescription',
+    ],
+    note: ''
+  },
+  'pages/contacts': {
+    global: [
+      'globalFields.phone','globalFields.email',
+      'globalFields.ctaEmail','globalFields.mapsEmbed',
+    ],
+    localized: [
+      'translations.en.label','translations.en.title',
+      'translations.en.ctaButton','translations.en.logisticsTerms',
+      'translations.en.seoTitle','translations.en.metaDescription',
+    ],
+    note: 'phone/email/mapsEmbed — глобальные, не меняются по языку'
+  },
+  'pages/footer-nav': {
+    global: [],
+    localized: [
+      'translations.en.home','translations.en.about',
+      'translations.en.catalog','translations.en.blog',
+      'translations.en.contacts','translations.en.link1',
+      'translations.en.link2','translations.en.link3',
+      'translations.en.copyright',
+    ],
+    note: ''
+  },
+  'settings/main': {
+    global: [
+      'siteName','defaultLang','metaDescription',
+      'languagePrefixes.en','languagePrefixes.ru',
+      'languagePrefixes.ka','languagePrefixes.hy',
+    ],
+    localized: [],
+    note: 'settings не локализованы'
+  },
+};
+
+window.runCheck = async function() {
+  const statusEl = document.getElementById('status');
+  const outputEl = document.getElementById('output');
+  statusEl.className = 'status info';
+  statusEl.innerHTML = '<span class="spinner"></span>Загружаю документы...';
+  outputEl.innerHTML = '';
+
+  const DOCS = [
+    ['pages','home'],
+    ['pages','catalog'],
+    ['pages','contacts'],
+    ['pages','footer-nav'],
+    ['settings','main'],
+  ];
+
+  let html = '';
+  let allFound = true;
+
+  for (const [col, docId] of DOCS) {
+    const key = `${col}/${docId}`;
+    let data = null;
+    let error = null;
+
+    try {
+      const snap = await getDoc(doc(db, col, docId));
+      if (snap.exists()) { data = snap.data(); }
+      else { error = 'Документ не найден в Firestore'; }
+    } catch(e) {
+      error = e.message;
+    }
+
+    const exists = !!data;
+    if (!exists) allFound = false;
+
+    html += `<div class="doc-block">
+      <div class="doc-head" onclick="toggle(this)">
+        <span class="doc-title">📄 ${key}</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="doc-badge ${exists ? 'badge-ok' : 'badge-miss'}">${exists ? 'FOUND' : 'MISSING'}</span>
+          <span class="toggle">▼</span>
+        </div>
+      </div>
+      <div class="doc-body">`;
+
+    if (error) {
+      html += `<pre style="color:#f87171">❌ ${esc(error)}</pre>`;
+    } else {
+      // Полный JSON документа
+      html += `<pre>${esc(JSON.stringify(data, null, 2))}</pre>`;
+
+      // Проверка ожидаемых полей
+      const exp = EXPECTED[key];
+      if (exp) {
+        html += `<div class="field-map">`;
+        if (exp.note) {
+          html += `<div style="font-size:11px;color:#fb923c;margin-bottom:10px">ℹ️ ${exp.note}</div>`;
+        }
+
+        // Глобальные поля
+        if (exp.global.length > 0) {
+          html += `<h4>🌐 Глобальные поля:</h4>`;
+          exp.global.forEach(path => { html += badge(getPath(data, path), path); });
+        }
+
+        // Локализованные
+        if (exp.localized.length > 0) {
+          html += `<h4 style="margin-top:14px">🌍 Локализованные поля (EN):</h4>`;
+          exp.localized.forEach(path => { html += badge(getPath(data, path), path); });
+
+          // Какие языки есть в translations
+          const tr = data.translations || data.globalFields?.translations || {};
+          const langs = Object.keys(tr);
+          html += langs.length > 0
+            ? `<div style="margin-top:10px;font-size:11px;color:#4ade80">✅ Языки в translations: <strong>${langs.join(', ')}</strong></div>`
+            : `<div style="margin-top:10px;font-size:11px;color:#f87171">⚠️ Ключ <strong>translations</strong> отсутствует — данные лежат в другой структуре!</div>`;
+        }
+
+        // Показываем корневые ключи документа
+        html += `<div style="margin-top:12px;font-size:11px;color:#64748b">
+          Корневые ключи документа: <strong style="color:#a78bfa">${Object.keys(data).join(', ')}</strong>
+        </div>`;
+        html += `</div>`;
+      }
+    }
+
+    html += `</div></div>`;
+  }
+
+  outputEl.innerHTML = html;
+  statusEl.className = allFound ? 'status ok' : 'status warn';
+  statusEl.innerHTML = allFound
+    ? '✅ Все 5 документов найдены — смотри структуру ниже'
+    : '⚠️ Некоторые документы отсутствуют';
+};
+
+window.toggle = function(head) {
+  const body = head.nextElementSibling;
+  const t = head.querySelector('.toggle');
+  body.classList.toggle('open');
+  t.textContent = body.classList.contains('open') ? '▲' : '▼';
+};
+
+runCheck();
+</script>
+</body>
+</html>
