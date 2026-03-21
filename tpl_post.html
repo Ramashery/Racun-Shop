@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <title>RAKUN — {{ post.name }}</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="read-progress"><div class="read-progress-bar" id="progress-bar"></div></div>
+  <!-- NAV -->
+  
+  <section class="post-hero">
+    <div class="post-hero-inner">
+      <div class="post-breadcrumb">
+        <a href="/{{ lang }}/">Home</a> <span class="post-breadcrumb-sep">/</span>
+        <a href="/{{ lang }}/blog/">Blog</a> <span class="post-breadcrumb-sep">/</span>
+        <span>{{ post.name }}</span>
+      </div>
+      <h1 id="post-title">{{ post.name }}</h1>
+      <p class="post-hero-lead">{{ post.shortDescription }}</p>
+    </div>
+  </section>
+
+  <div class="post-layout">
+    <article class="post-body">
+      {{ post.fullDescription | safe }}
+    </article>
+    <!-- Sidebar widgets ... -->
+  </div>
+
+  <script>
+    var bar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', function () {
+      var pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      bar.style.width = Math.min(pct, 100) + '%';
+    });
+  </script>
+</body>
+</html>
