@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Firebase Structure Checker — RAKUN</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Courier New', monospace; background: #0f1117; color: #e2e8f0; padding: 20px; }
+  h1 { color: #60a5fa; margin-bottom: 6px; font-size: 20px; }
+  .sub { color: #64748b; font-size: 13px; margin-bottom: 24px; }
+  .status { padding: 10px 16px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; font-weight: 600; }
+  .ok  { background: #14532d; color: #4ade80; border: 1px solid #16a34a; }
+  .err { background: #450a0a; color: #f87171; border: 1px solid #dc2626; }
+  .warn{ background: #422006; color: #fb923c; border: 1px solid #ea580c; }
+  .info{ background: #1e3a5f; color: #60a5fa; border: 1px solid #3b82f6; }
+  .section { background: #1e2130; border: 1px solid #2d3148; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+  .section-header { padding: 12px 18px; background: #252840; display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+  .section-header:hover { background: #2e3354; }
+  .col-name { font-size: 15px; font-weight: 700; color: #a78bfa; }
+  .col-count { font-size: 12px; color: #64748b; background: #1a1d2e; padding: 2px 8px; border-radius: 999px; }
+  .col-empty { font-size: 12px; color: #f87171; }
+  .section-body { padding: 0; }
+  .doc { border-top: 1px solid #2d3148; }
+  .doc-header { padding: 10px 18px; background: #1a1d2e; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .doc-header:hover { background: #222540; }
+  .doc-id { font-size: 12px; color: #fbbf24; font-weight: 600; }
+  .doc-preview { font-size: 11px; color: #64748b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 300px; }
+  .doc-body { padding: 14px 18px; background: #161824; display: none; }
+  .doc-body.open { display: block; }
+  .field { margin-bottom: 8px; }
+  .field-key { color: #34d399; font-size: 12px; }
+  .field-val { color: #e2e8f0; font-size: 12px; word-break: break-all; }
+  .field-type { color: #64748b; font-size: 10px; margin-left: 6px; }
+  .nested { margin-left: 18px; border-left: 2px solid #2d3148; padding-left: 12px; margin-top: 4px; }
+  .missing { color: #f87171; font-style: italic; font-size: 12px; }
+  .found  { color: #4ade80; font-size: 12px; }
+  .check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 18px; }
+  .check-item { background: #1a1d2e; border-radius: 8px; padding: 12px; }
+  .check-title { font-size: 12px; color: #94a3b8; margin-bottom: 6px; }
+  .check-val { font-size: 13px; font-weight: 600; }
+  pre { background: #0d0f1a; border: 1px solid #2d3148; border-radius: 6px; padding: 12px; font-size: 11px; color: #cbd5e1; overflow-x: auto; white-space: pre-wrap; word-break: break-all; max-height: 300px; overflow-y: auto; }
+  .toggle { color: #60a5fa; font-size: 11px; margin-left: auto; }
+  button.refresh { background: #3b82f6; color: white; border: none; padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 20px; }
+  button.refresh:hover { background: #2563eb; }
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #3b82f6; border-top-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .admin-check { background: #1e2130; border: 1px solid #2d3148; border-radius: 10px; padding: 18px; margin-bottom: 20px; }
+  .admin-check h3 { color: #a78bfa; font-size: 14px; margin-bottom: 12px; }
+  .field-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 6px; font-size: 12px; }
+  .badge-ok  { background: #14532d; color: #4ade80; padding: 1px 7px; border-radius: 4px; flex-shrink: 0; }
+  .badge-miss{ background: #450a0a; color: #f87171; padding: 1px 7px; border-radius: 4px; flex-shrink: 0; }
+  .badge-alt { background: #422006; color: #fb923c; padding: 1px 7px; border-radius: 4px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<h1>🔍 Firebase Structure Checker</h1>
+<p class="sub">RAKUN · racun-shop · Проверка структуры данных Firestore</p>
+
+<div id="status" class="status info"><span class="spinner"></span>Подключение к Firebase...</div>
+
+<button class="refresh" onclick="runCheck()">🔄 Перезапустить проверку</button>
+
+<div id="output"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getFirestore, collection, getDocs }
+  from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyAGXs4wc4vcxxy2cMoHMC8_MlD9S_chSQY",
+  authDomain:        "racun-shop.firebaseapp.com",
+  projectId:         "racun-shop",
+  storageBucket:     "racun-shop.appspot.com",
+  messagingSenderId: "569457770232",
+  appId:             "1:569457770232:web:5a2737d1ee270459f3050d"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+window.runCheck = async function() {
+  const statusEl = document.getElementById('status');
+  const outputEl = document.getElementById('output');
+  statusEl.className = 'status info';
+  statusEl.innerHTML = '<span class="spinner"></span>Загружаю данные из Firestore...';
+  outputEl.innerHTML = '';
+
+  const COLLECTIONS = ['categories', 'products', 'posts', 'settings', 'pages', 'home', 'blog'];
+  const results = {};
+
+  // Пробуем все возможные коллекции
+  for (const col of COLLECTIONS) {
+    try {
+      const snap = await getDocs(collection(db, col));
+      results[col] = { docs: snap.docs.map(d => ({ id: d.id, data: d.data() })), error: null };
+    } catch(err) {
+      results[col] = { docs: [], error: err.code + ': ' + err.message };
+    }
+  }
+
+  const found = Object.entries(results).filter(([,v]) => v.docs.length > 0);
+  const empty = Object.entries(results).filter(([,v]) => v.docs.length === 0 && !v.error);
+  const errors= Object.entries(results).filter(([,v]) => v.error);
+
+  if (found.length === 0 && errors.length > 0) {
+    statusEl.className = 'status err';
+    statusEl.innerHTML = '❌ Ошибка подключения: ' + errors[0][1].error;
+  } else if (found.length === 0) {
+    statusEl.className = 'status warn';
+    statusEl.innerHTML = '⚠️ Подключение OK, но все коллекции пустые';
+  } else {
+    statusEl.className = 'status ok';
+    statusEl.innerHTML = `✅ Подключение OK · Найдено коллекций с данными: ${found.length} · Документов: ${found.reduce((s,[,v])=>s+v.docs.length,0)}`;
+  }
+
+  let html = '';
+
+  // ── Сводка коллекций ──────────────────────────────────────
+  html += `<div class="section">
+    <div class="section-header" style="cursor:default">
+      <span class="col-name">📦 Все коллекции</span>
+    </div>
+    <div class="section-body" style="padding:14px 18px">`;
+
+  for (const [col, res] of Object.entries(results)) {
+    if (res.error) {
+      html += `<div class="field-row"><span class="badge-miss">ERROR</span><span style="color:#f87171">${col}</span><span style="color:#64748b;font-size:11px"> — ${res.error}</span></div>`;
+    } else if (res.docs.length === 0) {
+      html += `<div class="field-row"><span class="badge-alt">EMPTY</span><span style="color:#fb923c">${col}</span></div>`;
+    } else {
+      html += `<div class="field-row"><span class="badge-ok">${res.docs.length} docs</span><span style="color:#4ade80">${col}</span></div>`;
+    }
+  }
+  html += `</div></div>`;
+
+  // ── Детальный вывод каждой найденной коллекции ────────────
+  for (const [col, res] of found) {
+    html += `<div class="section">
+      <div class="section-header" onclick="toggleSection(this)">
+        <span class="col-name">📁 ${col}</span>
+        <span class="col-count">${res.docs.length} документов</span>
+        <span class="toggle">▼ развернуть</span>
+      </div>
+      <div class="section-body" style="display:none">`;
+
+    for (const docObj of res.docs) {
+      const preview = Object.keys(docObj.data).slice(0,3).join(', ');
+      html += `<div class="doc">
+        <div class="doc-header" onclick="toggleDoc(this)">
+          <span class="doc-id">📄 ${docObj.id}</span>
+          <span class="doc-preview">{ ${preview} }</span>
+          <span class="toggle" style="margin-left:auto">▼</span>
+        </div>
+        <div class="doc-body">
+          ${renderFields(docObj.data, 0)}
+          <div style="margin-top:12px;font-size:11px;color:#64748b">Полный JSON:</div>
+          <pre>${escHtml(JSON.stringify(docObj.data, null, 2))}</pre>
+        </div>
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+
+  // ── Проверка совместимости с admin.html ───────────────────
+  html += `<div class="admin-check"><h3>🔧 Проверка совместимости с admin.html</h3>`;
+
+  // Проверяем categories
+  const cats = results['categories']?.docs || [];
+  html += `<div style="margin-bottom:12px;font-size:12px;color:#94a3b8">Коллекция <strong style="color:#a78bfa">categories</strong> (${cats.length} docs):</div>`;
+  if (cats.length > 0) {
+    const d = cats[0].data;
+    html += checkField(d, 'globalFields',              'globalFields (объект с slug, status, color)');
+    html += checkField(d, 'globalFields.slug',         'globalFields.slug');
+    html += checkField(d, 'globalFields.status',       'globalFields.status');
+    html += checkField(d, 'globalFields.color',        'globalFields.color');
+    html += checkField(d, 'translations',              'translations (объект с en/ru/ka/hy)');
+    html += checkField(d, 'translations.en.name',      'translations.en.name');
+  } else {
+    html += `<div class="missing">— коллекция пустая или называется иначе</div>`;
+  }
+
+  // Проверяем products
+  const prods = results['products']?.docs || [];
+  html += `<div style="margin:14px 0 6px;font-size:12px;color:#94a3b8">Коллекция <strong style="color:#a78bfa">products</strong> (${prods.length} docs):</div>`;
+  if (prods.length > 0) {
+    const d = prods[0].data;
+    html += checkField(d, 'globalFields',                    'globalFields');
+    html += checkField(d, 'globalFields.slug',               'globalFields.slug');
+    html += checkField(d, 'globalFields.categoryId',         'globalFields.categoryId');
+    html += checkField(d, 'globalFields.price',              'globalFields.price');
+    html += checkField(d, 'globalFields.images',             'globalFields.images (массив URL)');
+    html += checkField(d, 'globalFields.status',             'globalFields.status');
+    html += checkField(d, 'translations.en.productName',     'translations.en.productName');
+    html += checkField(d, 'translations.en.shortDescription','translations.en.shortDescription');
+    // Альтернативные структуры
+    if (!getNestedVal(d,'translations.en.productName')) {
+      html += checkField(d, 'en.productName', 'en.productName (альтернативная структура)');
+      html += checkField(d, 'productName',    'productName (в корне документа)');
+    }
+  } else {
+    html += `<div class="missing">— коллекция пустая или называется иначе</div>`;
+  }
+
+  // Проверяем posts
+  const posts = results['posts']?.docs || [];
+  html += `<div style="margin:14px 0 6px;font-size:12px;color:#94a3b8">Коллекция <strong style="color:#a78bfa">posts</strong> (${posts.length} docs):</div>`;
+  if (posts.length > 0) {
+    const d = posts[0].data;
+    html += checkField(d, 'globalFields',           'globalFields');
+    html += checkField(d, 'globalFields.slug',      'globalFields.slug');
+    html += checkField(d, 'globalFields.status',    'globalFields.status');
+    html += checkField(d, 'globalFields.author',    'globalFields.author');
+    html += checkField(d, 'translations.en.h1',     'translations.en.h1');
+  } else {
+    html += `<div class="missing">— коллекция пустая или называется иначе</div>`;
+  }
+
+  html += `</div>`;
+
+  outputEl.innerHTML = html;
+};
+
+// ── Хелперы ───────────────────────────────────────────────────
+function getNestedVal(obj, path) {
+  return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj);
+}
+
+function checkField(obj, path, label) {
+  const val = getNestedVal(obj, path);
+  if (val !== undefined && val !== null && val !== '') {
+    const preview = typeof val === 'object' ? '{ ' + Object.keys(val).slice(0,3).join(', ') + ' }' : String(val).slice(0,60);
+    return `<div class="field-row"><span class="badge-ok">OK</span><span style="color:#e2e8f0">${label}</span><span style="color:#64748b;font-size:11px;margin-left:6px">${escHtml(preview)}</span></div>`;
+  } else {
+    return `<div class="field-row"><span class="badge-miss">НЕТ</span><span style="color:#f87171">${label}</span></div>`;
+  }
+}
+
+function renderFields(obj, depth) {
+  if (depth > 3) return `<span style="color:#64748b">...</span>`;
+  let html = '';
+  for (const [k, v] of Object.entries(obj)) {
+    if (v === null) {
+      html += `<div class="field" style="margin-left:${depth*16}px"><span class="field-key">${k}</span>: <span style="color:#64748b">null</span></div>`;
+    } else if (Array.isArray(v)) {
+      html += `<div class="field" style="margin-left:${depth*16}px"><span class="field-key">${k}</span><span class="field-type">[array·${v.length}]</span>: <span class="field-val">${escHtml(JSON.stringify(v).slice(0,120))}</span></div>`;
+    } else if (typeof v === 'object') {
+      html += `<div class="field" style="margin-left:${depth*16}px"><span class="field-key">${k}</span><span class="field-type">{object}</span><div class="nested">${renderFields(v, depth+1)}</div></div>`;
+    } else {
+      html += `<div class="field" style="margin-left:${depth*16}px"><span class="field-key">${k}</span><span class="field-type">${typeof v}</span>: <span class="field-val">${escHtml(String(v).slice(0,200))}</span></div>`;
+    }
+  }
+  return html || '<span class="missing">пустой объект</span>';
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+window.toggleSection = function(el) {
+  const body = el.nextElementSibling;
+  const toggle = el.querySelector('.toggle');
+  const open = body.style.display === 'block';
+  body.style.display = open ? 'none' : 'block';
+  toggle.textContent = open ? '▼ развернуть' : '▲ свернуть';
+};
+
+window.toggleDoc = function(el) {
+  const body = el.nextElementSibling;
+  body.classList.toggle('open');
+  el.querySelector('.toggle').textContent = body.classList.contains('open') ? '▲' : '▼';
+};
+
+runCheck();
+</script>
+</body>
+</html>
