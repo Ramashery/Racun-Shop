@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>RAKUN Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+<script>
+window.__SITE_DATA__ = {{ site_data_json | safe }};
+window.__GENERATED_AT__ = "{{ generated_at }}";
+</script>
+<div class="sov" id="sov" onclick="closeMob()"></div>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sbl"><div class="lmark">RK</div><div class="ltxt">RAKUN<small>Admin Panel</small></div></div>
+  <nav class="snav">
+    <div class="ngl">Content</div>
+    <div class="ni on" data-p="products"><span class="material-symbols-outlined ic">inventory_2</span><span class="lbl">Products</span><span class="bdg" id="bdgp">0</span></div>
+    <div class="ni" data-p="categories"><span class="material-symbols-outlined ic">category</span><span class="lbl">Categories</span><span class="bdg" id="bdgc">0</span></div>
+    <div class="ni" data-p="blog"><span class="material-symbols-outlined ic">article</span><span class="lbl">Blog Posts</span><span class="bdg" id="bdgb">0</span></div>
+    <div class="ngl">Pages</div>
+    <div class="ni" data-p="page-home"><span class="material-symbols-outlined ic">home</span><span class="lbl">Home Page</span></div>
+    <div class="ni" data-p="page-catalog"><span class="material-symbols-outlined ic">grid_view</span><span class="lbl">Catalog Page</span></div>
+    <div class="ni" data-p="page-contacts"><span class="material-symbols-outlined ic">location_on</span><span class="lbl">Contacts</span></div>
+    <div class="ni" data-p="page-footer"><span class="material-symbols-outlined ic">link</span><span class="lbl">Navigation &amp; Footer</span></div>
+    <div class="ngl">Settings</div>
+    <div class="ni" data-p="settings"><span class="material-symbols-outlined ic">settings</span><span class="lbl">Settings</span></div>
+  </nav>
+  <div class="sft"><div class="av">AD</div><div class="ui"><div class="un">Admin</div><div class="ur">Super Administrator</div></div></div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <button class="tbt" id="dtt" onclick="toggleSidebar()"><span class="material-symbols-outlined">menu</span></button>
+    <button class="tbt" id="mbt" style="display:none" onclick="openMob()"><span class="material-symbols-outlined">menu</span></button>
+    <span class="tt" id="tptitle">Products</span>
+    <span class="tc" id="tpcrumb">/ Catalog</span>
+    <div class="tr">
+      <button class="btn bg2b bxs bv"><span class="material-symbols-outlined ic" style="font-size:15px">open_in_new</span>Visit Site</button>
+      <div class="av tav">AD</div>
+    </div>
+  </div>
+
+  <div class="ct">
+
+    <!-- PRODUCTS LIST -->
+    <div class="pn on" id="pn-products">
+      <div class="ph"><div class="pht"><h1>Products</h1><p>URL: /en/products/<strong>[category-slug]</strong>/<strong>[product-slug]</strong></p></div><div class="pha"><button class="btn bp" onclick="showM('mprod')"><span class="material-symbols-outlined ic">add</span>New Product</button></div></div>
+      <div class="tw">
+        <div class="ttb">
+          <div class="sbox"><span class="material-symbols-outlined ic">search</span><input type="text" placeholder="Search products&#x2026;"></div>
+          <select class="fs" id="pf-cat"><option value="">All categories</option></select>
+          <select class="fs"><option>All statuses</option><option>Published</option><option>Draft</option><option>Archived</option></select>
+        </div>
+        <table class="dt">
+          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Translations</th><th>Status</th><th>URL</th><th>Actions</th></tr></thead>
+          <tbody id="products-tbody">
+            <!-- Dynamic Content -->
+          </tbody>
+        </table>
+        <div class="mcl" id="products-mob">
+          <!-- Dynamic Content -->
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="pn" id="pn-categories">
+      <div class="ph"><div class="pht"><h1>Categories</h1><p>URL: /en/products/<strong>[category-slug]</strong>/product-slug</p></div><div class="pha"><button class="btn bp" onclick="openNewCat()"><span class="material-symbols-outlined ic">add</span>New Category</button></div></div>
+      <div class="nt"><span class="material-symbols-outlined ic">info</span>Category slug is part of every product URL. Changing it breaks existing links &#x2014; set up redirects.</div>
+      <div class="cg2" id="catgrid">
+        <!-- Dynamic Content -->
+      </div>
+      <div class="tw">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between">All Categories<span style="font-size:12px;color:var(--text2);font-weight:500" id="catcntlbl">0 categories</span></div>
+        <table class="dt"><thead><tr><th>Name (EN)</th><th>Slug</th><th>Products</th><th>Translations</th><th>Status</th><th>URL</th><th>Actions</th></tr></thead><tbody id="cattbody"></tbody></table>
+        <div class="mcl" id="catmob"></div>
+      </div>
+    </div>
+
+    <!-- BLOG LIST -->
+    <div class="pn" id="pn-blog">
+      <div class="ph"><div class="pht"><h1>Blog Posts</h1><p>URL: /en/blog/<strong>[post-slug]</strong></p></div><div class="pha"><button class="btn bp" onclick="showM('mblog')"><span class="material-symbols-outlined ic">add</span>New Post</button></div></div>
+      <div class="tw">
+        <div class="ttb">
+          <div class="sbox"><span class="material-symbols-outlined ic">search</span><input type="text" placeholder="Search posts&#x2026;"></div>
+          <select class="fs"><option>All categories</option><option>Technology</option><option>Eco &amp; Safety</option><option>Guides</option><option>Science</option><option>Industry</option></select>
+          <select class="fs"><option>All statuses</option><option>Published</option><option>Draft</option><option>Archived</option></select>
+        </div>
+        <table class="dt">
+          <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Translations</th><th>Status</th><th>URL</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="blog-tbody">
+            <!-- Dynamic Content -->
+          </tbody>
+        </table>
+        <div class="mcl" id="blog-mob">
+          <!-- Dynamic Content -->
+        </div>
+      </div>
+    </div>
+
+    <!-- HOME PAGE -->
+    <div class="pn" id="pn-page-home">
+      <div class="ph"><div class="pht"><h1>Home Page</h1><p>index.html &#x2014; Hero, Products, Blog, Reviews, Contacts</p></div><div class="pha"><select class="fs" onchange="updLang(this.value,'hll','hlp')"><option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option></select><button class="btn bp"><span class="material-symbols-outlined ic">save</span>Save</button></div></div>
+      <div class="nt"><span class="material-symbols-outlined ic">info</span>Editing: <strong id="hll" style="margin:0 4px">English (EN)</strong> prefix: <code id="hlp" style="font-family:'IBM Plex Mono',monospace;margin-left:4px">/en/</code></div>
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">view_carousel</span><h4>Hero Slider</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div style="margin-bottom:12px;font-size:12px;font-weight:700;color:var(--text2)">SLIDE 1</div><div class="fg"><div class="fi"><label class="fl">Subtitle</label><input class="fin"></div><div class="fi"><label class="fl">Button</label><input class="fin"></div><div class="fi full"><label class="fl">Headline</label><input class="fin"></div><div class="fi full"><label class="fl">Background Image URL</label><input class="fin"></div></div><hr class="div"><div style="margin-bottom:12px;font-size:12px;font-weight:700;color:var(--text2)">SLIDE 2</div><div class="fg"><div class="fi"><label class="fl">Subtitle</label><input class="fin"></div><div class="fi"><label class="fl">Button</label><input class="fin"></div><div class="fi full"><label class="fl">Headline</label><input class="fin"></div><div class="fi full"><label class="fl">Background Image URL</label><input class="fin"></div></div><button class="btn bg2b bxs" style="margin-top:12px"><span class="material-symbols-outlined ic">add</span>Add Slide</button></div></div>
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">star</span><h4>Reviews Section</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg"><div class="fi"><label class="fl">Label</label><input class="fin"></div><div class="fi"><label class="fl">Title</label><input class="fin"></div></div><hr class="div"><div class="fg"><div class="fi"><label class="fl">Author</label><input class="fin"></div><div class="fi"><label class="fl">Role</label><input class="fin"></div><div class="fi full"><label class="fl">Review Text</label><textarea class="fta" style="min-height:60px"></textarea></div></div><button class="btn bg2b bxs" style="margin-top:8px"><span class="material-symbols-outlined ic">add</span>Add Review</button></div></div>
+    </div>
+
+    <!-- CATALOG PAGE -->
+    <div class="pn" id="pn-page-catalog">
+      <div class="ph"><div class="pht"><h1>Catalog Page</h1></div><div class="pha"><select class="fs"><option>EN</option><option>RU</option><option>KA</option><option>HY</option></select><button class="btn bp"><span class="material-symbols-outlined ic">save</span>Save</button></div></div>
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">campaign</span><h4>Catalog Hero</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg"><div class="fi"><label class="fl">Title</label><input class="fin"></div><div class="fi"><label class="fl">Subtitle</label><input class="fin"></div><div class="fi full"><label class="fl">Description</label><textarea class="fta" style="min-height:60px"></textarea></div></div></div></div>
+    </div>
+
+    <!-- CONTACTS -->
+    <div class="pn" id="pn-page-contacts">
+      <div class="ph"><div class="pht"><h1>Contacts Section</h1></div><div class="pha"><select class="fs"><option>EN</option><option>RU</option><option>KA</option><option>HY</option></select><button class="btn bp"><span class="material-symbols-outlined ic">save</span>Save</button></div></div>
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">contact_phone</span><h4>Contact Details</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg"><div class="fi"><label class="fl">Label</label><input class="fin"></div><div class="fi"><label class="fl">Title</label><input class="fin"></div><div class="fi"><label class="fl">Phone</label><input class="fin"></div><div class="fi"><label class="fl">Email</label><input class="fin"></div><div class="fi"><label class="fl">CTA Button</label><input class="fin"></div><div class="fi"><label class="fl">CTA Email</label><input class="fin"></div><div class="fi full"><label class="fl">Logistics Terms</label><textarea class="fta"></textarea></div><div class="fi full"><label class="fl">Maps Embed URL</label><input class="fin"></div></div></div></div>
+    </div>
+
+    <!-- FOOTER / NAV -->
+    <div class="pn" id="pn-page-footer">
+      <div class="ph"><div class="pht"><h1>Navigation &amp; Footer</h1></div><div class="pha"><select class="fs"><option>EN</option><option>RU</option><option>KA</option><option>HY</option></select><button class="btn bp"><span class="material-symbols-outlined ic">save</span>Save</button></div></div>
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">menu</span><h4>Main Navigation</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg"><div class="fi"><label class="fl">Home</label><input class="fin"></div><div class="fi"><label class="fl">About Us</label><input class="fin"></div><div class="fi"><label class="fl">Catalog</label><input class="fin"></div><div class="fi"><label class="fl">Blog</label><input class="fin"></div><div class="fi"><label class="fl">Contacts</label><input class="fin"></div></div></div></div>
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">image</span><h4>Logo &amp; Footer</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fi" style="margin-bottom:12px"><label class="fl">Logo URL</label><input class="fin"></div><div class="fg"><div class="fi"><label class="fl">Footer Link 1</label><input class="fin"></div><div class="fi"><label class="fl">Footer Link 2</label><input class="fin"></div><div class="fi"><label class="fl">Footer Link 3</label><input class="fin"></div><div class="fi"><label class="fl">Copyright</label><input class="fin"></div></div></div></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="pn" id="pn-settings">
+      <div class="ph"><div class="pht"><h1>Settings</h1></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px" id="stgg">
+        <div>
+          <div class="tw" style="padding:18px;margin-bottom:18px"><div style="font-size:13px;font-weight:800;margin-bottom:14px">General</div><div class="fi" style="margin-bottom:12px"><label class="fl">Site Name</label><input class="fin"></div><div class="fi" style="margin-bottom:12px"><label class="fl">Default Language</label><select class="fsel"><option>English (EN)</option><option>Russian (RU)</option><option>Georgian (KA)</option><option>Armenian (HY)</option></select></div><div class="fi"><label class="fl">Default Meta Description</label><textarea class="fta" style="min-height:70px"></textarea></div></div>
+          <div class="tw" style="padding:18px"><div style="font-size:13px;font-weight:800;margin-bottom:14px">Language URL Prefixes</div><div class="fg"><div class="fi"><label class="fl">English</label><div class="sr2"><div class="sp2">/</div><input class="fin si2" value="en"></div></div><div class="fi"><label class="fl">Russian</label><div class="sr2"><div class="sp2">/</div><input class="fin si2" value="ru"></div></div><div class="fi"><label class="fl">Georgian</label><div class="sr2"><div class="sp2">/</div><input class="fin si2" value="ka"></div></div><div class="fi"><label class="fl">Armenian</label><div class="sr2"><div class="sp2">/</div><input class="fin si2" value="hy"></div></div></div><div class="up" style="margin-top:14px"><span>/en/products/...</span><span>/en/blog/...</span></div></div>
+        </div>
+        <div>
+          <div class="tw" style="padding:18px;margin-bottom:18px"><div style="font-size:13px;font-weight:800;margin-bottom:14px">Admin Account</div><div class="fi" style="margin-bottom:12px"><label class="fl">Username</label><input class="fin"></div><div class="fi" style="margin-bottom:12px"><label class="fl">New Password</label><input class="fin" type="password" placeholder="Leave blank to keep current"></div><div class="fi" style="margin-bottom:14px"><label class="fl">Confirm Password</label><input class="fin" type="password" placeholder="Repeat new password"></div><button class="btn bg2b bxs">Update Password</button></div>
+          <div class="tw" style="padding:18px"><div style="font-size:13px;font-weight:800;margin-bottom:14px">API / Backend</div><div class="fi" style="margin-bottom:12px"><label class="fl">API Base URL</label><input class="fin" placeholder="https://api.yourdomain.com"></div><div class="fi" style="margin-bottom:14px"><label class="fl">API Token</label><input class="fin" type="password" placeholder="Bearer token&#x2026;"></div><button class="btn bg2b bxs">Test Connection</button></div>
+        </div>
+      </div>
+      <div style="margin-top:18px;text-align:right"><button class="btn bp"><span class="material-symbols-outlined ic">save</span>Save All Settings</button></div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- MOBILE NAV -->
+<nav class="mn">
+  <div class="mni2">
+    <button class="mni on" data-p="products"><span class="material-symbols-outlined ic">inventory_2</span><span class="mnl">Products</span></button>
+    <button class="mni" data-p="categories"><span class="material-symbols-outlined ic">category</span><span class="mnl">Categories</span></button>
+    <button class="mni" data-p="blog"><span class="material-symbols-outlined ic">article</span><span class="mnl">Blog</span></button>
+    <button class="mni" onclick="openMob()"><span class="material-symbols-outlined ic">menu</span><span class="mnl">More</span></button>
+  </div>
+</nav>
+
+<!-- ============================================================
+     MODAL: BLOG POST EDITOR
+============================================================ -->
+<div class="mo" id="mblog">
+  <div class="md" style="max-width:920px">
+    <div class="mh">
+      <h2>Blog Post Editor</h2>
+      <button class="mc2b" onclick="closeM('mblog')"><span class="material-symbols-outlined" style="font-size:26px">close</span></button>
+    </div>
+
+    <!-- GLOBAL FIELDS (shared across all languages) -->
+    <div class="gf-block">
+      <div class="gf-title">&#x1F310; Global Fields &#x2014; shared across all language versions</div>
+      <div class="fg3">
+        <div class="fi"><label class="fl">Status</label><select class="fsel"><option>Draft</option><option>Published</option><option>Archived</option></select></div>
+        <div class="fi"><label class="fl">Category</label><select class="fsel"><option>Technology</option><option>Eco &amp; Safety</option><option>Guides</option><option>Science</option><option>Industry</option></select></div>
+        <div class="fi"><label class="fl">Author Name</label><input class="fin"></div>
+        <div class="fi"><label class="fl">Tag Badge</label><input class="fin"></div>
+        <div class="fi"><label class="fl">Read Time</label><input class="fin"></div>
+        <div class="fi"><label class="fl">Publish Date</label><input class="fin" type="date"></div>
+        <div class="fi"><label class="fl">Last Modified</label><input class="fin" type="datetime-local"></div>
+        <div class="fi"><label class="fl">Priority <span class="tip">(sitemap, 0.1&#x2013;1.0)</span></label><input class="fin" placeholder="0.1 &#x2013; 1.0"></div>
+        <div class="fi"><label class="fl">Change Frequency</label><select class="fsel"><option>weekly</option><option>monthly</option><option>daily</option><option>yearly</option><option>never</option></select></div>
+      </div>
+      <div class="fg" style="margin-top:14px">
+        <div class="fi"><label class="fl">URL Slug <span class="tip">(shared across all languages)</span></label><div class="sr2"><div class="sp2">/[lang]/blog/</div><input class="fin si2" id="blogslug" oninput="updBlogUrl()"></div><div class="up" id="blogurlprev"></div></div>
+        <div class="fi"><label class="fl">x-default hreflang <span class="tip">(canonical language)</span></label><select class="fsel"><option value="en">EN &#x2014; English</option><option value="ru">RU &#x2014; Russian</option><option value="ka">KA &#x2014; Georgian</option><option value="hy">HY &#x2014; Armenian</option></select></div>
+        <div class="fi"><label class="fl">Region for hreflang <span class="tip">(e.g. en-GE)</span></label><input class="fin" placeholder="e.g. en-GE, ru-GE, ka-GE, hy-AM"></div>
+        <div class="fi"><label class="fl">OG Image URL</label><input class="fin" placeholder="https://&#x2026;/og-image.jpg"></div>
+      </div>
+      <div class="fi" style="margin-top:14px"><label class="fl">Schema.org JSON-LD <span class="tip">(Article schema)</span></label><textarea class="fmono" style="min-height:100px"></textarea></div>
+    </div>
+
+    <!-- LANG STATUS OVERVIEW -->
+    <div class="lang-overview" id="blog-lang-overview">
+      <div class="lang-pill on" onclick="swBlogLang('en',this)" data-lang="en"><span class="flag">&#x1F1EC;&#x1F1E7;</span><span class="lcode">EN</span><span class="lstatus lstatus-empty" id="blog-lstatus-en">Empty</span></div>
+      <div class="lang-pill" onclick="swBlogLang('ru',this)" data-lang="ru"><span class="flag">&#x1F1F7;&#x1F1FA;</span><span class="lcode">RU</span><span class="lstatus lstatus-empty" id="blog-lstatus-ru">Empty</span></div>
+      <div class="lang-pill" onclick="swBlogLang('ka',this)" data-lang="ka"><span class="flag">&#x1F1EC;&#x1F1EA;</span><span class="lcode">KA</span><span class="lstatus lstatus-empty" id="blog-lstatus-ka">Empty</span></div>
+      <div class="lang-pill" onclick="swBlogLang('hy',this)" data-lang="hy"><span class="flag">&#x1F1E6;&#x1F1F2;</span><span class="lcode">HY</span><span class="lstatus lstatus-empty" id="blog-lstatus-hy">Empty</span></div>
+    </div>
+
+    <!-- LANG TABS -->
+    <div class="ltabs-row" id="blog-ltabs">
+      <button class="ltab on" onclick="swBlogLang('en',this)" data-lang="en"><span class="flag">&#x1F1EC;&#x1F1E7;</span><span class="lang-code">EN</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swBlogLang('ru',this)" data-lang="ru"><span class="flag">&#x1F1F7;&#x1F1FA;</span><span class="lang-code">RU</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swBlogLang('ka',this)" data-lang="ka"><span class="flag">&#x1F1EC;&#x1F1EA;</span><span class="lang-code">KA</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swBlogLang('hy',this)" data-lang="hy"><span class="flag">&#x1F1E6;&#x1F1F2;</span><span class="lang-code">HY</span><span class="conf-dot no"></span></button>
+    </div>
+
+    <div class="mb">
+      <!-- EN -->
+      <div class="lpane on" id="blog-lp-en">
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full"><label class="fl">H1 &#x2014; Page Heading</label><input class="fin"></div>
+          <div class="fi full"><label class="fl">Main Page Content <span class="tip">(paste HTML &#x2014; will be rendered as-is)</span></label><textarea class="fta fin-html" placeholder="&lt;h2&gt;Introduction&lt;/h2&gt;&#10;&lt;p&gt;Article body here&#x2026;&lt;/p&gt;&#10;&lt;h2&gt;Section 2&lt;/h2&gt;&#10;&lt;p&gt;&#x2026;&lt;/p&gt;"></textarea></div>
+          <div class="fi full"><label class="fl">Media URLs <span class="tip">(comma-separated image/video URLs embedded in article)</span></label><input class="fin" placeholder="https://&#x2026;/img1.jpg, https://&#x2026;/img2.jpg"></div>
+          <div class="fi full"><label class="fl">Main Image Alt Text</label><input class="fin"></div>
+        </div>
+        <div class="sec-title">Card (Blog listing)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span>
+            <div>
+              <div class="conf-status">EN version &#x2014; Not started</div>
+              <div class="conf-sub">Fill in all fields and confirm to publish</div>
+            </div>
+            <span class="conf-badge conf-n">&#x2014; Empty</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn bg2b bxs">Save Draft</button>
+            <button class="btn bsuc bxs" onclick="confirmLang('blog','en')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish EN</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RU -->
+      <div class="lpane" id="blog-lp-ru">
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full"><label class="fl">H1 &#x2014; Page Heading</label><input class="fin" placeholder="&#x41A;&#x430;&#x43A; &#x43F;&#x43E;&#x43B;&#x438;&#x43C;&#x435;&#x440;&#x43D;&#x430;&#x44F; &#x43A;&#x430;&#x43F;&#x441;&#x443;&#x43B;&#x44C;&#x43D;&#x430;&#x44F; &#x442;&#x435;&#x445;&#x43D;&#x43E;&#x43B;&#x43E;&#x433;&#x438;&#x44F; &#x43C;&#x435;&#x43D;&#x44F;&#x435;&#x442; &#x441;&#x442;&#x438;&#x440;&#x43A;&#x443;"></div>
+          <div class="fi full"><label class="fl">Main Page Content <span class="tip">(HTML)</span></label><textarea class="fta fin-html" placeholder="&lt;h2&gt;&#x412;&#x432;&#x435;&#x434;&#x435;&#x43D;&#x438;&#x435;&lt;/h2&gt;&#10;&lt;p&gt;&#x422;&#x435;&#x43A;&#x441;&#x442; &#x441;&#x442;&#x430;&#x442;&#x44C;&#x438; &#x43D;&#x430; &#x440;&#x443;&#x441;&#x441;&#x43A;&#x43E;&#x43C;...&lt;/p&gt;"></textarea></div>
+          <div class="fi full"><label class="fl">Media URLs</label><input class="fin" placeholder="https://&#x2026;/img1-ru.jpg, https://&#x2026;/img2-ru.jpg"></div>
+          <div class="fi full"><label class="fl">Main Image Alt Text</label><input class="fin" placeholder="&#x414;&#x438;&#x430;&#x433;&#x440;&#x430;&#x43C;&#x43C;&#x430; &#x442;&#x435;&#x445;&#x43D;&#x43E;&#x43B;&#x43E;&#x433;&#x438;&#x438; &#x43A;&#x430;&#x43F;&#x441;&#x443;&#x43B; RAKUN RU"></div>
+        </div>
+        <div class="sec-title">Card (Blog listing)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" placeholder="&#x41A;&#x430;&#x43F;&#x441;&#x443;&#x43B;&#x44C;&#x43D;&#x430;&#x44F; &#x442;&#x435;&#x445;&#x43D;&#x43E;&#x43B;&#x43E;&#x433;&#x438;&#x44F; RAKUN"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin" placeholder="&#x422;&#x440;&#x451;&#x445;&#x43A;&#x430;&#x43C;&#x435;&#x440;&#x43D;&#x430;&#x44F; &#x43A;&#x430;&#x43F;&#x441;&#x443;&#x43B;&#x430; &#x440;&#x430;&#x441;&#x442;&#x432;&#x43E;&#x440;&#x44F;&#x435;&#x442;&#x441;&#x44F; &#x43F;&#x43E;&#x44D;&#x442;&#x430;&#x43F;&#x43D;&#x43E;&#x2026;"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin" placeholder="&#x41A;&#x430;&#x43F;&#x441;&#x443;&#x43B;&#x44C;&#x43D;&#x430;&#x44F; &#x442;&#x435;&#x445;&#x43D;&#x43E;&#x43B;&#x43E;&#x433;&#x438;&#x44F; &#x2014; &#x411;&#x43B;&#x43E;&#x433; RAKUN"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" placeholder="&#x41A;&#x430;&#x43A; &#x43A;&#x430;&#x43F;&#x441;&#x443;&#x43B;&#x44B; RAKUN &#x43F;&#x440;&#x435;&#x432;&#x43E;&#x441;&#x445;&#x43E;&#x434;&#x44F;&#x442; &#x43E;&#x431;&#x44B;&#x447;&#x43D;&#x44B;&#x435; &#x433;&#x435;&#x43B;&#x438;&#x2026;"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" placeholder="&#x41A;&#x430;&#x43F;&#x441;&#x443;&#x43B;&#x44C;&#x43D;&#x430;&#x44F; &#x442;&#x435;&#x445;&#x43D;&#x43E;&#x43B;&#x43E;&#x433;&#x438;&#x44F; &#x2014; RAKUN"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" placeholder="&#x41F;&#x43E;&#x434;&#x440;&#x43E;&#x431;&#x43D;&#x44B;&#x439; &#x440;&#x430;&#x437;&#x431;&#x43E;&#x440; &#x43A;&#x430;&#x43F;&#x441;&#x443;&#x43B;&#x44C;&#x43D;&#x43E;&#x439; &#x445;&#x438;&#x43C;&#x438;&#x438;&#x2026;"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span>
+            <div>
+              <div class="conf-status">RU version &#x2014; Not started</div>
+              <div class="conf-sub">Fill in all fields and confirm to publish</div>
+            </div>
+            <span class="conf-badge conf-n">&#x2014; Empty</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn bg2b bxs">Save Draft</button>
+            <button class="btn bsuc bxs" onclick="confirmLang('blog','ru')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish RU</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- KA -->
+      <div class="lpane" id="blog-lp-ka">
+        <div class="nt"><span class="material-symbols-outlined ic">translate</span>Georgian version &#x2014; empty. Fill in all fields below and confirm to publish.</div>
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full"><label class="fl">H1 &#x2014; Page Heading</label><input class="fin" placeholder="&#x10E1;&#x10D0;&#x10D7;&#x10D0;&#x10E3;&#x10E0;&#x10D8; &#x10E5;&#x10D0;&#x10E0;&#x10D7;&#x10E3;&#x10DA;&#x10D0;&#x10D3;"></div>
+          <div class="fi full"><label class="fl">Main Page Content <span class="tip">(HTML)</span></label><textarea class="fta fin-html" placeholder="&lt;h2&gt;&#x10E8;&#x10D4;&#x10E1;&#x10D0;&#x10D5;&#x10D0;&#x10DA;&#x10D8;&lt;/h2&gt;&#10;&lt;p&gt;&#x10E1;&#x10E2;&#x10D0;&#x10E2;&#x10D8;&#x10D8;&#x10E1; &#x10E2;&#x10D4;&#x10E5;&#x10E1;&#x10E2;&#x10D8;...&lt;/p&gt;"></textarea></div>
+          <div class="fi full"><label class="fl">Media URLs</label><input class="fin" placeholder="https://&#x2026;/img1-ka.jpg"></div>
+          <div class="fi full"><label class="fl">Main Image Alt Text</label><input class="fin" placeholder="RAKUN &#x10D9;&#x10D0;&#x10DE;&#x10E1;&#x10E3;&#x10da;&#x10d8;&#x10e1; &#x10e2;&#x10d4;&#x10e5;&#x10dc;&#x10dd;&#x10da;&#x10dd;&#x10d2;&#x10d8;&#x10d8;&#x10e1; &#x10d3;&#x10d8;&#x10d0;&#x10d2;&#x10e0;&#x10d0;&#x10db;&#x10d0; KA"></div>
+        </div>
+        <div class="sec-title">Card</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" placeholder="&#x10E1;&#x10D0;&#x10D7;&#x10D0;&#x10E3;&#x10E0;&#x10D8; &#x10E5;&#x10D0;&#x10E0;&#x10D7;&#x10E3;&#x10DA;&#x10D0;&#x10D3;"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin" placeholder="&#x10DB;&#x10DD;&#x10056;&#x10DA;&#x10D4; &#x10D0;&#x10E6;&#x10EC;&#x10D4;&#x10E0;&#x10D0;"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin" placeholder="SEO &#x10E1;&#x10D0;&#x10D7;&#x10D0;&#x10E3;&#x10E0;&#x10D8; &#x10E5;&#x10D0;&#x10E0;&#x10D7;&#x10E3;&#x10DA;&#x10D0;&#x10D3;"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" placeholder="Meta &#x10D0;&#x10E6;&#x10EC;&#x10D4;&#x10E0;&#x10D0; &#x10E5;&#x10D0;&#x10E0;&#x10D7;&#x10E3;&#x10DA;&#x10D0;&#x10D3;"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" placeholder="OG &#x10E1;&#x10D0;&#x10D7;&#x10D0;&#x10E3;&#x10E0;&#x10D8;"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" placeholder="OG &#x10D0;&#x10E6;&#x10EC;&#x10D4;&#x10E0;&#x10D0;"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span>
+            <div>
+              <div class="conf-status">KA version &#x2014; Not started</div>
+              <div class="conf-sub">Fill in all fields and confirm to publish</div>
+            </div>
+            <span class="conf-badge conf-n">&#x2014; Empty</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn bg2b bxs">Save Draft</button>
+            <button class="btn bsuc bxs" onclick="confirmLang('blog','ka')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish KA</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- HY -->
+      <div class="lpane" id="blog-lp-hy">
+        <div class="nt"><span class="material-symbols-outlined ic">translate</span>Armenian version &#x2014; empty. Fill in all fields below and confirm to publish.</div>
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full"><label class="fl">H1 &#x2014; Page Heading</label><input class="fin" placeholder="&#x540;&#x578;&#x564;&#x57E;&#x561;&#x5AE;&#x56B;&#x580; &#x570;&#x561;&#x575;&#x5A5;&#x580;&#x565;&#x576;"></div>
+          <div class="fi full"><label class="fl">Main Page Content <span class="tip">(HTML)</span></label><textarea class="fta fin-html" placeholder="&lt;h2&gt;&#x546;&#x565;&#x580;&#x561;&#x56A;&#x576;&#x561;&#x562;&#x561;&#x576;&#x578;&#x582;&#x569;&#x575;&#x578;&#x582;&#x576;&lt;/h2&gt;&#10;&lt;p&gt;&#x570;&#x578;&#x564;&#x57E;&#x561;&#x56E;&#x56B; &#x562;&#x578;&#x57E;&#x561;&#x564;&#x561;&#x56f;&#x578;&#x582;&#x569;&#x575;&#x578;&#x582;&#x576;&#x576;...&lt;/p&gt;"></textarea></div>
+          <div class="fi full"><label class="fl">Media URLs</label><input class="fin" placeholder="https://&#x2026;/img1-hy.jpg"></div>
+          <div class="fi full"><label class="fl">Main Image Alt Text</label><input class="fin" placeholder="RAKUN &#x56F;&#x561;&#x54A;&#x57D;&#x578;&#x582;&#x56C;&#x561;&#x575;&#x56B;&#x576; &#x568;&#x576;&#x564;&#x56C;&#x561;&#x575;&#x576;&#x574;&#x561;&#x576; &#x564;&#x56B;&#x561;&#x563;&#x580;&#x561;&#x574;&#x561;"></div>
+        </div>
+        <div class="sec-title">Card</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" placeholder="&#x553;&#x561;&#x56C;&#x561;&#x584; &#x561;&#x576;&#x578;&#x582;&#x576;&#x56F;&#x561;&#x563;&#x56B;&#x580; &#x570;&#x561;&#x575;&#x587;"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin" placeholder="&#x532;&#x576;&#x576;&#x561;&#x563;&#x56B;&#x580;"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin" placeholder="SEO &#x545;&#x561;&#x56F;&#x561;&#x563;&#x56B;&#x580; &#x570;&#x561;&#x575;&#x587;"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" placeholder="Meta &#x576;&#x056;&#x0561;&#x0563;&#x056B;&#x0580; &#x570;&#x561;&#x575;&#x587;"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" placeholder="OG &#x545;&#x561;&#x56F;&#x561;&#x563;&#x56B;&#x580;"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" placeholder="OG &#x576;&#x056f;&#x0561;&#x0563;&#x056B;&#x0580;"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span>
+            <div>
+              <div class="conf-status">HY version &#x2014; Not started</div>
+              <div class="conf-sub">Fill in all fields and confirm to publish</div>
+            </div>
+            <span class="conf-badge conf-n">&#x2014; Empty</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn bg2b bxs">Save Draft</button>
+            <button class="btn bsuc bxs" onclick="confirmLang('blog','hy')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish HY</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mf">
+      <div style="display:flex;gap:8px"><button class="btn bg2b" onclick="closeM('mblog')">Cancel</button><button class="btn bd2 bxs" onclick="closeM('mblog');showM('mconf')"><span class="material-symbols-outlined ic">delete</span>Delete</button></div>
+      <div style="display:flex;gap:8px"><button class="btn bg2b">Save All Drafts</button><button class="btn bp"><span class="material-symbols-outlined ic">publish</span>Publish All Languages</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: PRODUCT EDITOR
+============================================================ -->
+<div class="mo" id="mprod">
+  <div class="md" style="max-width:920px">
+    <div class="mh">
+      <h2>Product Editor</h2>
+      <button class="mc2b" onclick="closeM('mprod')"><span class="material-symbols-outlined" style="font-size:26px">close</span></button>
+    </div>
+
+    <!-- GLOBAL FIELDS -->
+    <div class="gf-block">
+      <div class="gf-title">&#x1F310; Global Fields &#x2014; shared across all language versions</div>
+      <div class="fg3">
+        <div class="fi"><label class="fl">Status</label><select class="fsel"><option>Draft</option><option>Published</option><option>Archived</option></select></div>
+        <div class="fi"><label class="fl">Category</label><select class="fsel" id="prodcatsel" onchange="updProdUrl()"></select></div>
+        <div class="fi"><label class="fl">Price</label><input class="fin" placeholder="e.g. 6.53 GEL"></div>
+        <div class="fi"><label class="fl">SKU (Артикул)</label><input class="fin" placeholder="e.g. RK-1001"></div>
+        <div class="fi"><label class="fl">Stock (Наличие)</label><input class="fin" type="number" placeholder="e.g. 150"></div>
+        <div class="fi"><label class="fl">Weight/Volume (Вес/Объём)</label><input class="fin" placeholder="e.g. 2L or 2kg"></div>
+        <div class="fi"><label class="fl">Last Modified</label><input class="fin" type="datetime-local"></div>
+        <div class="fi"><label class="fl">Priority <span class="tip">(sitemap 0.1&#x2013;1.0)</span></label><input class="fin" placeholder="0.9"></div>
+        <div class="fi"><label class="fl">Change Frequency</label><select class="fsel"><option>monthly</option><option>weekly</option><option>daily</option><option>yearly</option><option>never</option></select></div>
+      </div>
+      <div class="fg" style="margin-top:14px">
+        <div class="fi"><label class="fl">URL Slug <span class="tip">(shared &#x2014; only lang prefix changes)</span></label><div class="sr2"><div class="sp2">/[lang]/products/[cat]/</div><input class="fin si2" id="prodslug" oninput="updProdUrl()"></div><div class="up" id="produp"></div></div>
+        <div class="fi"><label class="fl">x-default hreflang</label><select class="fsel"><option value="en">EN &#x2014; English</option><option value="ru">RU &#x2014; Russian</option><option value="ka">KA &#x2014; Georgian</option><option value="hy">HY &#x2014; Armenian</option></select></div>
+        <div class="fi"><label class="fl">Region for hreflang</label><input class="fin" placeholder="e.g. en-GE, ru-GE, ka-GE, hy-AM"></div>
+        <div class="fi"><label class="fl">OG Image URL</label><input class="fin" placeholder="https://&#x2026;/og-product.jpg"></div>
+      </div>
+      <div class="fi" style="margin-top:14px"><label class="fl">Schema.org JSON-LD <span class="tip">(Product schema)</span></label><textarea class="fmono" style="min-height:100px"></textarea></div>
+    </div>
+
+    <!-- LANG STATUS OVERVIEW -->
+    <div class="lang-overview">
+      <div class="lang-pill on" onclick="swProdLang('en',this)" data-lang="en"><span class="flag">&#x1F1EC;&#x1F1E7;</span><span class="lcode">EN</span><span class="lstatus lstatus-empty" id="prod-lstatus-en">Empty</span></div>
+      <div class="lang-pill" onclick="swProdLang('ru',this)" data-lang="ru"><span class="flag">&#x1F1F7;&#x1F1FA;</span><span class="lcode">RU</span><span class="lstatus lstatus-empty" id="prod-lstatus-ru">Empty</span></div>
+      <div class="lang-pill" onclick="swProdLang('ka',this)" data-lang="ka"><span class="flag">&#x1F1EC;&#x1F1EA;</span><span class="lcode">KA</span><span class="lstatus lstatus-empty" id="prod-lstatus-ka">Empty</span></div>
+      <div class="lang-pill" onclick="swProdLang('hy',this)" data-lang="hy"><span class="flag">&#x1F1E6;&#x1F1F2;</span><span class="lcode">HY</span><span class="lstatus lstatus-empty" id="prod-lstatus-hy">Empty</span></div>
+    </div>
+
+    <!-- LANG TABS -->
+    <div class="ltabs-row">
+      <button class="ltab on" onclick="swProdLang('en',this)" data-lang="en"><span class="flag">&#x1F1EC;&#x1F1E7;</span><span class="lang-code">EN</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swProdLang('ru',this)" data-lang="ru"><span class="flag">&#x1F1F7;&#x1F1FA;</span><span class="lang-code">RU</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swProdLang('ka',this)" data-lang="ka"><span class="flag">&#x1F1EC;&#x1F1EA;</span><span class="lang-code">KA</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swProdLang('hy',this)" data-lang="hy"><span class="flag">&#x1F1E6;&#x1F1F2;</span><span class="lang-code">HY</span><span class="conf-dot no"></span></button>
+    </div>
+
+    <div class="mb">
+      <!-- EN -->
+      <div class="lpane on" id="prod-lp-en">
+        <div class="sec-title">Product Images (EN carousel)</div>
+        <div class="fi" style="margin-bottom:14px">
+          <label class="fl">Product Image URLs <span class="tip">(comma-separated, used for carousel)</span></label>
+          <textarea class="fta" style="min-height:70px;font-family:'IBM Plex Mono',monospace;font-size:12px"></textarea>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap" id="prod-images-en">
+            <!-- Dynamic Content -->
+          </div>
+        </div>
+
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Category Label</label><input class="fin"></div>
+          <div class="fi"><label class="fl">Product Name</label><input class="fin"></div>
+          <div class="fi full"><label class="fl">Short Description</label><textarea class="fta" style="min-height:70px"></textarea></div>
+        </div>
+        <div class="fi" style="margin-bottom:14px"><label class="fl">Feature Pills</label><div class="pb" id="pills-en"></div><div class="pa"><input class="fin" id="pillin-en" placeholder="New feature&#x2026;"><button class="btn bg2b bxs" onclick="addPill('en')"><span class="material-symbols-outlined ic">add</span></button></div></div>
+        <div class="fi" style="margin-bottom:14px">
+          <label class="fl">Full Description <span class="tip">(paste HTML &#x2014; will be rendered as-is)</span></label>
+          <textarea class="fta fin-html" placeholder="&lt;p&gt;Description...&lt;/p&gt;"></textarea>
+        </div>
+
+        <div class="sec-title">Ingredients</div>
+        <div id="ingren">
+          <!-- Dynamic Content -->
+        </div>
+        <button class="btn bg2b bxs" style="margin-top:8px" onclick="addIngr()"><span class="material-symbols-outlined ic">add</span>Add Ingredient</button>
+
+        <div class="sec-title">CTA Buttons</div>
+        <div class="fg3" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">CTA Button Text</label><input class="fin"></div>
+          <div class="fi"><label class="fl">Secondary Button Text</label><input class="fin"></div>
+          <div class="fi"><label class="fl">Button URL</label><input class="fin" placeholder="mailto:info@rakun.ge or /en/contacts"></div>
+        </div>
+
+        <div class="sec-title">Card (Catalog listing)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin"></div>
+        </div>
+
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin"></div>
+        </div>
+
+        <div class="conf-bar">
+          <div class="conf-info">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span>
+            <div>
+              <div class="conf-status">EN version &#x2014; Not started</div>
+              <div class="conf-sub">Fill in all fields and confirm to publish</div>
+            </div>
+            <span class="conf-badge conf-n">&#x2014; Empty</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn bg2b bxs">Save Draft</button>
+            <button class="btn bsuc bxs" onclick="confirmLang('prod','en')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish EN</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RU -->
+      <div class="lpane" id="prod-lp-ru">
+        <div class="sec-title">Product Images (RU carousel)</div>
+        <div class="fi" style="margin-bottom:14px"><label class="fl">Product Image URLs <span class="tip">(comma-separated)</span></label><textarea class="fta" style="min-height:60px;font-family:'IBM Plex Mono',monospace;font-size:12px" placeholder="https://&#x2026;/preview-ru.png, https://&#x2026;/preview-ru-back.png"></textarea></div>
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">&#x41A;&#x430;&#x442;&#x435;&#x433;&#x43E;&#x440;&#x438;&#x44F;</label><input class="fin" placeholder="&#x413;&#x435;&#x43B;&#x44C; &#x434;&#x43B;&#x44F; &#x441;&#x442;&#x438;&#x440;&#x43A;&#x438; &#xB7; &#x423;&#x43D;&#x438;&#x432;&#x435;&#x440;&#x441;&#x430;&#x43B;&#x44C;&#x43D;&#x44B;&#x439;"></div>
+          <div class="fi"><label class="fl">&#x41D;&#x430;&#x437;&#x432;&#x430;&#x43D;&#x438;&#x435; &#x442;&#x43E;&#x432;&#x430;&#x440;&#x430;</label><input class="fin" placeholder="&#x41F;&#x430;&#x440;&#x444;&#x44E;&#x43C;&#x438;&#x440;&#x43E;&#x432;&#x430;&#x43D;&#x43D;&#x44B;&#x439; &#x433;&#x435;&#x43B;&#x44C; &#x434;&#x43B;&#x44F; &#x441;&#x442;&#x438;&#x440;&#x43A;&#x438;"></div>
+          <div class="fi full"><label class="fl">&#x41A;&#x440;&#x430;&#x442;&#x43A;&#x43E;&#x435; &#x43E;&#x43F;&#x438;&#x441;&#x430;&#x43D;&#x438;&#x435;</label><textarea class="fta" style="min-height:70px"></textarea></div>
+        </div>
+        <div class="fi" style="margin-bottom:14px"><label class="fl">&#x42F;&#x440;&#x43B;&#x44B;&#x43A;&#x438; &#x445;&#x430;&#x440;&#x430;&#x43A;&#x442;&#x435;&#x440;&#x438;&#x441;&#x442;&#x438;&#x43A;</label><div class="pb"></div></div>
+        <div class="fi" style="margin-bottom:14px"><label class="fl">&#x41F;&#x43E;&#x43B;&#x43D;&#x43E;&#x435; &#x43E;&#x43F;&#x438;&#x441;&#x430;&#x43D;&#x438;&#x435; <span class="tip">(HTML)</span></label><textarea class="fta fin-html" placeholder="&lt;p&gt;&#x422;&#x435;&#x43A;&#x441;&#x442; &#x43D;&#x430; &#x440;&#x443;&#x441;&#x441;&#x43A;&#x43E;&#x43C;...&lt;/p&gt;"></textarea></div>
+        <div class="sec-title">&#x41A;&#x43D;&#x43E;&#x43F;&#x43A;&#x438; CTA</div>
+        <div class="fg3" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">&#x422;&#x435;&#x43A;&#x441;&#x442; CTA</label><input class="fin"></div>
+          <div class="fi"><label class="fl">&#x414;&#x43E;&#x43F. &#x43A;&#x43D;&#x43E;&#x43F;&#x43A;&#x430;</label><input class="fin"></div>
+          <div class="fi"><label class="fl">URL &#x43A;&#x43D;&#x43E;&#x43F;&#x43A;&#x438;</label><input class="fin" placeholder="mailto: &#x438;&#x43B;&#x438; /ru/contacts"></div>
+        </div>
+        <div class="sec-title">&#x41A;&#x430;&#x440;&#x442;&#x43E;&#x447;&#x43A;&#x430; &#x432; &#x43A;&#x430;&#x442;&#x430;&#x43B;&#x43E;&#x433;&#x435;</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" placeholder="&#x41F;&#x430;&#x440;&#x444;&#x44E;&#x43C;&#x438;&#x440;&#x43E;&#x432;&#x430;&#x43D;&#x43D;&#x44B;&#x439; &#x433;&#x435;&#x43B;&#x44C; &#x434;&#x43B;&#x44F; &#x441;&#x442;&#x438;&#x440;&#x43A;&#x438;, 2&#x43B;"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin" placeholder="&#x42D;&#x444;&#x444;&#x435;&#x43A;&#x442;&#x438;&#x432;&#x43D;&#x43E; &#x443;&#x434;&#x430;&#x43B;&#x44F;&#x435;&#x442; &#x43F;&#x44F;&#x442;&#x43D;&#x430;&#x2026;"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin" placeholder="&#x413;&#x435;&#x43B;&#x44C; &#x434;&#x43B;&#x44F; &#x441;&#x442;&#x438;&#x440;&#x43A;&#x438; 2&#x43B; &#x2014; RAKUN"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" placeholder="&#x41A;&#x443;&#x43F;&#x438;&#x442;&#x44C; &#x433;&#x435;&#x43B;&#x44C; &#x434;&#x43B;&#x44F; &#x441;&#x442;&#x438;&#x440;&#x43A;&#x438; RAKUN 2&#x43B; &#x43E;&#x43F;&#x442;&#x43E;&#x43C;&#x2026;"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" placeholder="RAKUN &#x413;&#x435;&#x43B;&#x44C; 2&#x43B;"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" placeholder="&#x41F;&#x440;&#x43E;&#x444;&#x435;&#x441;&#x441;&#x438;&#x43E;&#x43D;&#x430;&#x43B;&#x44C;&#x43D;&#x44B;&#x439; &#x433;&#x435;&#x43B;&#x44C;&#x2026;"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span>
+            <div><div class="conf-status">RU version &#x2014; Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div>
+            <span class="conf-badge conf-n">&#x2014; Empty</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn bg2b bxs">Save Draft</button>
+            <button class="btn bsuc bxs" onclick="confirmLang('prod','ru')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish RU</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- KA -->
+      <div class="lpane" id="prod-lp-ka">
+        <div class="nt"><span class="material-symbols-outlined ic">translate</span>Georgian version &#x2014; empty.</div>
+        <div class="sec-title">Product Images (KA carousel)</div>
+        <div class="fi" style="margin-bottom:14px"><label class="fl">Product Image URLs</label><textarea class="fta" style="min-height:60px;font-family:'IBM Plex Mono',monospace;font-size:12px" placeholder="https://&#x2026;/preview-ka.png"></textarea></div>
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">&#x10D9;&#x10D0;&#x10E2;&#x10D4;&#x10D2;&#x10DD;&#x10E0;&#x10D8;&#x10D0;</label><input class="fin" placeholder="&#x10E1;&#x10D0;&#x10E0;&#x10D4;&#x10EA;&#x10EE;&#x10D8; &#x10D2;&#x10D4;&#x10da;&#x10d8; &#xB7; &#x10E3;&#x10DC;&#x10D8;&#x10D5;&#x10D4;&#x10E0;&#x10E1;&#x10D0;&#x10DA;&#x10E3;&#x10E0;&#x10D8;"></div>
+          <div class="fi"><label class="fl">&#x10DE;&#x10E0;&#x10DD;&#x10D3;&#x10E3;&#x10E5;&#x10E2;&#x10D8;&#x10E1; &#x10E1;&#x10D0;&#x10EE;&#x10D4;&#x10DA;&#x10D8;</label><input class="fin" placeholder="&#x10E1;&#x10E3;&#x10E0;&#x10DC;&#x10D4;&#x10DA;&#x10DD;&#x10D5;&#x10D0;&#x10DC;&#x10D8; &#x10E1;&#x10D0;&#x10E0;&#x10D4;&#x10EA;&#x10EE;&#x10D8; &#x10D2;&#x10D4;&#x10da;&#x10d8;"></div>
+          <div class="fi full"><label class="fl">&#x10DB;&#x10DD;&#x10056;&#x10DA;&#x10D4; &#x10D0;&#x10E6;&#x10EC;&#x10D4;&#x10E0;&#x10D0;</label><textarea class="fta" placeholder="&#x10D9;&#x10DD;&#x10DC;&#x10EA;&#x10D4;&#x10DC;&#x10E2;&#x10E0;&#x10D8;&#x10E0;&#x10D4;&#x10D1;&#x10E3;&#x10DA;&#x10D8; &#x10E1;&#x10D0;&#x10E0;&#x10D4;&#x10EA;&#x10EE;&#x10D8; &#x10D2;&#x10D4;&#x10da;&#x10d8;, 2 &#x10da;&#x10d8;&#x10e2;&#x10e0;&#x10d8;&#x2026;"></textarea></div>
+          <div class="fi full"><label class="fl">&#x10E1;&#x10E0;&#x10E3;&#x10DA;&#x10D8; &#x10D0;&#x10E6;&#x10EC;&#x10D4;&#x10E0;&#x10D0; <span class="tip">(HTML)</span></label><textarea class="fta fin-html" placeholder="&lt;p&gt;&#x10E2;&#x10D4;&#x10E5;&#x10E1;&#x10E2;&#x10D8; &#x10E5;&#x10D0;&#x10E0;&#x10D7;&#x10E3;&#x10DA;&#x10D0;&#x10D3;...&lt;/p&gt;"></textarea></div>
+        </div>
+        <div class="sec-title">CTA / Card / SEO</div>
+        <div class="fg3" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">CTA</label><input class="fin" placeholder="&#x10E4;&#x10D0;&#x10E1;&#x10D8;&#x10E1; &#x10DB;&#x10DD;&#x10D7;&#x10EE;&#x10DD;&#x10D5;&#x10D0;"></div>
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" placeholder="&#x10E1;&#x10D0;&#x10EE;&#x10D4;&#x10DA;&#x10D8; KA"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin" placeholder="&#x10D0;&#x10E6;&#x10EC;&#x10D4;&#x10E0;&#x10D0; KA"></div>
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" placeholder="SEO &#x10E1;&#x10D0;&#x10D7;&#x10D0;&#x10E3;&#x10E0;&#x10D8; KA"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" placeholder="Meta KA"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" placeholder="OG KA"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span>
+            <div><div class="conf-status">KA version &#x2014; Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div>
+            <span class="conf-badge conf-n">&#x2014; Empty</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn bg2b bxs">Save Draft</button>
+            <button class="btn bsuc bxs" onclick="confirmLang('prod','ka')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish KA</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- HY -->
+      <div class="lpane" id="prod-lp-hy">
+        <div class="nt"><span class="material-symbols-outlined ic">translate</span>Armenian version &#x2014; empty.</div>
+        <div class="sec-title">Product Images (HY carousel)</div>
+        <div class="fi" style="margin-bottom:14px"><label class="fl">Product Image URLs</label><textarea class="fta" style="min-height:60px;font-family:'IBM Plex Mono',monospace;font-size:12px" placeholder="https://&#x2026;/preview-hy.png"></textarea></div>
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">&#x531;&#x57F;&#x56F;&#x565;&#x563;&#x578;&#x580;&#x56B;&#x561;</label><input class="fin" placeholder="&#x041C;&#x561;&#x581;&#x578;&#x582;&#x569;&#x561;&#x562;&#x561;&#x576;&#x578;&#x582;&#x569;&#x575;&#x561;&#x576; &#x563;&#x565;&#x56C; &#xB7; &#x548;&#x582;&#x576;&#x56B;&#x57E;&#x565;&#x580;&#x57D;&#x561;&#x56C;"></div>
+          <div class="fi"><label class="fl">&#x531;&#x54A;&#x580;&#x561;&#x576;&#x584;&#x56B; &#x561;&#x576;&#x578;&#x582;&#x576;&#x56F;</label><input class="fin" placeholder="&#x532;&#x578;&#x582;&#x580;&#x561;&#x57D;&#x57F;&#x561;&#x576; &#x543;&#x561;&#x57F;&#x580;&#x565;&#x56C;&#x56B;&#x584;&#x56B; &#x533;&#x565;&#x56C;"></div>
+          <div class="fi full"><label class="fl">&#x55A;&#x578;&#x56F;&#x580; &#x576;&#x056f;&#x561;&#x563;&#x580;&#x561;&#x563;&#x580;&#x578;&#x582;&#x569;&#x575;&#x578;&#x582;&#x576;</label><textarea class="fta" placeholder="&#x531;&#x57F;&#x56F;&#x561;&#x563;&#x580;&#x56F;&#x561;&#x581;&#x56F;&#x561;&#x576; &#x543;&#x561;&#x57F;&#x580;&#x565;&#x56C;&#x56B;&#x584;&#x56B; &#x533;&#x565;&#x56C;, 2 &#x056c;&#x056B;&#x057F;&#x580;&#x2026;"></textarea></div>
+          <div class="fi full"><label class="fl">&#x531;&#x544;&#x562;&#x578;&#x572;&#x57BB; &#x576;&#x056f;&#x561;&#x563;&#x580;&#x561;&#x563;&#x580;&#x578;&#x582;&#x569;&#x575;&#x578;&#x582;&#x576; <span class="tip">(HTML)</span></label><textarea class="fta fin-html" placeholder="&lt;p&gt;&#x570;&#x561;&#x575;&#x587;&#x561;&#x563;&#x56B;&#x580;&#x56B; &#x562;&#x578;&#x057e;&#x561;&#x576;&#x564;&#x561;&#x56f;&#x578;&#x582;&#x569;&#x575;&#x578;&#x582;&#x576;...&lt;/p&gt;"></textarea></div>
+        </div>
+        <div class="sec-title">CTA / Card / SEO</div>
+        <div class="fg3" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">CTA</label><input class="fin" placeholder="&#x533;&#x576;&#x561;&#x570;&#x561;&#x569;&#x565;&#x56C; &#x563;&#x56B;&#x576;&#x568;"></div>
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" placeholder="&#x531;&#x576;&#x578;&#x582;&#x576;&#x56F; HY"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin" placeholder="&#x546;&#x056f;&#x561;&#x563;&#x580;&#x561;&#x563;&#x580;&#x578;&#x582;&#x569;&#x575;&#x578;&#x582;&#x576; HY"></div>
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" placeholder="SEO HY"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" placeholder="Meta HY"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" placeholder="OG HY"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info">
+            <span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span>
+            <div><div class="conf-status">HY version &#x2014; Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div>
+            <span class="conf-badge conf-n">&#x2014; Empty</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn bg2b bxs">Save Draft</button>
+            <button class="btn bsuc bxs" onclick="confirmLang('prod','hy')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish HY</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mf">
+      <div style="display:flex;gap:8px"><button class="btn bg2b" onclick="closeM('mprod')">Cancel</button><button class="btn bd2 bxs" onclick="closeM('mprod');showM('mconf')"><span class="material-symbols-outlined ic">delete</span>Delete</button></div>
+      <div style="display:flex;gap:8px"><button class="btn bg2b">Save All Drafts</button><button class="btn bp"><span class="material-symbols-outlined ic">publish</span>Publish All Languages</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CATEGORY -->
+<div class="mo" id="mcat">
+  <div class="md" style="max-width:560px">
+    <div class="mh"><h2 id="cattitle">New Category</h2><button class="mc2b" onclick="closeM('mcat')"><span class="material-symbols-outlined" style="font-size:26px">close</span></button></div>
+    <div class="mb" style="padding:20px">
+      <div class="fg" style="margin-bottom:18px">
+        <div class="fi"><label class="fl">Status</label><select class="fsel" id="catstat"><option>Active</option><option>Hidden</option></select></div>
+        <div class="fi"><label class="fl">Color Tag</label><div class="sw2" id="swatches"><div class="sw on" data-c="#4f7dff" style="background:#4f7dff"></div><div class="sw" data-c="#f5c842" style="background:#f5c842"></div><div class="sw" data-c="#3ecf8e" style="background:#3ecf8e"></div><div class="sw" data-c="#f04e4e" style="background:#f04e4e"></div><div class="sw" data-c="#f0934e" style="background:#f0934e"></div><div class="sw" data-c="#b57bff" style="background:#b57bff"></div><div class="sw" data-c="#9299b0" style="background:#9299b0"></div></div></div>
+        <div class="fi full"><label class="fl">URL Slug</label><div class="sr2"><div class="sp2">/[lang]/products/</div><input class="fin si2" id="catslug" placeholder="washing-gels" oninput="updCatUrl()"></div><div class="up" id="caturlprev"><span>/en/products/</span><span>/ru/products/</span><span>/ka/products/</span><span>/hy/products/</span></div></div>
+      </div>
+      <div class="ltabs-row" style="border-radius:8px 8px 0 0;overflow:hidden">
+        <button class="ltab on" onclick="swCatLang('en',this)"><span class="flag">&#x1F1EC;&#x1F1E7;</span><span class="lang-code">EN</span></button>
+        <button class="ltab" onclick="swCatLang('ru',this)"><span class="flag">&#x1F1F7;&#x1F1FA;</span><span class="lang-code">RU</span></button>
+        <button class="ltab" onclick="swCatLang('ka',this)"><span class="flag">&#x1F1EC;&#x1F1EA;</span><span class="lang-code">KA</span></button>
+        <button class="ltab" onclick="swCatLang('hy',this)"><span class="flag">&#x1F1E6;&#x1F1F2;</span><span class="lang-code">HY</span></button>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border2);border-top:none;border-radius:0 0 8px 8px;padding:16px">
+        <div class="lpane on" id="cat-lang-en"><div class="fg"><div class="fi"><label class="fl">Name (EN)</label><input class="fin" id="catnameen" placeholder="Washing Gels"></div><div class="fi"><label class="fl">Description (EN)</label><input class="fin" placeholder="Concentrated gels for all fabric types"></div><div class="fi"><label class="fl">SEO Title (EN)</label><input class="fin" placeholder="Washing Gels &#x2014; RAKUN Catalog"></div><div class="fi"><label class="fl">SEO Description (EN)</label><input class="fin" placeholder="Professional-grade washing gels&#x2026;"></div></div></div>
+        <div class="lpane" id="cat-lang-ru"><div class="fg"><div class="fi"><label class="fl">&#x41D;&#x430;&#x437;&#x432;&#x430;&#x43D;&#x438;&#x435; (RU)</label><input class="fin" placeholder="&#x413;&#x435;&#x43B;&#x438; &#x434;&#x43B;&#x44F; &#x441;&#x442;&#x438;&#x440;&#x43A;&#x438;"></div><div class="fi"><label class="fl">&#x41E;&#x43F;&#x438;&#x441;&#x430;&#x43D;&#x438;&#x435; (RU)</label><input class="fin" placeholder="&#x41A;&#x43E;&#x43D;&#x446;&#x435;&#x43D;&#x442;&#x440;&#x438;&#x440;&#x43E;&#x432;&#x430;&#x43D;&#x43D;&#x44B;&#x435; &#x433;&#x435;&#x43B;&#x438;&#x2026;"></div><div class="fi"><label class="fl">SEO Title (RU)</label><input class="fin" placeholder="&#x413;&#x435;&#x43B;&#x438; &#x434;&#x43B;&#x44F; &#x441;&#x442;&#x438;&#x440;&#x43A;&#x438; &#x2014; RAKUN"></div><div class="fi"><label class="fl">SEO Description (RU)</label><input class="fin" placeholder="&#x41F;&#x440;&#x43E;&#x444;&#x435;&#x441;&#x441;&#x438;&#x43E;&#x43D;&#x430;&#x43B;&#x44C;&#x43D;&#x44B;&#x435; &#x433;&#x435;&#x43B;&#x438;&#x2026;"></div></div></div>
+        <div class="lpane" id="cat-lang-ka"><div class="fg"><div class="fi"><label class="fl">&#x10E1;&#x10D0;&#x10EE;&#x10D4;&#x10DA;&#x10D8; (KA)</label><input class="fin" placeholder="&#x10E1;&#x10D0;&#x10E0;&#x10D4;&#x10EA;&#x10EE;&#x10D8; &#x10D2;&#x10D4;&#x10da;&#x10d4;&#x10d1;&#x10d8;"></div><div class="fi"><label class="fl">&#x10D0;&#x10E6;&#x10EC;&#x10D4;&#x10E0;&#x10D0; (KA)</label><input class="fin" placeholder="&#x10D9;&#x10DD;&#x10DC;&#x10EA;&#x10D4;&#x10DC;&#x10E2;&#x10E0;&#x10D8;&#x10E0;&#x10D4;&#x10D1;&#x10E3;&#x10DA;&#x10D8; &#x10D2;&#x10D4;&#x10da;&#x10d4;&#x10d1;&#x10d8;&#x2026;"></div></div></div>
+        <div class="lpane" id="cat-lang-hy"><div class="fg"><div class="fi"><label class="fl">&#x531;&#x576;&#x578;&#x582;&#x576; (HY)</label><input class="fin" placeholder="&#x053c;&#x057e;&#x561;&#x581;&#x584;&#x56B; &#x563;&#x565;&#x56C;&#x565;&#x580;"></div><div class="fi"><label class="fl">&#x546;&#x056f;&#x561;&#x563;&#x580;&#x561;&#x563;&#x580;&#x578;&#x582;&#x569;&#x575;&#x578;&#x582;&#x576; (HY)</label><input class="fin" placeholder="&#x531;&#x57F;&#x56F;&#x561;&#x563;&#x580;&#x56F;&#x561;&#x581;&#x56F;&#x561;&#x576; &#x563;&#x565;&#x56C;&#x565;&#x580;&#x2026;"></div></div></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn bg2b" onclick="closeM('mcat')">Cancel</button>
+      <div style="display:flex;gap:8px"><button class="btn bd2 bxs" onclick="closeM('mcat');showM('mconf')"><span class="material-symbols-outlined ic">delete</span>Delete</button><button class="btn bp" onclick="saveCat()"><span class="material-symbols-outlined ic">save</span>Save Category</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONFIRM -->
+<div class="mo" id="mconf">
+  <div class="md cmod">
+    <div class="mb"><span class="ci3">&#x1F5D1;&#xFE0F;</span><h3>Delete this item?</h3><p>This action cannot be undone. The item and all language versions will be permanently removed.</p></div>
+    <div class="mf" style="justify-content:center"><button class="btn bg2b" onclick="closeM('mconf')">Cancel</button><button class="btn bd2" onclick="closeM('mconf')"><span class="material-symbols-outlined ic">delete</span>Yes, Delete</button></div>
+  </div>
+</div>
+
+<script>
+const LANGS=['en','ru','ka','hy'];
+
+// DB Data (Initialized empty, ready to be populated by backend)
+let cats = []; 
+
+let editCatId=null,selColor='#4f7dff';
+
+// Lang confirm state (can be handled dynamically per item later)
+const blogState={en:'empty',ru:'empty',ka:'empty',hy:'empty'};
+const prodState={en:'empty',ru:'empty',ka:'empty',hy:'empty'};
+
+const META={
+  products:{t:'Products',c:'/ Catalog'},categories:{t:'Categories',c:'/ Catalog'},
+  blog:{t:'Blog Posts',c:'/ Content'},'page-home':{t:'Home Page',c:'/ Pages'},'page-catalog':{t:'Catalog Page',c:'/ Pages'},
+  'page-contacts':{t:'Contacts',c:'/ Pages'},'page-footer':{t:'Navigation & Footer',c:'/ Pages'},
+  settings:{t:'Settings',c:''},
+};
+
+function goP(id){
+  document.querySelectorAll('.pn').forEach(p=>p.classList.remove('on'));
+  const p=document.getElementById('pn-'+id);if(p)p.classList.add('on');
+  document.querySelectorAll('.ni[data-p]').forEach(n=>n.classList.remove('on'));
+  const ni=document.querySelector('.ni[data-p="'+id+'"]');if(ni)ni.classList.add('on');
+  document.querySelectorAll('.mni[data-p]').forEach(n=>n.classList.remove('on'));
+  const mi=document.querySelector('.mni[data-p="'+id+'"]');if(mi)mi.classList.add('on');
+  const m=META[id]||{t:id,c:''};
+  document.getElementById('tptitle').textContent=m.t;
+  document.getElementById('tpcrumb').textContent=m.c;
+  document.querySelector('.ct').scrollTop=0;
+  closeMob();
+}
+document.querySelectorAll('.ni[data-p]').forEach(el=>el.addEventListener('click',()=>goP(el.dataset.p)));
+document.querySelectorAll('.mni[data-p]').forEach(el=>el.addEventListener('click',()=>goP(el.dataset.p)));
+
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('col')}
+function openMob(){document.getElementById('sidebar').classList.add('mo');document.getElementById('sov').classList.add('on');document.body.style.overflow='hidden'}
+function closeMob(){document.getElementById('sidebar').classList.remove('mo');document.getElementById('sov').classList.remove('on');document.body.style.overflow=''}
+function checkMob(){
+  const m=window.innerWidth<=768;
+  const dt=document.getElementById('dtt'),mb=document.getElementById('mbt');
+  if(dt)dt.style.display=m?'none':'';if(mb)mb.style.display=m?'flex':'none';
+  const sg=document.getElementById('stgg');if(sg)sg.style.gridTemplateColumns=m?'1fr':'1fr 1fr';
+}
+window.addEventListener('resize',checkMob);checkMob();
+
+function showM(id){document.getElementById(id).classList.add('on');document.body.style.overflow='hidden'}
+function closeM(id){document.getElementById(id).classList.remove('on');document.body.style.overflow=''}
+document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeM(o.id)}));
+
+// BLOG LANG SWITCH
+function swBlogLang(lang,btn){
+  document.querySelectorAll('#mblog .lpane').forEach(p=>p.classList.remove('on'));
+  const p=document.getElementById('blog-lp-'+lang);if(p)p.classList.add('on');
+  document.querySelectorAll('#mblog .ltab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('#mblog .lang-pill').forEach(t=>t.classList.remove('on'));
+  if(btn){
+    btn.classList.add('on');
+    const overviewPill=document.querySelector('#blog-lang-overview .lang-pill[data-lang="'+lang+'"]');
+    if(overviewPill)overviewPill.classList.add('on');
+  }
+}
+// PRODUCT LANG SWITCH
+function swProdLang(lang,btn){
+  document.querySelectorAll('#mprod .lpane').forEach(p=>p.classList.remove('on'));
+  const p=document.getElementById('prod-lp-'+lang);if(p)p.classList.add('on');
+  document.querySelectorAll('#mprod .ltab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('#mprod .lang-overview .lang-pill').forEach(t=>t.classList.remove('on'));
+  if(btn){btn.classList.add('on');const pp=document.querySelector('#mprod .lang-overview .lang-pill[data-lang="'+lang+'"]');if(pp)pp.classList.add('on');}
+}
+// CATEGORY LANG SWITCH
+function swCatLang(lang,btn){
+  document.querySelectorAll('#mcat .lpane').forEach(p=>p.classList.remove('on'));
+  const p=document.getElementById('cat-lang-'+lang);if(p)p.classList.add('on');
+  document.querySelectorAll('#mcat .ltab').forEach(t=>t.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+}
+
+function togSec(h){h.classList.toggle('on');h.nextElementSibling.classList.toggle('on')}
+
+// CONFIRM LANG
+function confirmLang(type,lang){
+  const state=type==='blog'?blogState:prodState;
+  state[lang]='published';
+  const paneId=(type==='blog'?'blog-lp-':'prod-lp-')+lang;
+  const bar=document.querySelector('#'+paneId+' .conf-bar');
+  if(!bar)return;
+  const icon=bar.querySelector('.material-symbols-outlined');
+  const status=bar.querySelector('.conf-status');
+  const sub=bar.querySelector('.conf-sub');
+  const badge=bar.querySelector('.conf-badge');
+  if(icon){icon.textContent='check_circle';icon.style.color='var(--green)'}
+  if(status)status.textContent=lang.toUpperCase()+' version — Published';
+  if(sub)sub.textContent='Confirmed — '+new Date().toLocaleString();
+  if(badge){badge.className='conf-badge conf-y';badge.textContent='✓ Confirmed'}
+  const tabDot=document.querySelector('#'+(type==='blog'?'mblog':'mprod')+' .ltab[data-lang="'+lang+'"] .conf-dot');
+  if(tabDot){tabDot.className='conf-dot yes';tabDot.title='Published'}
+  const statusEl=document.getElementById((type==='blog'?'blog':'prod')+'-lstatus-'+lang);
+  if(statusEl){statusEl.textContent='Published';statusEl.className='lstatus lstatus-pub'}
+}
+
+// URL UPDATERS
+function updProdUrl(){
+  const cs=document.getElementById('prodcatsel'),sl=document.getElementById('prodslug'),pr=document.getElementById('produp');
+  if(!cs||!sl||!pr)return;
+  const c=cs.value||'category',s=sl.value.trim()||'slug';
+  pr.innerHTML=LANGS.map(l=>`<span>/${l}/products/${c}/${s}</span>`).join(' ');
+}
+function updBlogUrl(){
+  const sl=document.getElementById('blogslug'),pr=document.getElementById('blogurlprev');
+  if(!sl||!pr)return;
+  const s=sl.value.trim()||'slug';
+  pr.innerHTML=LANGS.map(l=>`<span>/${l}/blog/${s}</span>`).join(' ');
+}
+function updCatUrl(){
+  const sl=document.getElementById('catslug'),pr=document.getElementById('caturlprev');
+  if(!sl||!pr)return;
+  const s=sl.value.trim()||'[slug]';
+  pr.innerHTML=LANGS.map(l=>`<span>/${l}/products/${s}/</span>`).join(' ');
+}
+function updLang(v,lid,pid){
+  const lm={en:'English (EN)',ru:'Russian (RU)',ka:'Georgian (KA)',hy:'Armenian (HY)'};
+  const pm={en:'/en/',ru:'/ru/',ka:'/ka/',hy:'/hy/'};
+  const l=document.getElementById(lid),p=document.getElementById(pid);
+  if(l)l.textContent=lm[v]||v;if(p)p.textContent=pm[v]||'/'+v+'/';
+}
+
+// PILLS
+function addPill(lang){
+  const inp=document.getElementById('pillin-'+lang);if(!inp||!inp.value.trim())return;
+  const box=document.getElementById('pills-'+lang);
+  const s=document.createElement('span');s.className='pi';
+  s.innerHTML=inp.value.trim()+'<button onclick="rmPill(this)"><span class="material-symbols-outlined ic">close</span></button>';
+  box.appendChild(s);inp.value='';
+}
+function rmPill(btn){btn.closest('.pi').remove()}
+
+// INGREDIENTS
+function addIngr(){
+  const list=document.getElementById('ingren');if(!list)return;
+  const r=document.createElement('div');r.className='ir';
+  r.innerHTML='<input class="fin" placeholder="Ingredient name"><input class="fin pct" placeholder="0%"><button class="ib dr" onclick="this.parentNode.remove()"><span class="material-symbols-outlined ic">delete</span></button>';
+  list.appendChild(r);
+}
+
+// COLOR SWATCHES
+document.getElementById('swatches').addEventListener('click',e=>{
+  const sw=e.target.closest('.sw');if(!sw)return;
+  document.querySelectorAll('.sw').forEach(s=>s.classList.remove('on'));
+  sw.classList.add('on');selColor=sw.dataset.c;
+});
+
+// CATEGORIES
+function renderCats(){
+  const g=document.getElementById('catgrid'),tb=document.getElementById('cattbody'),mob=document.getElementById('catmob');
+  const cl=document.getElementById('catcntlbl'),bc=document.getElementById('bdgc');
+  if(cl)cl.textContent=cats.length+' categories';
+  if(bc)bc.textContent=cats.length;
+  if(g)g.innerHTML=cats.map(c=>`<div class="cc"><div class="cdot" style="background:${c.color}"></div><div class="ci2"><div class="cn">${c.name}</div><div class="csl">/${c.slug}/</div><div class="cct">${c.count} product${c.count!==1?'s':''} · ${c.status}</div></div><div class="ca"><button class="ib" onclick="editCat(${c.id})"><span class="material-symbols-outlined ic">edit</span></button>${c.count===0?`<button class="ib dr" onclick="delCat(${c.id})"><span class="material-symbols-outlined ic">delete</span></button>`:`<button class="ib" onclick="archCat(${c.id})"><span class="material-symbols-outlined ic">archive</span></button>`}</div></div>`).join('');
+  if(tb)tb.innerHTML=cats.map(c=>`<tr><td><div style="display:flex;align-items:center;gap:10px"><div style="width:10px;height:10px;border-radius:50%;background:${c.color};flex-shrink:0"></div><strong>${c.name}</strong></div></td><td style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text2)">${c.slug}</td><td>${c.count}</td><td><div class="lf"><span class="lfl d">EN</span><span class="lfl d">RU</span><span class="lfl ${c.id<3?'d':''}">KA</span><span class="lfl">HY</span></div></td><td><span class="sb2 ${c.status==='Active'?'sp':'sa'}">${c.status}</span></td><td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2)">/en/products/${c.slug}/</td><td><div class="ra"><button class="ib" onclick="editCat(${c.id})"><span class="material-symbols-outlined ic">edit</span></button><button class="ib" onclick="archCat(${c.id})"><span class="material-symbols-outlined ic">archive</span></button>${c.count===0?`<button class="ib dr" onclick="delCat(${c.id})"><span class="material-symbols-outlined ic">delete</span></button>`:''}</div></td></tr>`).join('');
+  if(mob)mob.innerHTML=cats.map(c=>`<div class="mc"><div class="mc-top"><div style="width:40px;height:40px;border-radius:10px;background:${c.color}20;border:2px solid ${c.color};display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="width:14px;height:14px;border-radius:50%;background:${c.color}"></div></div><div class="mc-i"><div class="mc-n">${c.name}</div><div class="mc-s">${c.count} product${c.count!==1?'s':''} · ${c.status}</div></div></div><div class="mc-bot"><div class="mc-m"><span class="sb2 ${c.status==='Active'?'sp':'sa'}">${c.status}</span></div><div class="mc-a"><button class="ib" onclick="editCat(${c.id})"><span class="material-symbols-outlined ic">edit</span></button>${c.count===0?`<button class="ib dr" onclick="delCat(${c.id})"><span class="material-symbols-outlined ic">delete</span></button>`:`<button class="ib" onclick="archCat(${c.id})"><span class="material-symbols-outlined ic">archive</span></button>`}</div></div><div class="mc-u">/en/products/${c.slug}/</div></div>`).join('');
+  const ps=document.getElementById('prodcatsel'),pf=document.getElementById('pf-cat');
+  if(ps){const v=ps.value;ps.innerHTML=cats.map(c=>`<option value="${c.slug}"${c.slug===v?' selected':''}>${c.name}</option>`).join('')}
+  if(pf){const v=pf.value;pf.innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option value="${c.slug}"${c.slug===v?' selected':''}>${c.name}</option>`).join('')}
+}
+function openNewCat(){
+  editCatId=null;document.getElementById('cattitle').textContent='New Category';
+  document.getElementById('catslug').value='';document.getElementById('catnameen').value='';
+  document.getElementById('catstat').value='Active';selColor='#4f7dff';
+  document.querySelectorAll('.sw').forEach(s=>s.classList.toggle('on',s.dataset.c==='#4f7dff'));
+  updCatUrl();showM('mcat');
+}
+function editCat(id){
+  const c=cats.find(x=>x.id===id);if(!c)return;
+  editCatId=id;document.getElementById('cattitle').textContent='Edit Category';
+  document.getElementById('catslug').value=c.slug;document.getElementById('catnameen').value=c.name;
+  document.getElementById('catstat').value=c.status;selColor=c.color;
+  document.querySelectorAll('.sw').forEach(s=>s.classList.toggle('on',s.dataset.c===c.color));
+  updCatUrl();showM('mcat');
+}
+function delCat(id){cats=cats.filter(c=>c.id!==id);renderCats()}
+function archCat(id){const c=cats.find(x=>x.id===id);if(c)c.status=c.status==='Active'?'Hidden':'Active';renderCats()}
+function saveCat(){
+  const slug=document.getElementById('catslug').value.trim();
+  const name=document.getElementById('catnameen').value.trim();
+  if(!slug||!name){alert('Please fill in the name and slug.');return}
+  if(editCatId){const c=cats.find(x=>x.id===editCatId);if(c){c.slug=slug;c.name=name;c.color=selColor;c.status=document.getElementById('catstat').value}}
+  else cats.push({id:Math.max(0,...cats.map(c=>c.id))+1,slug,name,color:selColor,count:0,status:document.getElementById('catstat').value});
+  editCatId=null;renderCats();closeM('mcat');
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mo.on').forEach(m=>closeM(m.id))});
+
+// ══════════════════════════════════════════════════════════════
+// ДАННЫЕ ИЗ FIRESTORE — встроены при сборке generate_site.py
+// ══════════════════════════════════════════════════════════════
+(function() {
+  const D  = window.__SITE_DATA__ || {};
+  const PRODUCTS   = D.products   || [];
+  const POSTS      = D.posts      || [];
+  const CATEGORIES = D.categories || [];
+
+  function _gf(doc)        { return doc.globalFields || {}; }
+  function _loc(doc, lang) {
+    // Support both doc['en'] and doc['translations']['en']
+    var t = doc['translations'] || {};
+    if (t[lang] && Object.keys(t[lang]).length) return t[lang];
+    if (t['en']  && Object.keys(t['en']).length)  return t['en'];
+    return doc[lang] || doc['en'] || {};
+  }
+  function _esc(s)         { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function _gfSlug(doc)    { return _gf(doc).slug || doc._id || ''; }
+  function _catSlug(doc)   { return (_gf(doc).categoryId||'products').toLowerCase().replace(/[^a-z0-9]+/g,'-'); }
+  function _firstImg(doc)  { const imgs=_gf(doc).images||_gf(doc).imageUrls||[]; return imgs[0]||_gf(doc).ogImageUrl||''; }
+  function _langs(doc) {
+    var t = doc['translations'] || {};
+    return ['en','ru','ka','hy'].map(function(l){
+      var has = (t[l] && Object.keys(t[l]).length > 0) || (doc[l] && Object.keys(doc[l]).length > 0);
+      return '<span class="lfl '+(has?'d':'')+'">'+l.toUpperCase()+'</span>';
+    }).join('');
+  }
+
+  // Обновляем счётчики бейджей
+  const bdgp=document.getElementById('bdgp'), bdgb=document.getElementById('bdgb'), bdgc=document.getElementById('bdgc');
+  if(bdgp) bdgp.textContent=PRODUCTS.length;
+  if(bdgb) bdgb.textContent=POSTS.length;
+  if(bdgc) bdgc.textContent=CATEGORIES.length;
+
+  // Заполняем cats из реальных данных Firestore (для renderCats)
+  CATEGORIES.forEach(function(cat,i){
+    const g=_gf(cat), en=_loc(cat,'en');
+    const slug=g.slug||cat._id;
+    if(!cats.find(c=>c.slug===slug)){
+      const count=PRODUCTS.filter(p=>_catSlug(p)===slug.toLowerCase().replace(/[^a-z0-9]+/g,'-')).length;
+      cats.push({id:i+1, slug:slug, name:en.name||slug, color:g.color||'#4f7dff', count:count, status:g.status||'Active'});
+    }
+  });
+
+  // ── ТАБЛИЦА PRODUCTS ───────────────────────────────────────
+  var prodsAll = PRODUCTS.slice();
+
+  function renderProducts(list) {
+    var tbody = document.getElementById('products-tbody');
+    var mob   = document.getElementById('products-mob');
+    if (!list.length) {
+      if(tbody) tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text3)">No products found</td></tr>';
+      if(mob)   mob.innerHTML='';
+      return;
+    }
+    if(tbody) tbody.innerHTML = list.map(function(p){
+      var en=_loc(p,'en'), g=_gf(p);
+      var img   = _firstImg(p);
+      var slug  = _gfSlug(p);
+      var cs    = _catSlug(p);
+      var url   = '/en/products/'+cs+'/'+slug+'/';
+      var fbUrl = 'https://console.firebase.google.com/project/racun-shop/firestore/data/~2Fproducts~2F'+encodeURIComponent(p._id);
+      var name  = en.productName||en.cardTitle||p._id||'';
+      var price = g.price||'—';
+      var st    = g.status||p.status||'Draft';
+      var stCls = st.toLowerCase()==='published'?'sp':st.toLowerCase()==='archived'?'sa':'';
+      return '<tr>'+
+        '<td><div style="display:flex;align-items:center;gap:10px">'+
+          (img?'<img src="'+_esc(img)+'" style="width:44px;height:44px;object-fit:cover;border-radius:6px;border:1px solid var(--border)">':'<div style="width:44px;height:44px;background:var(--bg3);border-radius:6px;border:1px solid var(--border)"></div>')+
+          '<div><strong>'+_esc(name)+'</strong><br><span style="font-size:11px;color:var(--text3);font-family:\'IBM Plex Mono\',monospace">'+_esc(p._id)+'</span></div>'+
+        '</div></td>'+
+        '<td>'+_esc(en.categoryLabel||g.categoryId||'—')+'</td>'+
+        '<td>'+_esc(price)+'</td>'+
+        '<td><div class="lf">'+_langs(p)+'</div></td>'+
+        '<td><span class="sb2 '+stCls+'">'+_esc(st)+'</span></td>'+
+        '<td style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--text2)"><a href="'+_esc(url)+'" target="_blank">'+_esc(url)+'</a></td>'+
+        '<td><div class="ra">'+
+          '<a href="'+_esc(fbUrl)+'" target="_blank" class="ib" title="Edit in Firebase"><span class="material-symbols-outlined ic">edit</span></a>'+
+          '<a href="'+_esc(url)+'" target="_blank" class="ib" title="View"><span class="material-symbols-outlined ic">open_in_new</span></a>'+
+        '</div></td>'+
+      '</tr>';
+    }).join('');
+    if(mob) mob.innerHTML = list.map(function(p){
+      var en=_loc(p,'en'), g=_gf(p);
+      var img=_firstImg(p), slug=_gfSlug(p), cs=_catSlug(p);
+      var url='/en/products/'+cs+'/'+slug+'/';
+      var name=en.productName||en.cardTitle||p._id||'';
+      var st=g.status||p.status||'Draft';
+      var stCls=st.toLowerCase()==='published'?'sp':st.toLowerCase()==='archived'?'sa':'';
+      return '<div class="mc"><div class="mc-top">'+
+        (img?'<img src="'+_esc(img)+'" style="width:48px;height:48px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">':'<div style="width:48px;height:48px;background:var(--bg3);border-radius:8px"></div>')+
+        '<div class="mc-i"><div class="mc-n">'+_esc(name)+'</div><div class="mc-s">'+_esc(en.categoryLabel||g.categoryId||'')+(g.price?' · '+g.price:'')+'</div></div>'+
+        '</div><div class="mc-bot"><div class="mc-m"><span class="sb2 '+stCls+'">'+_esc(st)+'</span></div>'+
+        '<div class="mc-a"><a href="https://console.firebase.google.com/project/racun-shop/firestore/data/~2Fproducts~2F'+encodeURIComponent(p._id)+'" target="_blank" class="ib"><span class="material-symbols-outlined ic">edit</span></a>'+
+        '<a href="'+_esc(url)+'" target="_blank" class="ib"><span class="material-symbols-outlined ic">open_in_new</span></a></div></div>'+
+        '<div class="mc-u">/en/products/'+_esc(cs)+'/'+_esc(slug)+'/</div></div>';
+    }).join('');
+  }
+  renderProducts(prodsAll);
+
+  // Фильтр продуктов по поиску
+  var prodSearch = document.querySelector('#pn-products .sbox input');
+  var prodCatSel = document.getElementById('pf-cat');
+  function filterProds() {
+    var q   = (prodSearch?prodSearch.value:'').toLowerCase().trim();
+    var cat = prodCatSel?prodCatSel.value:'';
+    var list = prodsAll.filter(function(p){
+      var en=_loc(p,'en'), g=_gf(p);
+      var name=(en.productName||en.cardTitle||p._id||'').toLowerCase();
+      if(cat && _catSlug(p)!==cat) return false;
+      if(q && !name.includes(q) && !(p._id||'').toLowerCase().includes(q)) return false;
+      return true;
+    });
+    renderProducts(list);
+  }
+  if(prodSearch) prodSearch.addEventListener('input', filterProds);
+  if(prodCatSel) prodCatSel.addEventListener('change', filterProds);
+
+  // ── ТАБЛИЦА BLOG ───────────────────────────────────────────
+  var postsAll = POSTS.slice();
+
+  function renderPosts(list) {
+    var tbody = document.getElementById('blog-tbody');
+    var mob   = document.getElementById('blog-mob');
+    if (!list.length) {
+      if(tbody) tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text3)">No posts found</td></tr>';
+      if(mob)   mob.innerHTML='';
+      return;
+    }
+    if(tbody) tbody.innerHTML = list.map(function(p){
+      var en=_loc(p,'en'), g=_gf(p);
+      var slug  = _gfSlug(p);
+      var url   = '/en/blog/'+slug+'/';
+      var fbUrl = 'https://console.firebase.google.com/project/racun-shop/firestore/data/~2Fposts~2F'+encodeURIComponent(p._id);
+      var title = en.h1||en.cardTitle||p._id||'';
+      var st    = g.status||p.status||'Draft';
+      var stCls = st.toLowerCase()==='published'?'sp':st.toLowerCase()==='archived'?'sa':'';
+      return '<tr>'+
+        '<td><strong>'+_esc(title)+'</strong><br><span style="font-size:11px;color:var(--text3);font-family:\'IBM Plex Mono\',monospace">'+_esc(p._id)+'</span></td>'+
+        '<td>'+_esc(g.category||'—')+'</td>'+
+        '<td>'+_esc(g.authorName||'—')+'</td>'+
+        '<td><div class="lf">'+_langs(p)+'</div></td>'+
+        '<td><span class="sb2 '+stCls+'">'+_esc(st)+'</span></td>'+
+        '<td style="font-family:\'IBM Plex Mono\',monospace;font-size:10px;color:var(--text2)"><a href="'+_esc(url)+'" target="_blank">'+_esc(url)+'</a></td>'+
+        '<td style="font-size:12px;color:var(--text2)">'+_esc(g.publishedAt||'—')+'</td>'+
+        '<td><div class="ra">'+
+          '<a href="'+_esc(fbUrl)+'" target="_blank" class="ib"><span class="material-symbols-outlined ic">edit</span></a>'+
+          '<a href="'+_esc(url)+'" target="_blank" class="ib"><span class="material-symbols-outlined ic">open_in_new</span></a>'+
+        '</div></td>'+
+      '</tr>';
+    }).join('');
+    if(mob) mob.innerHTML = list.map(function(p){
+      var en=_loc(p,'en'), g=_gf(p);
+      var slug=_gfSlug(p), url='/en/blog/'+slug+'/';
+      var title=en.h1||en.cardTitle||p._id||'';
+      var og=g.ogImageUrl||'';
+      var st=g.status||p.status||'Draft';
+      var stCls=st.toLowerCase()==='published'?'sp':st.toLowerCase()==='archived'?'sa':'';
+      return '<div class="mc"><div class="mc-top">'+
+        (og?'<img src="'+_esc(og)+'" style="width:60px;height:40px;object-fit:cover;border-radius:6px">':'<div style="width:60px;height:40px;background:var(--bg3);border-radius:6px"></div>')+
+        '<div class="mc-i"><div class="mc-n">'+_esc(title)+'</div><div class="mc-s">'+_esc(g.category||'')+( g.authorName?' · '+g.authorName:'')+'</div></div>'+
+        '</div><div class="mc-bot"><div class="mc-m"><span class="sb2 '+stCls+'">'+_esc(st)+'</span></div>'+
+        '<div class="mc-a"><a href="https://console.firebase.google.com/project/racun-shop/firestore/data/~2Fposts~2F'+encodeURIComponent(p._id)+'" target="_blank" class="ib"><span class="material-symbols-outlined ic">edit</span></a>'+
+        '<a href="'+_esc(url)+'" target="_blank" class="ib"><span class="material-symbols-outlined ic">open_in_new</span></a></div></div>'+
+        '<div class="mc-u">/en/blog/'+_esc(slug)+'/</div></div>';
+    }).join('');
+  }
+  renderPosts(postsAll);
+
+  var blogSearch = document.querySelector('#pn-blog .sbox input');
+  if(blogSearch) blogSearch.addEventListener('input', function(){
+    var q=this.value.toLowerCase().trim();
+    renderPosts(postsAll.filter(function(p){
+      var en=_loc(p,'en');
+      var t=(en.h1||en.cardTitle||p._id||'').toLowerCase();
+      return !q||t.includes(q)||(p._id||'').toLowerCase().includes(q);
+    }));
+  });
+
+  // Build info
+  var builtAt = document.getElementById('build-info-time');
+  if(!builtAt){
+    // Добавляем строку в topbar если элемента нет
+    var tc = document.getElementById('tpcrumb');
+    if(tc) tc.title = 'Built: '+(window.__GENERATED_AT__||'');
+  } else {
+    builtAt.textContent = window.__GENERATED_AT__||'';
+  }
+})();
+
+renderCats();updProdUrl();updBlogUrl();updCatUrl();
+</script>
+</body>
+</html>
