@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>RAKUN Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+<div class="sov" id="sov" onclick="closeMob()"></div>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sbl"><div class="lmark">RK</div><div class="ltxt">RAKUN<small>Admin Panel</small></div></div>
+  <nav class="snav">
+    <div class="ngl">Content</div>
+    <div class="ni on" data-p="products"><span class="material-symbols-outlined ic">inventory_2</span><span class="lbl">Products</span><span class="bdg" id="bdgp">0</span></div>
+    <div class="ni" data-p="categories"><span class="material-symbols-outlined ic">category</span><span class="lbl">Categories</span><span class="bdg" id="bdgc">0</span></div>
+    <div class="ni" data-p="blog"><span class="material-symbols-outlined ic">article</span><span class="lbl">Blog Posts</span><span class="bdg" id="bdgb">0</span></div>
+    <div class="ngl">Pages</div>
+    <div class="ni" data-p="page-home"><span class="material-symbols-outlined ic">home</span><span class="lbl">Home Page</span></div>
+    <div class="ni" data-p="page-catalog"><span class="material-symbols-outlined ic">grid_view</span><span class="lbl">Catalog Page</span></div>
+    <div class="ni" data-p="page-contacts"><span class="material-symbols-outlined ic">location_on</span><span class="lbl">Contacts</span></div>
+    <div class="ni" data-p="page-footer"><span class="material-symbols-outlined ic">link</span><span class="lbl">Navigation &amp; Footer</span></div>
+    <div class="ngl">Settings</div>
+    <div class="ni" data-p="settings"><span class="material-symbols-outlined ic">settings</span><span class="lbl">Settings</span></div>
+  </nav>
+  <div class="sft"><div class="av">AD</div><div class="ui"><div class="un">Admin</div><div class="ur">Super Administrator</div></div></div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <button class="tbt" id="dtt" onclick="toggleSidebar()"><span class="material-symbols-outlined">menu</span></button>
+    <button class="tbt" id="mbt" style="display:none" onclick="openMob()"><span class="material-symbols-outlined">menu</span></button>
+    <span class="tt" id="tptitle">Products</span>
+    <span class="tc" id="tpcrumb">/ Catalog</span>
+    <div class="tr">
+      <button class="btn bg2b bxs bv"><span class="material-symbols-outlined ic" style="font-size:15px">open_in_new</span>Visit Site</button>
+      <div class="av tav">AD</div>
+    </div>
+  </div>
+
+  <div class="ct">
+
+    <!-- PRODUCTS LIST -->
+    <div class="pn on" id="pn-products">
+      <div class="ph"><div class="pht"><h1>Products</h1><p>URL: /en/products/<strong>[category-slug]</strong>/<strong>[product-slug]</strong></p></div><div class="pha"><button class="btn bp" id="btn-new-prod"><span class="material-symbols-outlined ic">add</span>New Product</button></div></div>
+      <div class="tw">
+        <div class="ttb">
+          <div class="sbox"><span class="material-symbols-outlined ic">search</span><input type="text" id="search-products" placeholder="Search products…" oninput="filterProducts()"></div>
+          <select class="fs" id="pf-cat" onchange="filterProducts()"><option value="">All categories</option></select>
+          <select class="fs" id="pf-prod-status" onchange="filterProducts()"><option value="">All statuses</option><option>Published</option><option>Draft</option><option>Archived</option></select>
+        </div>
+        <table class="dt">
+          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Translations</th><th>Status</th><th>URL</th><th>Actions</th></tr></thead>
+          <tbody id="products-tbody"></tbody>
+        </table>
+        <div class="mcl" id="products-mob"></div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="pn" id="pn-categories">
+      <div class="ph"><div class="pht"><h1>Categories</h1><p>URL: /en/products/<strong>[category-slug]</strong>/product-slug</p></div><div class="pha"><button class="btn bp" onclick="openNewCat()"><span class="material-symbols-outlined ic">add</span>New Category</button></div></div>
+      <div class="nt"><span class="material-symbols-outlined ic">info</span>Category slug is part of every product URL. Changing it breaks existing links — set up redirects.</div>
+      <div class="cg2" id="catgrid"></div>
+      <div class="tw">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between">All Categories<span style="font-size:12px;color:var(--text2);font-weight:500" id="catcntlbl">0 categories</span></div>
+        <table class="dt"><thead><tr><th>Name (EN)</th><th>Slug</th><th>Products</th><th>Translations</th><th>Status</th><th>URL</th><th>Actions</th></tr></thead><tbody id="cattbody"></tbody></table>
+        <div class="mcl" id="catmob"></div>
+      </div>
+    </div>
+
+    <!-- BLOG LIST -->
+    <div class="pn" id="pn-blog">
+      <div class="ph"><div class="pht"><h1>Blog Posts</h1><p>URL: /en/blog/<strong>[post-slug]</strong></p></div><div class="pha"><button class="btn bp" id="btn-new-blog"><span class="material-symbols-outlined ic">add</span>New Post</button></div></div>
+      <div class="tw">
+        <div class="ttb">
+          <div class="sbox"><span class="material-symbols-outlined ic">search</span><input type="text" id="search-blog" placeholder="Search posts…" oninput="filterBlog()"></div>
+          <select class="fs" id="pf-blog-status" onchange="filterBlog()"><option value="">All statuses</option><option>Published</option><option>Draft</option><option>Archived</option></select>
+        </div>
+        <table class="dt">
+          <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Translations</th><th>Status</th><th>URL</th><th>Actions</th></tr></thead>
+          <tbody id="blog-tbody"></tbody>
+        </table>
+        <div class="mcl" id="blog-mob"></div>
+      </div>
+    </div>
+
+    <!-- HOME PAGE -->
+    <div class="pn" id="pn-page-home">
+      <div class="ph"><div class="pht"><h1>Home Page</h1><p>index.html — Hero, Products, Blog, Reviews, Contacts</p></div><div class="pha"><select class="fs" id="home-lang-sel" onchange="switchPageLang('home',this.value)"><option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option></select><button class="btn bp" onclick="savePageDoc('home')"><span class="material-symbols-outlined ic">save</span>Save</button></div></div>
+      <div class="nt"><span class="material-symbols-outlined ic">info</span>Editing: <strong id="hll" style="margin:0 4px">English (EN)</strong> prefix: <code id="hlp" style="font-family:'IBM Plex Mono',monospace;margin-left:4px">/en/</code></div>
+      <div id="home-slides-wrap">
+        <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">view_carousel</span><h4>Hero Slider</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on" id="home-slides-body">
+          <!-- слайды рендерятся динамически -->
+        </div></div>
+        <button class="btn bg2b bxs" style="margin:0 0 18px 0" onclick="addSlide()"><span class="material-symbols-outlined ic">add</span>Add Slide</button>
+      </div>
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">campaign</span><h4>Section Titles</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">Products — Label</label><input class="fin" id="home-productsLabel"></div>
+        <div class="fi"><label class="fl">Products — Title</label><input class="fin" id="home-productsTitle"></div>
+        <div class="fi"><label class="fl">Blog — Label</label><input class="fin" id="home-blogLabel"></div>
+        <div class="fi"><label class="fl">Blog — Title</label><input class="fin" id="home-blogTitle"></div>
+        <div class="fi"><label class="fl">Reviews — Label</label><input class="fin" id="home-reviewsLabel"></div>
+        <div class="fi"><label class="fl">Reviews — Title</label><input class="fin" id="home-reviewsTitle"></div>
+      </div></div></div>
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">star</span><h4>Reviews</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div id="home-reviews-body"><!-- динамически --></div>
+        <button class="btn bg2b bxs" style="margin-top:8px" onclick="addReview()"><span class="material-symbols-outlined ic">add</span>Add Review</button>
+      </div></div>
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="home-seoTitle"></div>
+        <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="home-metaDescription"></div>
+        <div class="fi"><label class="fl">OG Title</label><input class="fin" id="home-ogTitle"></div>
+        <div class="fi"><label class="fl">OG Description</label><input class="fin" id="home-ogDescription"></div>
+        <div class="fi"><label class="fl">OG Image URL</label><input class="fin" id="home-ogImageUrl"></div>
+      </div></div></div>
+    </div>
+
+    <!-- CATALOG PAGE -->
+    <div class="pn" id="pn-page-catalog">
+      <div class="ph"><div class="pht"><h1>Catalog Page</h1></div><div class="pha"><select class="fs" onchange="switchPageLang('catalog',this.value)"><option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option></select><button class="btn bp" onclick="savePageDoc('catalog')"><span class="material-symbols-outlined ic">save</span>Save</button></div></div>
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">campaign</span><h4>Catalog Hero</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg">
+        <div class="fi"><label class="fl">Title</label><input class="fin" id="catalog-title"></div>
+        <div class="fi"><label class="fl">Subtitle</label><input class="fin" id="catalog-subtitle"></div>
+        <div class="fi full"><label class="fl">Description</label><textarea class="fta" id="catalog-description" style="min-height:60px"></textarea></div>
+      </div></div></div>
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="catalog-seoTitle"></div>
+        <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="catalog-metaDescription"></div>
+      </div></div></div>
+    </div>
+
+    <!-- CONTACTS -->
+    <div class="pn" id="pn-page-contacts">
+      <div class="ph"><div class="pht"><h1>Contacts Section</h1></div><div class="pha"><select class="fs" onchange="switchPageLang('contacts',this.value)"><option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option></select><button class="btn bp" onclick="savePageDoc('contacts')"><span class="material-symbols-outlined ic">save</span>Save</button></div></div>
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">contact_phone</span><h4>Contact Details</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg">
+        <div class="fi"><label class="fl">Label <span class="tip">(локализованный)</span></label><input class="fin" id="contacts-label"></div>
+        <div class="fi"><label class="fl">Title <span class="tip">(локализованный)</span></label><input class="fin" id="contacts-title"></div>
+        <div class="fi"><label class="fl">Phone <span class="tip">(глобальный)</span></label><input class="fin" id="contacts-phone"></div>
+        <div class="fi"><label class="fl">Email <span class="tip">(глобальный)</span></label><input class="fin" id="contacts-email"></div>
+        <div class="fi"><label class="fl">CTA Button Text <span class="tip">(локализованный)</span></label><input class="fin" id="contacts-ctaButton"></div>
+        <div class="fi"><label class="fl">CTA Email <span class="tip">(глобальный)</span></label><input class="fin" id="contacts-ctaEmail"></div>
+        <div class="fi full"><label class="fl">Logistics Terms <span class="tip">(локализованный)</span></label><textarea class="fta" id="contacts-logisticsTerms"></textarea></div>
+        <div class="fi full"><label class="fl">Maps Embed URL <span class="tip">(глобальный)</span></label><input class="fin" id="contacts-mapsEmbed"></div>
+      </div></div></div>
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="contacts-seoTitle"></div>
+        <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="contacts-metaDescription"></div>
+      </div></div></div>
+    </div>
+
+    <!-- FOOTER / NAV -->
+    <div class="pn" id="pn-page-footer">
+      <div class="ph"><div class="pht"><h1>Navigation &amp; Footer</h1></div><div class="pha"><select class="fs" onchange="switchPageLang('footer-nav',this.value)"><option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option></select><button class="btn bp" onclick="savePageDoc('footer-nav')"><span class="material-symbols-outlined ic">save</span>Save</button></div></div>
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">menu</span><h4>Navigation Labels</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg">
+        <div class="fi"><label class="fl">Home</label><input class="fin" id="footer-nav-home"></div>
+        <div class="fi"><label class="fl">About Us</label><input class="fin" id="footer-nav-about"></div>
+        <div class="fi"><label class="fl">Catalog</label><input class="fin" id="footer-nav-catalog"></div>
+        <div class="fi"><label class="fl">Blog</label><input class="fin" id="footer-nav-blog"></div>
+        <div class="fi"><label class="fl">Contacts</label><input class="fin" id="footer-nav-contacts"></div>
+      </div></div></div>
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">image</span><h4>Footer</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">Footer Link 1</label><input class="fin" id="footer-nav-link1"></div>
+        <div class="fi"><label class="fl">Footer Link 2</label><input class="fin" id="footer-nav-link2"></div>
+        <div class="fi"><label class="fl">Footer Link 3</label><input class="fin" id="footer-nav-link3"></div>
+        <div class="fi"><label class="fl">Copyright</label><input class="fin" id="footer-nav-copyright"></div>
+      </div></div></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="pn" id="pn-settings">
+      <div class="ph"><div class="pht"><h1>Settings</h1></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px" id="stgg">
+        <div>
+          <div class="tw" style="padding:18px;margin-bottom:18px">
+            <div style="font-size:13px;font-weight:800;margin-bottom:14px">General</div>
+            <div class="fi" style="margin-bottom:12px"><label class="fl">Site Name</label><input class="fin" id="settings-siteName"></div>
+            <div class="fi" style="margin-bottom:12px"><label class="fl">Default Language</label>
+              <select class="fsel" id="settings-defaultLang">
+                <option value="en">English (EN)</option><option value="ru">Russian (RU)</option>
+                <option value="ka">Georgian (KA)</option><option value="hy">Armenian (HY)</option>
+              </select>
+            </div>
+            <div class="fi"><label class="fl">Default Meta Description</label><textarea class="fta" id="settings-metaDescription" style="min-height:70px"></textarea></div>
+          </div>
+          <div class="tw" style="padding:18px">
+            <div style="font-size:13px;font-weight:800;margin-bottom:14px">Language URL Prefixes</div>
+            <div class="fg">
+              <div class="fi"><label class="fl">English</label><div class="sr2"><div class="sp2">/</div><input class="fin si2" id="settings-prefix-en" value="en"></div></div>
+              <div class="fi"><label class="fl">Russian</label><div class="sr2"><div class="sp2">/</div><input class="fin si2" id="settings-prefix-ru" value="ru"></div></div>
+              <div class="fi"><label class="fl">Georgian</label><div class="sr2"><div class="sp2">/</div><input class="fin si2" id="settings-prefix-ka" value="ka"></div></div>
+              <div class="fi"><label class="fl">Armenian</label><div class="sr2"><div class="sp2">/</div><input class="fin si2" id="settings-prefix-hy" value="hy"></div></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="tw" style="padding:18px;margin-bottom:18px">
+            <div style="font-size:13px;font-weight:800;margin-bottom:14px">Admin</div>
+            <div class="fi" style="margin-bottom:12px"><label class="fl">Admin Name</label><input class="fin" id="settings-adminName"></div>
+          </div>
+          <div class="tw" style="padding:18px">
+            <div style="font-size:13px;font-weight:800;margin-bottom:14px">Firebase Project</div>
+            <div class="fi" style="margin-bottom:12px"><label class="fl">Project ID</label><input class="fin" value="racun-shop" readonly style="opacity:.6"></div>
+            <div class="fi" style="margin-bottom:14px"><label class="fl">Status</label><input class="fin" id="fb-status" value="Connecting…" readonly style="opacity:.6"></div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:18px;text-align:right"><button class="btn bp" onclick="saveSettings()"><span class="material-symbols-outlined ic">save</span>Save All Settings</button></div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- MOBILE NAV -->
+<nav class="mn">
+  <div class="mni2">
+    <button class="mni on" data-p="products"><span class="material-symbols-outlined ic">inventory_2</span><span class="mnl">Products</span></button>
+    <button class="mni" data-p="categories"><span class="material-symbols-outlined ic">category</span><span class="mnl">Categories</span></button>
+    <button class="mni" data-p="blog"><span class="material-symbols-outlined ic">article</span><span class="mnl">Blog</span></button>
+    <button class="mni" onclick="openMob()"><span class="material-symbols-outlined ic">menu</span><span class="mnl">More</span></button>
+  </div>
+</nav>
+
+<!-- ============================================================
+     MODAL: BLOG POST EDITOR
+============================================================ -->
+<div class="mo" id="mblog">
+  <div class="md" style="max-width:920px">
+    <div class="mh">
+      <h2 id="blogtitle">Blog Post Editor</h2>
+      <button class="mc2b" onclick="closeM('mblog')"><span class="material-symbols-outlined" style="font-size:26px">close</span></button>
+    </div>
+
+    <div class="gf-block">
+      <div class="gf-title">🌐 Global Fields — shared across all language versions</div>
+      <div class="fg3">
+        <div class="fi"><label class="fl">Status</label><select class="fsel" id="blogstat"><option value="Draft">Draft</option><option value="Published">Published</option><option value="Archived">Archived</option></select></div>
+        <div class="fi"><label class="fl">Category</label><select class="fsel" id="blogcat"><option value="Technology">Technology</option><option value="Eco &amp; Safety">Eco &amp; Safety</option><option value="Guides">Guides</option><option value="Science">Science</option><option value="Industry">Industry</option></select></div>
+        <div class="fi"><label class="fl">Author Name</label><input class="fin" id="blogauthor"></div>
+        <div class="fi"><label class="fl">Tag Badge</label><input class="fin" id="blogbadge"></div>
+        <div class="fi"><label class="fl">Read Time</label><input class="fin" id="blogread" placeholder="5 min read"></div>
+        <div class="fi"><label class="fl">Publish Date</label><input class="fin" id="blogdate" type="date"></div>
+        <div class="fi"><label class="fl">Last Modified</label><input class="fin" type="datetime-local"></div>
+        <div class="fi"><label class="fl">Priority <span class="tip">(sitemap, 0.1–1.0)</span></label><input class="fin" id="blogprio" placeholder="0.8"></div>
+        <div class="fi"><label class="fl">Change Frequency</label><select class="fsel" id="blogfreq"><option>weekly</option><option>monthly</option><option>daily</option><option>yearly</option><option>never</option></select></div>
+      </div>
+      <div class="fg" style="margin-top:14px">
+        <div class="fi"><label class="fl">URL Slug <span class="tip">(shared across all languages)</span></label><div class="sr2"><div class="sp2">/[lang]/blog/</div><input class="fin si2" id="blogslug" oninput="updBlogUrl()"></div><div class="up" id="blogurlprev"></div></div>
+        <div class="fi"><label class="fl">x-default hreflang <span class="tip">(canonical language)</span></label><select class="fsel" id="bloghreflang"><option value="en">EN — English</option><option value="ru">RU — Russian</option><option value="ka">KA — Georgian</option><option value="hy">HY — Armenian</option></select></div>
+        <div class="fi"><label class="fl">Region for hreflang <span class="tip">(e.g. en-GE)</span></label><input class="fin" id="blogregion" placeholder="e.g. en-GE, ru-GE, ka-GE, hy-AM"></div>
+        <div class="fi"><label class="fl">OG Image URL</label><input class="fin" id="blogogimg" placeholder="https://…/og-image.jpg"></div>
+      </div>
+      <div class="fi" style="margin-top:14px"><label class="fl">Schema.org JSON-LD <span class="tip">(Article schema)</span></label><textarea class="fmono" style="min-height:100px"></textarea></div>
+    </div>
+
+    <div class="lang-overview" id="blog-lang-overview">
+      <div class="lang-pill on" onclick="swBlogLang('en',this)" data-lang="en"><span class="flag">🇬🇧</span><span class="lcode">EN</span><span class="lstatus lstatus-empty" id="blog-lstatus-en">Empty</span></div>
+      <div class="lang-pill" onclick="swBlogLang('ru',this)" data-lang="ru"><span class="flag">🇷🇺</span><span class="lcode">RU</span><span class="lstatus lstatus-empty" id="blog-lstatus-ru">Empty</span></div>
+      <div class="lang-pill" onclick="swBlogLang('ka',this)" data-lang="ka"><span class="flag">🇬🇪</span><span class="lcode">KA</span><span class="lstatus lstatus-empty" id="blog-lstatus-ka">Empty</span></div>
+      <div class="lang-pill" onclick="swBlogLang('hy',this)" data-lang="hy"><span class="flag">🇦🇲</span><span class="lcode">HY</span><span class="lstatus lstatus-empty" id="blog-lstatus-hy">Empty</span></div>
+    </div>
+
+    <div class="ltabs-row" id="blog-ltabs">
+      <button class="ltab on" onclick="swBlogLang('en',this)" data-lang="en"><span class="flag">🇬🇧</span><span class="lang-code">EN</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swBlogLang('ru',this)" data-lang="ru"><span class="flag">🇷🇺</span><span class="lang-code">RU</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swBlogLang('ka',this)" data-lang="ka"><span class="flag">🇬🇪</span><span class="lang-code">KA</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swBlogLang('hy',this)" data-lang="hy"><span class="flag">🇦🇲</span><span class="lang-code">HY</span><span class="conf-dot no"></span></button>
+    </div>
+
+    <div class="mb">
+      <!-- EN -->
+      <div class="lpane on" id="blog-lp-en">
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full"><label class="fl">H1 — Page Heading</label><input class="fin"></div>
+          <div class="fi full"><label class="fl">Main Page Content <span class="tip">(paste HTML — will be rendered as-is)</span></label><textarea class="fta fin-html" placeholder="<h2>Introduction</h2>&#10;<p>Article body here…</p>"></textarea></div>
+          <div class="fi full"><label class="fl">Media URLs <span class="tip">(comma-separated)</span></label><input class="fin" placeholder="https://…/img1.jpg, https://…/img2.jpg"></div>
+          <div class="fi full"><label class="fl">Main Image Alt Text</label><input class="fin"></div>
+        </div>
+        <div class="sec-title">Card (Blog listing)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">EN version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bg2b bxs">Save Draft</button><button class="btn bsuc bxs" onclick="confirmLang('blog','en')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish EN</button></div>
+        </div>
+      </div>
+      <!-- RU -->
+      <div class="lpane" id="blog-lp-ru">
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full"><label class="fl">H1 — Page Heading</label><input class="fin" placeholder="Как полимерная капсульная технология меняет стирку"></div>
+          <div class="fi full"><label class="fl">Main Page Content <span class="tip">(HTML)</span></label><textarea class="fta fin-html" placeholder="<h2>Введение</h2>&#10;<p>Текст статьи на русском...</p>"></textarea></div>
+          <div class="fi full"><label class="fl">Media URLs</label><input class="fin" placeholder="https://…/img1-ru.jpg, https://…/img2-ru.jpg"></div>
+          <div class="fi full"><label class="fl">Main Image Alt Text</label><input class="fin" placeholder="Диаграмма технологии капсул RAKUN RU"></div>
+        </div>
+        <div class="sec-title">Card (Blog listing)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" placeholder="Капсульная технология RAKUN"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin" placeholder="Трёхкамерная капсула растворяется поэтапно…"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin" placeholder="Капсульная технология — Блог RAKUN"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" placeholder="Как капсулы RAKUN превосходят обычные гели…"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" placeholder="Капсульная технология — RAKUN"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" placeholder="Подробный разбор капсульной химии…"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">RU version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bg2b bxs">Save Draft</button><button class="btn bsuc bxs" onclick="confirmLang('blog','ru')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish RU</button></div>
+        </div>
+      </div>
+      <!-- KA -->
+      <div class="lpane" id="blog-lp-ka">
+        <div class="nt"><span class="material-symbols-outlined ic">translate</span>Georgian version — empty. Fill in all fields below and confirm to publish.</div>
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full"><label class="fl">H1 — Page Heading</label><input class="fin" placeholder="სათაური ქართულად"></div>
+          <div class="fi full"><label class="fl">Main Page Content <span class="tip">(HTML)</span></label><textarea class="fta fin-html" placeholder="<h2>შესავალი</h2>&#10;<p>სტატიის ტექსტი...</p>"></textarea></div>
+          <div class="fi full"><label class="fl">Media URLs</label><input class="fin" placeholder="https://…/img1-ka.jpg"></div>
+          <div class="fi full"><label class="fl">Main Image Alt Text</label><input class="fin" placeholder="RAKUN კაფსულის ტექნოლოგიის დიაგრამა KA"></div>
+        </div>
+        <div class="sec-title">Card</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" placeholder="სათაური ქართულად"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin" placeholder="მოკლე აღწერა"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin" placeholder="SEO სათაური ქართულად"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" placeholder="Meta აღწერა ქართულად"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" placeholder="OG სათაური"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" placeholder="OG აღწერა"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">KA version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bg2b bxs">Save Draft</button><button class="btn bsuc bxs" onclick="confirmLang('blog','ka')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish KA</button></div>
+        </div>
+      </div>
+      <!-- HY -->
+      <div class="lpane" id="blog-lp-hy">
+        <div class="nt"><span class="material-symbols-outlined ic">translate</span>Armenian version — empty. Fill in all fields below and confirm to publish.</div>
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full"><label class="fl">H1 — Page Heading</label><input class="fin" placeholder="Հոդվածի վերնագիր"></div>
+          <div class="fi full"><label class="fl">Main Page Content <span class="tip">(HTML)</span></label><textarea class="fta fin-html" placeholder="<h2>Ներածություն</h2>&#10;<p>հոդվածի բովանդակությունը...</p>"></textarea></div>
+          <div class="fi full"><label class="fl">Media URLs</label><input class="fin" placeholder="https://…/img1-hy.jpg"></div>
+          <div class="fi full"><label class="fl">Main Image Alt Text</label><input class="fin" placeholder="RAKUN կափսուլային ընդlայնման դիագրամա"></div>
+        </div>
+        <div class="sec-title">Card</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" placeholder="Փոքր անուն հայ"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin" placeholder="Բնագիր"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin" placeholder="SEO Վերնագիր հայ"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" placeholder="Meta նկագիր հայ"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" placeholder="OG Վերնագիր"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" placeholder="OG նկագիր"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">HY version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bg2b bxs">Save Draft</button><button class="btn bsuc bxs" onclick="confirmLang('blog','hy')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish HY</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mf">
+      <div style="display:flex;gap:8px"><button class="btn bg2b" onclick="closeM('mblog')">Cancel</button><button class="btn bd2 bxs" id="blog-delete-btn"><span class="material-symbols-outlined ic">delete</span>Delete</button></div>
+      <div style="display:flex;gap:8px"><button class="btn bg2b">Save All Drafts</button><button class="btn bp" onclick="saveBlogPost()"><span class="material-symbols-outlined ic">save</span>Save to Firebase</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: PRODUCT EDITOR
+============================================================ -->
+<div class="mo" id="mprod">
+  <div class="md" style="max-width:920px">
+    <div class="mh">
+      <h2 id="prodtitle">Product Editor</h2>
+      <button class="mc2b" onclick="closeM('mprod')"><span class="material-symbols-outlined" style="font-size:26px">close</span></button>
+    </div>
+
+    <div class="gf-block">
+      <div class="gf-title">🌐 Global Fields — shared across all language versions</div>
+      <div class="fg3">
+        <div class="fi"><label class="fl">Status</label><select class="fsel" id="prodstat"><option value="Draft">Draft</option><option value="Published">Published</option><option value="Archived">Archived</option></select></div>
+        <div class="fi"><label class="fl">Category</label><select class="fsel" id="prodcatsel" onchange="updProdUrl()"></select></div>
+        <div class="fi"><label class="fl">Price</label><input class="fin" id="prodprice" placeholder="e.g. 6.53 GEL"></div>
+        <div class="fi"><label class="fl">SKU (Артикул)</label><input class="fin" id="prodsku" placeholder="e.g. RK-1001"></div>
+        <div class="fi"><label class="fl">Stock (Наличие)</label><input class="fin" id="prodstock" type="number" placeholder="e.g. 150"></div>
+        <div class="fi"><label class="fl">Weight/Volume</label><input class="fin" id="prodvol" placeholder="e.g. 2L or 2kg"></div>
+        <div class="fi"><label class="fl">Last Modified</label><input class="fin" type="datetime-local"></div>
+        <div class="fi"><label class="fl">Priority <span class="tip">(sitemap 0.1–1.0)</span></label><input class="fin" id="prodprio" placeholder="0.9"></div>
+        <div class="fi"><label class="fl">Change Frequency</label><select class="fsel" id="prodfreq"><option>monthly</option><option>weekly</option><option>daily</option><option>yearly</option><option>never</option></select></div>
+      </div>
+      <div class="fg" style="margin-top:14px">
+        <div class="fi"><label class="fl">URL Slug <span class="tip">(shared — only lang prefix changes)</span></label><div class="sr2"><div class="sp2">/[lang]/products/[cat]/</div><input class="fin si2" id="prodslug" oninput="updProdUrl()"></div><div class="up" id="produp"></div></div>
+        <div class="fi"><label class="fl">x-default hreflang</label><select class="fsel" id="prodhreflang"><option value="en">EN — English</option><option value="ru">RU — Russian</option><option value="ka">KA — Georgian</option><option value="hy">HY — Armenian</option></select></div>
+        <div class="fi"><label class="fl">Region for hreflang</label><input class="fin" id="prodregion" placeholder="e.g. en-GE, ru-GE, ka-GE, hy-AM"></div>
+        <div class="fi"><label class="fl">OG Image URL</label><input class="fin" id="prodogimg" placeholder="https://…/og-product.jpg"></div>
+      </div>
+      <div class="fi" style="margin-top:14px"><label class="fl">Schema.org JSON-LD <span class="tip">(Product schema)</span></label><textarea class="fmono" style="min-height:100px"></textarea></div>
+    </div>
+
+    <div class="lang-overview">
+      <div class="lang-pill on" onclick="swProdLang('en',this)" data-lang="en"><span class="flag">🇬🇧</span><span class="lcode">EN</span><span class="lstatus lstatus-empty" id="prod-lstatus-en">Empty</span></div>
+      <div class="lang-pill" onclick="swProdLang('ru',this)" data-lang="ru"><span class="flag">🇷🇺</span><span class="lcode">RU</span><span class="lstatus lstatus-empty" id="prod-lstatus-ru">Empty</span></div>
+      <div class="lang-pill" onclick="swProdLang('ka',this)" data-lang="ka"><span class="flag">🇬🇪</span><span class="lcode">KA</span><span class="lstatus lstatus-empty" id="prod-lstatus-ka">Empty</span></div>
+      <div class="lang-pill" onclick="swProdLang('hy',this)" data-lang="hy"><span class="flag">🇦🇲</span><span class="lcode">HY</span><span class="lstatus lstatus-empty" id="prod-lstatus-hy">Empty</span></div>
+    </div>
+
+    <div class="ltabs-row">
+      <button class="ltab on" onclick="swProdLang('en',this)" data-lang="en"><span class="flag">🇬🇧</span><span class="lang-code">EN</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swProdLang('ru',this)" data-lang="ru"><span class="flag">🇷🇺</span><span class="lang-code">RU</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swProdLang('ka',this)" data-lang="ka"><span class="flag">🇬🇪</span><span class="lang-code">KA</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swProdLang('hy',this)" data-lang="hy"><span class="flag">🇦🇲</span><span class="lang-code">HY</span><span class="conf-dot no"></span></button>
+    </div>
+
+    <div class="mb">
+      <!-- EN -->
+      <div class="lpane on" id="prod-lp-en">
+        <div class="sec-title">Product Images (shared carousel)</div>
+        <div class="fi" style="margin-bottom:14px">
+          <label class="fl">Product Image URLs <span class="tip">(comma-separated, used for carousel)</span></label>
+          <textarea class="fta" id="prod-images-ta" style="min-height:70px;font-family:'IBM Plex Mono',monospace;font-size:12px" placeholder="https://…/img1.jpg,&#10;https://…/img2.jpg"></textarea>
+        </div>
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Category Label</label><input class="fin" id="en-categoryLabel"></div>
+          <div class="fi"><label class="fl">Product Name</label><input class="fin" id="en-productName"></div>
+          <div class="fi full"><label class="fl">Short Description</label><textarea class="fta" id="en-shortDescription" style="min-height:70px"></textarea></div>
+        </div>
+        <div class="fi" style="margin-bottom:14px"><label class="fl">Feature Pills</label><div class="pb" id="pills-en"></div><div class="pa"><input class="fin" id="pillin-en" placeholder="New feature…"><button class="btn bg2b bxs" onclick="addPill('en')"><span class="material-symbols-outlined ic">add</span></button></div></div>
+        <div class="fi" style="margin-bottom:14px">
+          <label class="fl">Full Description <span class="tip">(paste HTML — will be rendered as-is)</span></label>
+          <textarea class="fta fin-html" id="en-fullDescriptionHtml" placeholder="<p>Description...</p>"></textarea>
+        </div>
+        <div class="sec-title">Ingredients</div>
+        <div id="ingren"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px" onclick="addIngr()"><span class="material-symbols-outlined ic">add</span>Add Ingredient</button>
+        <div class="sec-title">CTA Buttons</div>
+        <div class="fg3" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">CTA Button Text</label><input class="fin" id="en-ctaButtonText"></div>
+          <div class="fi"><label class="fl">Secondary Button Text</label><input class="fin" id="en-secondaryButtonText"></div>
+          <div class="fi"><label class="fl">Button URL</label><input class="fin" id="en-buttonUrl" placeholder="mailto:info@rakun.ge or /en/contacts"></div>
+        </div>
+        <div class="sec-title">Card (Catalog listing)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" id="en-cardTitle"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin" id="en-cardDescription"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin" id="en-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="en-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="en-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="en-ogDescription"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">EN version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bg2b bxs">Save Draft</button><button class="btn bsuc bxs" onclick="confirmLang('prod','en')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish EN</button></div>
+        </div>
+      </div>
+
+      <!-- RU -->
+      <div class="lpane" id="prod-lp-ru">
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Категория</label><input class="fin" id="ru-categoryLabel" placeholder="Гель для стирки · Универсальный"></div>
+          <div class="fi"><label class="fl">Название товара</label><input class="fin" id="ru-productName" placeholder="Парфюмированный гель для стирки"></div>
+          <div class="fi full"><label class="fl">Краткое описание</label><textarea class="fta" id="ru-shortDescription" style="min-height:70px"></textarea></div>
+        </div>
+        <div class="fi" style="margin-bottom:14px"><label class="fl">Ярлыки характеристик</label><div class="pb"></div></div>
+        <div class="fi" style="margin-bottom:14px"><label class="fl">Полное описание <span class="tip">(HTML)</span></label><textarea class="fta fin-html" id="ru-fullDescriptionHtml" placeholder="<p>Текст на русском...</p>"></textarea></div>
+        <div class="sec-title">Кнопки CTA</div>
+        <div class="fg3" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Текст CTA</label><input class="fin" id="ru-ctaButtonText"></div>
+          <div class="fi"><label class="fl">Доп. кнопка</label><input class="fin" id="ru-secondaryButtonText"></div>
+          <div class="fi"><label class="fl">URL кнопки</label><input class="fin" id="ru-buttonUrl" placeholder="mailto: или /ru/contacts"></div>
+        </div>
+        <div class="sec-title">Карточка в каталоге</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" id="ru-cardTitle" placeholder="Парфюмированный гель для стирки, 2л"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin" id="ru-cardDescription" placeholder="Эффективно удаляет пятна…"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin" id="ru-seoTitle" placeholder="Гель для стирки 2л — RAKUN"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="ru-metaDescription" placeholder="Купить гель для стирки RAKUN 2л оптом…"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="ru-ogTitle" placeholder="RAKUN Гель 2л"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="ru-ogDescription" placeholder="Профессиональный гель…"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">RU version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bg2b bxs">Save Draft</button><button class="btn bsuc bxs" onclick="confirmLang('prod','ru')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish RU</button></div>
+        </div>
+      </div>
+
+      <!-- KA -->
+      <div class="lpane" id="prod-lp-ka">
+        <div class="nt"><span class="material-symbols-outlined ic">translate</span>Georgian version — empty.</div>
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">კატეგორია</label><input class="fin" id="ka-categoryLabel" placeholder="სარეცხი გელი · უნივერსალური"></div>
+          <div class="fi"><label class="fl">პროდუქტის სახელი</label><input class="fin" id="ka-productName" placeholder="სურნელოვანი სარეცხი გელი"></div>
+          <div class="fi full"><label class="fl">მოკლე აღწერა</label><textarea class="fta" id="ka-shortDescription" placeholder="კონცენტრირებული სარეცხი გელი, 2 ლიტრი…"></textarea></div>
+          <div class="fi full"><label class="fl">სრული აღწერა <span class="tip">(HTML)</span></label><textarea class="fta fin-html" id="ka-fullDescriptionHtml" placeholder="<p>ტექსტი ქართულად...</p>"></textarea></div>
+        </div>
+        <div class="sec-title">CTA / Card / SEO</div>
+        <div class="fg3" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">CTA</label><input class="fin" id="ka-ctaButtonText" placeholder="ფასის მოთხოვნა"></div>
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" id="ka-cardTitle" placeholder="სახელი KA"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin" id="ka-cardDescription" placeholder="აღწერა KA"></div>
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="ka-seoTitle" placeholder="SEO სათაური KA"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="ka-metaDescription" placeholder="Meta KA"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="ka-ogTitle" placeholder="OG KA"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">KA version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bg2b bxs">Save Draft</button><button class="btn bsuc bxs" onclick="confirmLang('prod','ka')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish KA</button></div>
+        </div>
+      </div>
+
+      <!-- HY -->
+      <div class="lpane" id="prod-lp-hy">
+        <div class="nt"><span class="material-symbols-outlined ic">translate</span>Armenian version — empty.</div>
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Կատեգորիա</label><input class="fin" id="hy-categoryLabel" placeholder="Մաքուր գել · Ունիվerssal"></div>
+          <div class="fi"><label class="fl">ापranq Անounn</label><input class="fin" id="hy-productName" placeholder="Բurast Ֆatreliki Gel"></div>
+          <div class="fi full"><label class="fl">Փoqr Nkagragout</label><textarea class="fta" id="hy-shortDescription" placeholder="Atkagrkaçkan Ֆatreliki Gel, 2 litri…"></textarea></div>
+          <div class="fi full"><label class="fl">Ambогж Nkagragout <span class="tip">(HTML)</span></label><textarea class="fta fin-html" id="hy-fullDescriptionHtml" placeholder="<p>հայ բovandakout...&lt;/p&gt;"></textarea></div>
+        </div>
+        <div class="sec-title">CTA / Card / SEO</div>
+        <div class="fg3" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">CTA</label><input class="fin" id="hy-ctaButtonText" placeholder="Gnaha gin"></div>
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" id="hy-cardTitle" placeholder="Անoun HY"></div>
+          <div class="fi"><label class="fl">Card Description</label><input class="fin" id="hy-cardDescription" placeholder="NkagragoutYoun HY"></div>
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="hy-seoTitle" placeholder="SEO HY"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="hy-metaDescription" placeholder="Meta HY"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="hy-ogTitle" placeholder="OG HY"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">HY version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bg2b bxs">Save Draft</button><button class="btn bsuc bxs" onclick="confirmLang('prod','hy')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish HY</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mf">
+      <div style="display:flex;gap:8px"><button class="btn bg2b" onclick="closeM('mprod')">Cancel</button><button class="btn bd2 bxs" id="prod-delete-btn"><span class="material-symbols-outlined ic">delete</span>Delete</button></div>
+      <div style="display:flex;gap:8px"><button class="btn bg2b">Save All Drafts</button><button class="btn bp" onclick="saveProduct()"><span class="material-symbols-outlined ic">save</span>Save to Firebase</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CATEGORY -->
+<div class="mo" id="mcat">
+  <div class="md" style="max-width:560px">
+    <div class="mh"><h2 id="cattitle">New Category</h2><button class="mc2b" onclick="closeM('mcat')"><span class="material-symbols-outlined" style="font-size:26px">close</span></button></div>
+    <div class="mb" style="padding:20px">
+      <div class="fg" style="margin-bottom:18px">
+        <div class="fi"><label class="fl">Status</label><select class="fsel" id="catstat"><option value="Active">Active</option><option value="Hidden">Hidden</option></select></div>
+        <div class="fi"><label class="fl">Color Tag</label><div class="sw2" id="swatches"><div class="sw on" data-c="#4f7dff" style="background:#4f7dff"></div><div class="sw" data-c="#f5c842" style="background:#f5c842"></div><div class="sw" data-c="#3ecf8e" style="background:#3ecf8e"></div><div class="sw" data-c="#f04e4e" style="background:#f04e4e"></div><div class="sw" data-c="#f0934e" style="background:#f0934e"></div><div class="sw" data-c="#b57bff" style="background:#b57bff"></div><div class="sw" data-c="#9299b0" style="background:#9299b0"></div></div></div>
+        <div class="fi full"><label class="fl">URL Slug</label><div class="sr2"><div class="sp2">/[lang]/products/</div><input class="fin si2" id="catslug" placeholder="washing-gels" oninput="updCatUrl()"></div><div class="up" id="caturlprev"></div></div>
+      </div>
+      <div class="ltabs-row" style="border-radius:8px 8px 0 0;overflow:hidden">
+        <button class="ltab on" onclick="swCatLang('en',this)"><span class="flag">🇬🇧</span><span class="lang-code">EN</span></button>
+        <button class="ltab" onclick="swCatLang('ru',this)"><span class="flag">🇷🇺</span><span class="lang-code">RU</span></button>
+        <button class="ltab" onclick="swCatLang('ka',this)"><span class="flag">🇬🇪</span><span class="lang-code">KA</span></button>
+        <button class="ltab" onclick="swCatLang('hy',this)"><span class="flag">🇦🇲</span><span class="lang-code">HY</span></button>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border2);border-top:none;border-radius:0 0 8px 8px;padding:16px">
+        <div class="lpane on" id="cat-lang-en"><div class="fg"><div class="fi"><label class="fl">Name (EN)</label><input class="fin" id="catnameen" placeholder="Washing Gels"></div><div class="fi"><label class="fl">Description (EN)</label><input class="fin" placeholder="Concentrated gels for all fabric types"></div><div class="fi"><label class="fl">SEO Title (EN)</label><input class="fin" placeholder="Washing Gels — RAKUN Catalog"></div><div class="fi"><label class="fl">SEO Description (EN)</label><input class="fin" placeholder="Professional-grade washing gels…"></div></div></div>
+        <div class="lpane" id="cat-lang-ru"><div class="fg"><div class="fi"><label class="fl">Название (RU)</label><input class="fin" placeholder="Гели для стирки"></div><div class="fi"><label class="fl">Описание (RU)</label><input class="fin" placeholder="Концентрированные гели…"></div><div class="fi"><label class="fl">SEO Title (RU)</label><input class="fin" placeholder="Гели для стирки — RAKUN"></div><div class="fi"><label class="fl">SEO Description (RU)</label><input class="fin" placeholder="Профессиональные гели…"></div></div></div>
+        <div class="lpane" id="cat-lang-ka"><div class="fg"><div class="fi"><label class="fl">სახელი (KA)</label><input class="fin" placeholder="სარეცხი გელები"></div><div class="fi"><label class="fl">აღწერა (KA)</label><input class="fin" placeholder="კონცენტრირებული გელები…"></div><div class="fi"><label class="fl">SEO Title (KA)</label><input class="fin" placeholder="სარეცხი გელები — RAKUN"></div><div class="fi"><label class="fl">SEO Description (KA)</label><input class="fin" placeholder="პროფესიული გელები…"></div></div></div>
+        <div class="lpane" id="cat-lang-hy"><div class="fg"><div class="fi"><label class="fl">Անunn (HY)</label><input class="fin" placeholder="Լvaçq gelerem"></div><div class="fi"><label class="fl">Nkagragout (HY)</label><input class="fin" placeholder="Atkagrkaçkan gelerem…"></div><div class="fi"><label class="fl">SEO Title (HY)</label><input class="fin" placeholder="Lvacq gelerem — RAKUN"></div><div class="fi"><label class="fl">SEO Description (HY)</label><input class="fin" placeholder="Professiynal gelerem…"></div></div></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn bg2b" onclick="closeM('mcat')">Cancel</button>
+      <div style="display:flex;gap:8px"><button class="btn bd2 bxs" id="cat-delete-btn"><span class="material-symbols-outlined ic">delete</span>Delete</button><button class="btn bp" onclick="saveCategory()"><span class="material-symbols-outlined ic">save</span>Save Category</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONFIRM DELETE -->
+<div class="mo" id="mconf">
+  <div class="md cmod">
+    <div class="mb"><span class="ci3">🗑️</span><h3>Delete this item?</h3><p>This action cannot be undone. The item and all language versions will be permanently removed.</p></div>
+    <div class="mf" style="justify-content:center"><button class="btn bg2b" onclick="closeM('mconf')">Cancel</button><button class="btn bd2" id="mconf-confirm-btn"><span class="material-symbols-outlined ic">delete</span>Yes, Delete</button></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     FIREBASE + ADMIN SCRIPT (ES Module)
+============================================================ -->
+<script type="module">
+// ── Firebase imports ──────────────────────────────────────────
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import {
+  getFirestore, collection, getDocs,
+  doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc,
+  terminate
+} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyAGXs4wc4vcxxy2cMoHMC8_MlD9S_chSQY",
+  authDomain:        "racun-shop.firebaseapp.com",
+  projectId:         "racun-shop",
+  storageBucket:     "racun-shop.appspot.com",
+  messagingSenderId: "569457770232",
+  appId:             "1:569457770232:web:5a2737d1ee270459f3050d"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// Закрываем соединение при уходе со страницы — предотвращает висящие коннекты
+window.addEventListener('beforeunload', () => terminate(db).catch(()=>{}));
+
+// ── Constants ─────────────────────────────────────────────────
+const LANGS = ['en','ru','ka','hy'];
+
+// ── State ─────────────────────────────────────────────────────
+let state = { categories: [], products: [], posts: [] };
+let currentEditingId  = null;
+let currentCollection = null;
+let selColor          = '#4f7dff';
+let pendingDeleteId   = null;
+let pendingDeleteCol  = null;
+
+// ── Helpers ───────────────────────────────────────────────────
+function getLocalVal(d, key, lang='en') {
+  if (!d) return '';
+  if (d.translations?.[lang]?.[key]) return d.translations[lang][key];
+  if (d[lang]?.[key])                return d[lang][key];
+  if (d.globalFields?.[key])         return d.globalFields[key];
+  return d[key] || '';
+}
+function escH(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function getV(id) { return document.getElementById(id)?.value || ''; }
+function setV(id, v) { const el=document.getElementById(id); if(el) el.value = v??''; }
+function setText(id, v) { const el=document.getElementById(id); if(el) el.textContent=v; }
+
+function showToast(msg, type='ok') {
+  let t = document.getElementById('_toast');
+  if (!t) {
+    t = document.createElement('div'); t.id='_toast';
+    Object.assign(t.style, {
+      position:'fixed',bottom:'28px',right:'28px',zIndex:'9999',
+      padding:'13px 24px',borderRadius:'10px',fontSize:'14px',fontWeight:'700',
+      color:'#fff',boxShadow:'0 4px 24px rgba(0,0,0,.28)',
+      transition:'opacity .35s',pointerEvents:'none'
+    });
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.background = type==='ok' ? '#22c55e' : '#ef4444';
+  t.style.opacity = '1';
+  clearTimeout(t._t);
+  t._t = setTimeout(()=>{ t.style.opacity='0'; }, 3200);
+}
+
+// ── Load from Firestore ───────────────────────────────────────
+async function loadAllData() {
+  setFbStatus('Loading…');
+  try {
+    const [catS, prodS, postS] = await Promise.all([
+      getDocs(collection(db,'categories')),
+      getDocs(collection(db,'products')),
+      getDocs(collection(db,'blog')),        // коллекция называется 'blog', не 'posts'
+    ]);
+    state.categories = catS.docs.map(d=>({id:d.id,...d.data()}));
+    state.products   = prodS.docs.map(d=>({id:d.id,...d.data()}));
+    state.posts      = postS.docs.map(d=>({id:d.id,...d.data()}));
+    renderAll();
+    setFbStatus('Connected ✓');
+    console.log('Firebase data loaded:', state);
+  } catch(err) {
+    setFbStatus('Error: '+err.message);
+    showToast('Ошибка загрузки данных. Проверьте консоль.','err');
+    console.error(err);
+  }
+}
+
+function setFbStatus(s) {
+  const el = document.getElementById('fb-status');
+  if (el) el.value = s;
+}
+
+// ── Render tables ─────────────────────────────────────────────
+function renderAll() {
+  renderCategories();
+  renderProducts();
+  renderBlog();
+}
+
+function renderCategories() {
+  setText('bdgc', state.categories.length);
+  setText('catcntlbl', state.categories.length+' categories');
+
+  const tb   = document.getElementById('cattbody');
+  const grid = document.getElementById('catgrid');
+
+  if (tb) tb.innerHTML = state.categories.map(c => {
+    // slug, status, color — в корне документа (не в globalFields)
+    const name   = getLocalVal(c,'name','en') || c.id;
+    const slug   = c.slug || c.globalFields?.slug || c.id;
+    const color  = c.color || c.globalFields?.color || '#4f7dff';
+    const status = c.status || c.globalFields?.status || 'Active';
+    const cnt    = state.products.filter(p=>(p.globalFields?.categoryId===c.id)).length;
+    return `<tr>
+      <td><div style="display:flex;align-items:center;gap:10px">
+        <div style="width:10px;height:10px;border-radius:50%;background:${color};flex-shrink:0"></div>
+        <strong>${escH(name)}</strong></div></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text2)">${escH(slug)}</td>
+      <td>${cnt}</td>
+      <td><div class="lf">${LANGS.map(l=>`<span class="lfl d">${l.toUpperCase()}</span>`).join('')}</div></td>
+      <td><span class="sb2 ${status==='Active'?'sp':'sa'}">${escH(status)}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2)">/en/products/${escH(slug)}/</td>
+      <td><div class="ra">
+        <button class="ib" onclick="window._editCat('${c.id}')"><span class="material-symbols-outlined ic">edit</span></button>
+        <button class="ib dr" onclick="window._askDelete('categories','${c.id}')"><span class="material-symbols-outlined ic">delete</span></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+
+  if (grid) grid.innerHTML = state.categories.map(c => {
+    const name   = getLocalVal(c,'name','en') || c.id;
+    const slug   = c.slug || c.globalFields?.slug || c.id;
+    const color  = c.color || c.globalFields?.color || '#4f7dff';
+    const status = c.status || c.globalFields?.status || 'Active';
+    const cnt    = state.products.filter(p=>(p.globalFields?.categoryId===c.id)).length;
+    return `<div class="cc">
+      <div class="cdot" style="background:${color}"></div>
+      <div class="ci2"><div class="cn">${escH(name)}</div><div class="csl">/${escH(slug)}/</div>
+      <div class="cct">${cnt} product${cnt!==1?'s':''} · ${status}</div></div>
+      <div class="ca"><button class="ib" onclick="window._editCat('${c.id}')"><span class="material-symbols-outlined ic">edit</span></button></div>
+    </div>`;
+  }).join('');
+
+  // Populate category selects
+  ['prodcatsel','pf-cat'].forEach(id=>{
+    const sel=document.getElementById(id); if(!sel) return;
+    const prev=sel.value;
+    const pre = id==='pf-cat'?'<option value="">All categories</option>':'';
+    sel.innerHTML = pre + state.categories.map(c=>
+      `<option value="${c.id}"${c.id===prev?' selected':''}>${escH(getLocalVal(c,'name','en')||c.id)}</option>`
+    ).join('');
+  });
+}
+
+function renderProducts() {
+  setText('bdgp', state.products.length);
+  const tb = document.getElementById('products-tbody'); if(!tb) return;
+  const q  = getV('search-products').toLowerCase();
+  const fc = getV('pf-cat');
+  const fs = getV('pf-prod-status');
+  const list = state.products.filter(p => {
+    const name = (getLocalVal(p,'productName','en')||getLocalVal(p,'name','en')||'').toLowerCase();
+    const cat  = p.globalFields?.categoryId || '';
+    const st   = p.globalFields?.status || '';
+    return (!q || name.includes(q)) && (!fc || cat===fc) && (!fs || st===fs);
+  });
+  tb.innerHTML = list.map(p => {
+    const name   = getLocalVal(p,'productName','en')||getLocalVal(p,'name','en')||'Unnamed';
+    const catObj = state.categories.find(c=>c.id===p.globalFields?.categoryId);
+    const catName= catObj?(getLocalVal(catObj,'name','en')||catObj.id):'Unknown';
+    const catSlug= catObj?.slug || catObj?.globalFields?.slug || 'category';
+    const price  = p.globalFields?.price||'—';
+    const status = p.globalFields?.status||'Draft';
+    const slug   = p.globalFields?.slug||p.id;
+    const img    = p.globalFields?.images?.[0]||'';
+    return `<tr>
+      <td><div class="pnc">
+        <img src="${escH(img)}" class="pth" style="object-fit:contain" onerror="this.onerror=null;this.style.cssText='background:#2d3148;width:44px;height:44px;border-radius:6px';this.removeAttribute('src')">
+        <div class="pni"><div class="pnm">${escH(name)}</div><div class="pcm">${p.id}</div></div>
+      </div></td>
+      <td>${escH(catName)}</td>
+      <td><strong>${escH(String(price))}</strong></td>
+      <td><div class="lf">${LANGS.map(l=>`<span class="lfl d">${l.toUpperCase()}</span>`).join('')}</div></td>
+      <td><span class="sb2 ${status.toLowerCase()==='published'?'sp':'sa'}">${escH(status)}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2)">/en/products/${escH(catSlug)}/${escH(slug)}/</td>
+      <td><div class="ra">
+        <button class="ib" onclick="window._editProd('${p.id}')"><span class="material-symbols-outlined ic">edit</span></button>
+        <button class="ib dr" onclick="window._askDelete('products','${p.id}')"><span class="material-symbols-outlined ic">delete</span></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderBlog() {
+  setText('bdgb', state.posts.length);
+  const tb = document.getElementById('blog-tbody'); if(!tb) return;
+  const q  = getV('search-blog').toLowerCase();
+  const fs = getV('pf-blog-status');
+  const list = state.posts.filter(p => {
+    const title = (getLocalVal(p,'name','en')||getLocalVal(p,'title','en')||'').toLowerCase();
+    const st    = p.globalFields?.status||'';
+    return (!q||title.includes(q)) && (!fs||st===fs);
+  });
+  tb.innerHTML = list.map(p => {
+    const title  = getLocalVal(p,'name','en')||getLocalVal(p,'title','en')||'Untitled';
+    const cat    = p.globalFields?.categoryId||'Article';
+    const author = p.globalFields?.author||'Admin';
+    const status = p.globalFields?.status||'Draft';
+    const slug   = p.globalFields?.slug||p.id;
+    const img    = p.globalFields?.images?.[0]||'';
+    return `<tr>
+      <td><div class="pnc">
+        <img src="${escH(img)}" class="pth" style="object-fit:cover" onerror="this.onerror=null;this.style.cssText='background:#2d3148;width:44px;height:44px;border-radius:6px';this.removeAttribute('src')">
+        <div class="pni"><div class="pnm">${escH(title)}</div><div class="pcm">${p.id}</div></div>
+      </div></td>
+      <td>${escH(cat)}</td>
+      <td>${escH(author)}</td>
+      <td><div class="lf">${LANGS.map(l=>`<span class="lfl d">${l.toUpperCase()}</span>`).join('')}</div></td>
+      <td><span class="sb2 ${status.toLowerCase()==='published'?'sp':'sa'}">${escH(status)}</span></td>
+      <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2)">/en/blog/${escH(slug)}/</td>
+      <td><div class="ra">
+        <button class="ib" onclick="window._editPost('${p.id}')"><span class="material-symbols-outlined ic">edit</span></button>
+        <button class="ib dr" onclick="window._askDelete('posts','${p.id}')"><span class="material-symbols-outlined ic">delete</span></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Open modals ───────────────────────────────────────────────
+function openNewCatFn() {
+  currentEditingId=null; currentCollection='categories';
+  document.getElementById('cattitle').textContent='New Category';
+  document.querySelectorAll('#mcat input.fin, #mcat textarea.fta').forEach(el=>el.value='');
+  setV('catstat','Active'); selColor='#4f7dff';
+  document.querySelectorAll('.sw').forEach(s=>s.classList.toggle('on',s.dataset.c==='#4f7dff'));
+  document.getElementById('cat-delete-btn').style.display='none';
+  updCatUrl(); showM('mcat');
+}
+
+window._editCat = function(id) {
+  currentEditingId=id; currentCollection='categories';
+  const cat = state.categories.find(c=>c.id===id); if(!cat) return;
+  document.getElementById('cattitle').textContent='Edit Category';
+  // поля slug/status/color — в корне документа
+  setV('catstat', cat.status || cat.globalFields?.status || 'Active');
+  setV('catslug', cat.slug   || cat.globalFields?.slug   || cat.id);
+  selColor = cat.color || cat.globalFields?.color || '#4f7dff';
+  document.querySelectorAll('.sw').forEach(s=>s.classList.toggle('on',s.dataset.c===selColor));
+  document.getElementById('cat-delete-btn').style.display='';
+  LANGS.forEach(lang=>{
+    const pane=document.getElementById(`cat-lang-${lang}`); if(!pane) return;
+    const inputs=pane.querySelectorAll('input.fin');
+    if(inputs[0]) inputs[0].value=getLocalVal(cat,'name',lang);
+    if(inputs[1]) inputs[1].value=getLocalVal(cat,'description',lang);
+    if(inputs[2]) inputs[2].value=getLocalVal(cat,'seoTitle',lang);
+    if(inputs[3]) inputs[3].value=getLocalVal(cat,'metaDescription',lang);
+  });
+  updCatUrl(); showM('mcat');
+};
+
+window._editProd = function(id) {
+  currentEditingId=id; currentCollection='products';
+  const p = state.products.find(x=>x.id===id); if(!p) return;
+  const gf = p.globalFields||{};
+  document.getElementById('prodtitle').textContent='Edit Product';
+  setV('prodstat',   gf.status||'Draft');
+  setV('prodcatsel', gf.categoryId||'');
+  setV('prodprice',  gf.price||'');
+  setV('prodsku',    gf.sku||'');
+  setV('prodstock',  gf.stock||'');
+  setV('prodvol',    gf.volume||'');
+  setV('prodprio',   gf.priority||'0.9');
+  setV('prodslug',   gf.slug||p.id);
+  setV('prodregion', gf.region||'');
+  setV('prodogimg',  gf.ogImageUrl||'');
+  const imgTa=document.getElementById('prod-images-ta');
+  if(imgTa) imgTa.value=(gf.images||[]).join(',\n');
+  document.getElementById('prod-delete-btn').style.display='';
+  // Локализованные поля по id
+  const prodFields=['categoryLabel','productName','shortDescription','fullDescriptionHtml',
+    'ctaButtonText','secondaryButtonText','buttonUrl','cardTitle','cardDescription',
+    'seoTitle','metaDescription','ogTitle','ogDescription'];
+  LANGS.forEach(lang=>{
+    prodFields.forEach(key=>{
+      const el=document.getElementById(`${lang}-${key}`);
+      if(el) el.value=getLocalVal(p,key,lang);
+    });
+  });
+  updProdUrl(); showM('mprod');
+};
+
+window._editPost = function(id) {
+  currentEditingId=id; currentCollection='posts';
+  const p = state.posts.find(x=>x.id===id); if(!p) return;
+  const gf = p.globalFields||{};
+  document.getElementById('blogtitle').textContent='Edit Post';
+  setV('blogstat',   gf.status||'Draft');
+  setV('blogcat',    gf.categoryId||'');
+  setV('blogauthor', gf.author||'');
+  setV('blogbadge',  gf.tagBadge||'');
+  setV('blogread',   gf.readTime||'');
+  setV('blogslug',   gf.slug||p.id);
+  setV('blogprio',   gf.priority||'0.8');
+  setV('blogregion', gf.region||'');
+  setV('blogogimg',  gf.ogImageUrl||'');
+  document.getElementById('blog-delete-btn').style.display='';
+  LANGS.forEach(lang=>{
+    const pane=document.getElementById(`blog-lp-${lang}`); if(!pane) return;
+    const inputs=pane.querySelectorAll('input.fin');
+    const tas=pane.querySelectorAll('textarea.fta');
+    if(tas[0]) tas[0].value=getLocalVal(p,'fullDescriptionHtml',lang)||getLocalVal(p,'fullDescription',lang);
+    const keys=['h1','mediaUrls','imageAltText','cardTitle','cardDescription','seoTitle','metaDescription','ogTitle','ogDescription'];
+    keys.forEach((k,i)=>{ if(inputs[i]) inputs[i].value=getLocalVal(p,k,lang); });
+  });
+  updBlogUrl(); showM('mblog');
+};
+
+// ── New item buttons ──────────────────────────────────────────
+document.getElementById('btn-new-prod').onclick = ()=>{
+  currentEditingId=null; currentCollection='products';
+  document.getElementById('prodtitle').textContent='New Product';
+  document.querySelectorAll('#mprod input.fin, #mprod textarea.fta').forEach(el=>el.value='');
+  document.querySelectorAll('#mprod select.fsel').forEach(el=>el.selectedIndex=0);
+  document.getElementById('prod-delete-btn').style.display='none';
+  updProdUrl(); showM('mprod');
+};
+document.getElementById('btn-new-blog').onclick = ()=>{
+  currentEditingId=null; currentCollection='posts';
+  document.getElementById('blogtitle').textContent='New Blog Post';
+  document.querySelectorAll('#mblog input.fin, #mblog textarea.fta').forEach(el=>el.value='');
+  document.querySelectorAll('#mblog select.fsel').forEach(el=>el.selectedIndex=0);
+  document.getElementById('blog-delete-btn').style.display='none';
+  updBlogUrl(); showM('mblog');
+};
+
+// ── Save to Firestore ─────────────────────────────────────────
+async function persistToFirestore(colName, data) {
+  // posts хранятся в коллекции 'blog'
+  const firestoreCol = colName === 'posts' ? 'blog' : colName;
+  try {
+    if (currentEditingId) {
+      await updateDoc(doc(db, firestoreCol, currentEditingId), data);
+      const arr = state[colName==='categories'?'categories':colName==='products'?'products':'posts'];
+      const i = arr.findIndex(x=>x.id===currentEditingId);
+      if(i!==-1) arr[i]={id:currentEditingId,...data};
+      showToast('✅ Сохранено в Firebase!');
+    } else {
+      const ref = await addDoc(collection(db, firestoreCol), data);
+      const arr = state[colName==='categories'?'categories':colName==='products'?'products':'posts'];
+      arr.push({id:ref.id,...data});
+      showToast('✅ Создано в Firebase!');
+    }
+    renderAll();
+    closeM({categories:'mcat',products:'mprod',posts:'mblog'}[colName]);
+    currentEditingId=null;
+  } catch(err) {
+    console.error(err);
+    showToast('Ошибка сохранения: '+err.message,'err');
+  }
+}
+
+window.saveCategory = async function() {
+  const slug=getV('catslug').trim(); if(!slug){showToast('Укажите slug','err');return;}
+  const translations={};
+  LANGS.forEach(lang=>{
+    const pane=document.getElementById(`cat-lang-${lang}`); if(!pane) return;
+    const inputs=pane.querySelectorAll('input.fin');
+    translations[lang]={
+      name:            inputs[0]?.value.trim()||'',
+      description:     inputs[1]?.value.trim()||'',
+      seoTitle:        inputs[2]?.value.trim()||'',
+      metaDescription: inputs[3]?.value.trim()||'',
+    };
+  });
+  // Структура categories в Firestore: slug/status/color в корне + translations
+  const data={
+    slug,
+    status:       getV('catstat'),
+    color:        selColor,
+    translations,
+    // productCount обновляем автоматически
+    productCount: state.products.filter(p=>p.globalFields?.categoryId===currentEditingId).length,
+  };
+  await persistToFirestore('categories', data);
+};
+
+window.saveProduct = async function() {
+  const slug=getV('prodslug').trim(); if(!slug){showToast('Укажите slug продукта','err');return;}
+  const prodFields=['categoryLabel','productName','shortDescription','fullDescriptionHtml',
+    'ctaButtonText','secondaryButtonText','buttonUrl','cardTitle','cardDescription',
+    'seoTitle','metaDescription','ogTitle','ogDescription'];
+  const translations={};
+  LANGS.forEach(lang=>{
+    const obj={};
+    prodFields.forEach(key=>{
+      const el=document.getElementById(`${lang}-${key}`);
+      obj[key]=el?el.value.trim():'';
+    });
+    translations[lang]=obj;
+  });
+  const imgTa=document.getElementById('prod-images-ta');
+  const images=imgTa?imgTa.value.split(',').map(s=>s.trim()).filter(Boolean):[];
+  const data={
+    globalFields:{
+      slug, status:getV('prodstat'), categoryId:getV('prodcatsel'),
+      price:getV('prodprice'), sku:getV('prodsku'), stock:getV('prodstock'),
+      volume:getV('prodvol'), priority:getV('prodprio'),
+      region:getV('prodregion'), ogImageUrl:getV('prodogimg'), images,
+    },
+    translations,
+    productName: translations.en?.productName||'',
+    name:        translations.en?.productName||'',
+  };
+  await persistToFirestore('products', data);
+};
+
+window.saveBlogPost = async function() {
+  const slug=getV('blogslug').trim(); if(!slug){showToast('Укажите slug поста','err');return;}
+  const translations={};
+  LANGS.forEach(lang=>{
+    const pane=document.getElementById(`blog-lp-${lang}`); if(!pane) return;
+    const inputs=pane.querySelectorAll('input.fin');
+    const tas=pane.querySelectorAll('textarea.fta');
+    const keys=['h1','mediaUrls','imageAltText','cardTitle','cardDescription','seoTitle','metaDescription','ogTitle','ogDescription'];
+    const obj={fullDescriptionHtml:tas[0]?.value.trim()||''};
+    keys.forEach((k,i)=>{ obj[k]=inputs[i]?.value.trim()||''; });
+    translations[lang]=obj;
+  });
+  const data={
+    globalFields:{
+      slug, status:getV('blogstat'), categoryId:getV('blogcat'),
+      author:getV('blogauthor'), tagBadge:getV('blogbadge'), readTime:getV('blogread'),
+      priority:getV('blogprio'), region:getV('blogregion'), ogImageUrl:getV('blogogimg'),
+    },
+    translations,
+    name:  translations.en?.h1||'',
+    title: translations.en?.h1||'',
+  };
+  await persistToFirestore('posts', data);
+};
+
+// ── Delete flow ───────────────────────────────────────────────
+window._askDelete = function(colName, id) {
+  pendingDeleteId=id; pendingDeleteCol=colName;
+  showM('mconf');
+};
+document.getElementById('mconf-confirm-btn').onclick = async ()=>{
+  if(!pendingDeleteId||!pendingDeleteCol) return;
+  // posts хранятся в коллекции 'blog'
+  const firestoreCol = pendingDeleteCol === 'posts' ? 'blog' : pendingDeleteCol;
+  try {
+    await deleteDoc(doc(db,firestoreCol,pendingDeleteId));
+    const key=pendingDeleteCol==='categories'?'categories':pendingDeleteCol==='products'?'products':'posts';
+    state[key]=state[key].filter(x=>x.id!==pendingDeleteId);
+    renderAll(); closeM('mconf'); showToast('🗑 Удалено');
+  } catch(err) { showToast('Ошибка удаления: '+err.message,'err'); }
+  pendingDeleteId=null; pendingDeleteCol=null;
+};
+document.getElementById('cat-delete-btn').onclick = ()=>{ if(currentEditingId) { closeM('mcat'); window._askDelete('categories',currentEditingId); }};
+document.getElementById('prod-delete-btn').onclick = ()=>{ if(currentEditingId) { closeM('mprod'); window._askDelete('products',currentEditingId); }};
+document.getElementById('blog-delete-btn').onclick = ()=>{ if(currentEditingId) { closeM('mblog'); window._askDelete('posts',currentEditingId); }};
+
+// ── Navigation ────────────────────────────────────────────────
+const META={
+  products:{t:'Products',c:'/ Catalog'},categories:{t:'Categories',c:'/ Catalog'},
+  blog:{t:'Blog Posts',c:'/ Content'},'page-home':{t:'Home Page',c:'/ Pages'},
+  'page-catalog':{t:'Catalog Page',c:'/ Pages'},'page-contacts':{t:'Contacts',c:'/ Pages'},
+  'page-footer':{t:'Navigation & Footer',c:'/ Pages'},settings:{t:'Settings',c:''},
+};
+function goP(id){
+  document.querySelectorAll('.pn').forEach(p=>p.classList.remove('on'));
+  document.getElementById('pn-'+id)?.classList.add('on');
+  document.querySelectorAll('.ni[data-p]').forEach(n=>n.classList.remove('on'));
+  document.querySelector(`.ni[data-p="${id}"]`)?.classList.add('on');
+  document.querySelectorAll('.mni[data-p]').forEach(n=>n.classList.remove('on'));
+  document.querySelector(`.mni[data-p="${id}"]`)?.classList.add('on');
+  const m=META[id]||{t:id,c:''};
+  setText('tptitle',m.t); setText('tpcrumb',m.c);
+  document.querySelector('.ct')?.scrollTo(0,0);
+  closeMob();
+}
+document.querySelectorAll('.ni[data-p]').forEach(el=>el.addEventListener('click',()=>goP(el.dataset.p)));
+document.querySelectorAll('.mni[data-p]').forEach(el=>el.addEventListener('click',()=>goP(el.dataset.p)));
+
+// ── Modal helpers ─────────────────────────────────────────────
+function showM(id){document.getElementById(id)?.classList.add('on');document.body.style.overflow='hidden';}
+function closeM(id){document.getElementById(id)?.classList.remove('on');document.body.style.overflow='';}
+window.showM=showM; window.closeM=closeM;
+
+document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeM(o.id);}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mo.on').forEach(m=>closeM(m.id));});
+
+// ── Sidebar / mobile ──────────────────────────────────────────
+window.toggleSidebar=()=>document.getElementById('sidebar')?.classList.toggle('col');
+window.openMob=()=>{document.getElementById('sidebar')?.classList.add('mo');document.getElementById('sov')?.classList.add('on');document.body.style.overflow='hidden';};
+window.closeMob=()=>{document.getElementById('sidebar')?.classList.remove('mo');document.getElementById('sov')?.classList.remove('on');document.body.style.overflow='';};
+function checkMob(){
+  const m=window.innerWidth<=768;
+  const dt=document.getElementById('dtt'),mb=document.getElementById('mbt');
+  if(dt)dt.style.display=m?'none':''; if(mb)mb.style.display=m?'flex':'none';
+  const sg=document.getElementById('stgg'); if(sg)sg.style.gridTemplateColumns=m?'1fr':'1fr 1fr';
+}
+window.addEventListener('resize',checkMob);
+
+// ── Lang switchers ────────────────────────────────────────────
+window.swBlogLang=(lang,btn)=>{
+  document.querySelectorAll('#mblog .lpane').forEach(p=>p.classList.remove('on'));
+  document.getElementById(`blog-lp-${lang}`)?.classList.add('on');
+  document.querySelectorAll('#mblog .ltab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('#blog-lang-overview .lang-pill').forEach(t=>t.classList.remove('on'));
+  if(btn){btn.classList.add('on');document.querySelector(`#blog-lang-overview .lang-pill[data-lang="${lang}"]`)?.classList.add('on');}
+};
+window.swProdLang=(lang,btn)=>{
+  document.querySelectorAll('#mprod .lpane').forEach(p=>p.classList.remove('on'));
+  document.getElementById(`prod-lp-${lang}`)?.classList.add('on');
+  document.querySelectorAll('#mprod .ltab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('#mprod .lang-overview .lang-pill').forEach(t=>t.classList.remove('on'));
+  if(btn){btn.classList.add('on');document.querySelector(`#mprod .lang-overview .lang-pill[data-lang="${lang}"]`)?.classList.add('on');}
+};
+window.swCatLang=(lang,btn)=>{
+  document.querySelectorAll('#mcat .lpane').forEach(p=>p.classList.remove('on'));
+  document.getElementById(`cat-lang-${lang}`)?.classList.add('on');
+  document.querySelectorAll('#mcat .ltab').forEach(t=>t.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+};
+
+// ── URL updaters ──────────────────────────────────────────────
+window.updProdUrl=function(){
+  const cat=getV('prodcatsel')||'category', sl=getV('prodslug')||'slug';
+  const pr=document.getElementById('produp');
+  if(pr) pr.innerHTML=LANGS.map(l=>`<span>/${l}/products/${cat}/${sl}</span>`).join(' ');
+};
+window.updBlogUrl=function(){
+  const sl=getV('blogslug')||'slug';
+  const pr=document.getElementById('blogurlprev');
+  if(pr) pr.innerHTML=LANGS.map(l=>`<span>/${l}/blog/${sl}</span>`).join(' ');
+};
+window.updCatUrl=function(){
+  const sl=getV('catslug')||'[slug]';
+  const pr=document.getElementById('caturlprev');
+  if(pr) pr.innerHTML=LANGS.map(l=>`<span>/${l}/products/${sl}/</span>`).join(' ');
+};
+window.updLang=function(v,lid,pid){
+  const lm={en:'English (EN)',ru:'Russian (RU)',ka:'Georgian (KA)',hy:'Armenian (HY)'};
+  const pm={en:'/en/',ru:'/ru/',ka:'/ka/',hy:'/hy/'};
+  const l=document.getElementById(lid),p=document.getElementById(pid);
+  if(l)l.textContent=lm[v]||v; if(p)p.textContent=pm[v]||'/'+v+'/';
+};
+
+// ── Color swatches ────────────────────────────────────────────
+document.getElementById('swatches').addEventListener('click',e=>{
+  const sw=e.target.closest('.sw'); if(!sw) return;
+  document.querySelectorAll('.sw').forEach(s=>s.classList.remove('on'));
+  sw.classList.add('on'); selColor=sw.dataset.c;
+});
+
+// ── confirmLang ───────────────────────────────────────────────
+window.confirmLang=function(type,lang){
+  const paneId=(type==='blog'?'blog-lp-':'prod-lp-')+lang;
+  const bar=document.querySelector('#'+paneId+' .conf-bar'); if(!bar) return;
+  const icon=bar.querySelector('.material-symbols-outlined');
+  const status=bar.querySelector('.conf-status');
+  const sub=bar.querySelector('.conf-sub');
+  const badge=bar.querySelector('.conf-badge');
+  if(icon){icon.textContent='check_circle';icon.style.color='var(--green)';}
+  if(status)status.textContent=lang.toUpperCase()+' version — Published';
+  if(sub)sub.textContent='Confirmed — '+new Date().toLocaleString();
+  if(badge){badge.className='conf-badge conf-y';badge.textContent='✓ Confirmed';}
+  const tabDot=document.querySelector(`#${type==='blog'?'mblog':'mprod'} .ltab[data-lang="${lang}"] .conf-dot`);
+  if(tabDot){tabDot.className='conf-dot yes';}
+  const sEl=document.getElementById(`${type==='blog'?'blog':'prod'}-lstatus-${lang}`);
+  if(sEl){sEl.textContent='Published';sEl.className='lstatus lstatus-pub';}
+};
+
+// ── Filters ───────────────────────────────────────────────────
+window.filterProducts=renderProducts;
+window.filterBlog=renderBlog;
+
+// ── Pills ─────────────────────────────────────────────────────
+window.addPill=function(lang){
+  const inp=document.getElementById('pillin-'+lang); if(!inp?.value.trim()) return;
+  const box=document.getElementById('pills-'+lang); if(!box) return;
+  const s=document.createElement('span'); s.className='pi';
+  s.innerHTML=escH(inp.value.trim())+'<button onclick="this.closest(\'.pi\').remove()"><span class="material-symbols-outlined ic">close</span></button>';
+  box.appendChild(s); inp.value='';
+};
+
+// ── Ingredients ───────────────────────────────────────────────
+window.addIngr=function(){
+  const list=document.getElementById('ingren'); if(!list) return;
+  const r=document.createElement('div'); r.className='ir';
+  r.innerHTML='<input class="fin" placeholder="Ingredient name"><input class="fin pct" placeholder="0%"><button class="ib dr" onclick="this.parentNode.remove()"><span class="material-symbols-outlined ic">delete</span></button>';
+  list.appendChild(r);
+};
+
+// ── Section toggle ────────────────────────────────────────────
+window.togSec=h=>{h.classList.toggle('on');h.nextElementSibling?.classList.toggle('on');};
+
+// ── openNewCat exposed ────────────────────────────────────────
+window.openNewCat=openNewCatFn;
+
+// ════════════════════════════════════════════════════════════
+// PAGES & SETTINGS
+// ════════════════════════════════════════════════════════════
+
+// Локальный кэш загруженных page-документов
+const pagesCache = {};
+// Текущий язык редактирования для каждой страницы
+const pageLangs = { home:'en', catalog:'en', contacts:'en', 'footer-nav':'en' };
+
+// ── Загрузка всех pages + settings ───────────────────────────
+async function loadPagesAndSettings() {
+  try {
+    const pageIds = ['home','catalog','contacts','footer-nav'];
+    await Promise.all(pageIds.map(async id => {
+      const snap = await getDoc(doc(db,'pages',id));
+      pagesCache[id] = snap.exists() ? snap.data() : {};
+    }));
+    const settSnap = await getDoc(doc(db,'settings','main'));
+    pagesCache['settings'] = settSnap.exists() ? settSnap.data() : {};
+
+    fillHomePage('en');
+    fillPageFields('catalog','en');
+    fillPageFields('contacts','en');
+    fillPageFields('footer-nav','en');
+    fillSettings();
+  } catch(err) {
+    console.error('Pages load error:', err);
+    showToast('Ошибка загрузки Pages: '+err.message,'err');
+  }
+}
+
+// ── Переключение языка на странице ────────────────────────────
+window.switchPageLang = function(pageId, lang) {
+  pageLangs[pageId] = lang;
+  const lm = {en:'English (EN)',ru:'Russian (RU)',ka:'Georgian (KA)',hy:'Armenian (HY)'};
+  const pm = {en:'/en/',ru:'/ru/',ka:'/ka/',hy:'/hy/'};
+  if (pageId === 'home') {
+    const hll = document.getElementById('hll');
+    const hlp = document.getElementById('hlp');
+    if (hll) hll.textContent = lm[lang]||lang;
+    if (hlp) hlp.textContent = pm[lang]||'/'+lang+'/';
+    fillHomePage(lang);
+  } else {
+    fillPageFields(pageId, lang);
+  }
+};
+
+// ── Геттеры данных из кэша ────────────────────────────────────
+function pageGF(id) { return pagesCache[id]?.globalFields || pagesCache[id] || {}; }
+function pageLoc(id, lang) {
+  const d = pagesCache[id] || {};
+  return d.translations?.[lang] || d.translations?.en || d[lang] || d.en || {};
+}
+
+// ── HOME PAGE fill ────────────────────────────────────────────
+function fillHomePage(lang) {
+  const d  = pagesCache['home'] || {};
+  const gf = d.globalFields || {};
+  const lo = d.translations?.[lang] || d.translations?.en || d[lang] || d.en || {};
+
+  // Section titles
+  setV('home-productsLabel',  lo.productsLabel  || lo.productsSectionLabel || gf.productsLabel  || '');
+  setV('home-productsTitle',  lo.productsTitle  || lo.productsSectionTitle || gf.productsTitle  || '');
+  setV('home-blogLabel',      lo.blogLabel      || lo.blogSectionLabel     || gf.blogLabel      || '');
+  setV('home-blogTitle',      lo.blogTitle      || lo.blogSectionTitle     || gf.blogTitle      || '');
+  setV('home-reviewsLabel',   lo.reviewsLabel   || lo.reviewsSectionLabel  || gf.reviewsLabel   || '');
+  setV('home-reviewsTitle',   lo.reviewsTitle   || lo.reviewsSectionTitle  || gf.reviewsTitle   || '');
+
+  // SEO
+  setV('home-seoTitle',        lo.seoTitle        || gf.seoTitle        || '');
+  setV('home-metaDescription', lo.metaDescription || gf.metaDescription || '');
+  setV('home-ogTitle',         lo.ogTitle         || gf.ogTitle         || '');
+  setV('home-ogDescription',   lo.ogDescription   || gf.ogDescription   || '');
+  setV('home-ogImageUrl',      gf.ogImageUrl || lo.ogImageUrl || '');
+
+  // Слайды — реальное поле heroSlides, внутри backgroundImageUrl/buttonText/buttonLink
+  const rawSlides = lo.heroSlides || lo.slides || gf.heroSlides || gf.slides || [];
+  const slides = rawSlides.map(s => ({
+    subtitle: s.subtitle || '',
+    headline: s.headline || '',
+    bgImage:  s.backgroundImageUrl || s.bgImage || '',
+    btnText:  s.buttonText  || s.btnText  || '',
+    btnUrl:   s.buttonLink  || s.btnUrl   || s.btnLink || '',
+  }));
+  renderSlides(slides);
+
+  // Отзывы — поле reviews, внутри reviewText или text
+  const rawReviews = lo.reviews || gf.reviews || [];
+  const reviews = rawReviews.map(r => ({
+    author: r.author || '',
+    role:   r.role   || '',
+    text:   r.reviewText || r.text || '',
+  }));
+  renderReviews(reviews);
+}
+
+
+// ── Рендер слайдов ────────────────────────────────────────────
+function renderSlides(slides) {
+  const body = document.getElementById('home-slides-body');
+  if (!body) return;
+  body.innerHTML = slides.map((s, i) => `
+    <div class="slide-row" data-idx="${i}" style="margin-bottom:18px;padding:16px;background:var(--bg3);border-radius:8px;border:1px solid var(--border2)">
+      <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+        SLIDE ${i+1}
+        <button class="ib dr" onclick="removeSlide(${i})"><span class="material-symbols-outlined ic">delete</span></button>
+      </div>
+      <div class="fg">
+        <div class="fi"><label class="fl">Subtitle</label><input class="fin slide-subtitle" value="${escH(s.subtitle||'')}"></div>
+        <div class="fi"><label class="fl">Button Text</label><input class="fin slide-btnText" value="${escH(s.btnText||'')}"></div>
+        <div class="fi full"><label class="fl">Headline</label><input class="fin slide-headline" value="${escH(s.headline||'')}"></div>
+        <div class="fi full"><label class="fl">Background Image URL</label><input class="fin slide-bgImage" value="${escH(s.bgImage||'')}"></div>
+        <div class="fi"><label class="fl">Button URL</label><input class="fin slide-btnUrl" value="${escH(s.btnUrl||'')}"></div>
+      </div>
+    </div>`).join('');
+}
+
+window.addSlide = function() {
+  const body = document.getElementById('home-slides-body');
+  const count = body ? body.querySelectorAll('.slide-row').length : 0;
+  const existing = collectSlides();
+  existing.push({subtitle:'',headline:'',btnText:'',btnUrl:'',bgImage:''});
+  renderSlides(existing);
+};
+window.removeSlide = function(idx) {
+  const slides = collectSlides();
+  slides.splice(idx, 1);
+  renderSlides(slides);
+};
+function collectSlides() {
+  const rows = document.querySelectorAll('#home-slides-body .slide-row');
+  return Array.from(rows).map(r => ({
+    subtitle:           r.querySelector('.slide-subtitle')?.value.trim() || '',
+    headline:           r.querySelector('.slide-headline')?.value.trim() || '',
+    buttonText:         r.querySelector('.slide-btnText')?.value.trim()  || '',
+    buttonLink:         r.querySelector('.slide-btnUrl')?.value.trim()   || '',
+    backgroundImageUrl: r.querySelector('.slide-bgImage')?.value.trim()  || '',
+    // алиасы для обратной совместимости
+    btnText: r.querySelector('.slide-btnText')?.value.trim()  || '',
+    btnUrl:  r.querySelector('.slide-btnUrl')?.value.trim()   || '',
+    bgImage: r.querySelector('.slide-bgImage')?.value.trim()  || '',
+  }));
+}
+
+// ── Рендер отзывов ────────────────────────────────────────────
+function renderReviews(reviews) {
+  const body = document.getElementById('home-reviews-body');
+  if (!body) return;
+  body.innerHTML = reviews.map((r, i) => `
+    <div class="review-row" style="margin-bottom:14px;padding:14px;background:var(--bg3);border-radius:8px;border:1px solid var(--border2)">
+      <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+        REVIEW ${i+1}
+        <button class="ib dr" onclick="removeReview(${i})"><span class="material-symbols-outlined ic">delete</span></button>
+      </div>
+      <div class="fg">
+        <div class="fi"><label class="fl">Author</label><input class="fin review-author" value="${escH(r.author||'')}"></div>
+        <div class="fi"><label class="fl">Role</label><input class="fin review-role" value="${escH(r.role||'')}"></div>
+        <div class="fi full"><label class="fl">Review Text</label><textarea class="fta review-text" style="min-height:60px">${escH(r.text||'')}</textarea></div>
+      </div>
+    </div>`).join('');
+}
+
+window.addReview = function() {
+  const existing = collectReviews();
+  existing.push({author:'',role:'',text:''});
+  renderReviews(existing);
+};
+window.removeReview = function(idx) {
+  const reviews = collectReviews();
+  reviews.splice(idx, 1);
+  renderReviews(reviews);
+};
+function collectReviews() {
+  const rows = document.querySelectorAll('#home-reviews-body .review-row');
+  return Array.from(rows).map(r => ({
+    author: r.querySelector('.review-author')?.value.trim() || '',
+    role:   r.querySelector('.review-role')?.value.trim()   || '',
+    text:   r.querySelector('.review-text')?.value.trim()   || '',
+  }));
+}
+
+// ── Generic page fill ─────────────────────────────────────────
+function fillPageFields(pageId, lang) {
+  const d  = pagesCache[pageId] || {};
+  const gf = d.globalFields || {};
+  const lo = d.translations?.[lang] || d.translations?.en || d[lang] || d.en || {};
+
+  if (pageId === 'catalog') {
+    // Реальные поля: heroTitle, heroSubtitle, heroDescription
+    setV('catalog-title',           lo.heroTitle       || lo.title       || gf.heroTitle       || '');
+    setV('catalog-subtitle',        lo.heroSubtitle    || lo.subtitle    || gf.heroSubtitle    || '');
+    setV('catalog-description',     lo.heroDescription || lo.description || gf.heroDescription || '');
+    setV('catalog-seoTitle',        lo.seoTitle        || gf.seoTitle        || '');
+    setV('catalog-metaDescription', lo.metaDescription || gf.metaDescription || '');
+  }
+
+  if (pageId === 'contacts') {
+    // Локализованные
+    setV('contacts-label',          lo.label          || gf.label          || '');
+    setV('contacts-title',          lo.title          || gf.title          || '');
+    setV('contacts-ctaButton',      lo.ctaButton      || gf.ctaButton      || '');
+    setV('contacts-logisticsTerms', lo.logisticsTerms || gf.logisticsTerms || '');
+    setV('contacts-seoTitle',       lo.seoTitle       || gf.seoTitle       || '');
+    setV('contacts-metaDescription',lo.metaDescription|| gf.metaDescription|| '');
+    // Глобальные — phone может быть в корне документа или в globalFields
+    setV('contacts-phone',     gf.phone     || d.phone     || '');
+    setV('contacts-email',     gf.email     || d.email     || '');
+    setV('contacts-ctaEmail',  gf.ctaEmail  || d.ctaEmail  || gf.email || d.email || '');
+    setV('contacts-mapsEmbed', gf.mapsEmbed || d.mapsEmbed || '');
+  }
+
+  if (pageId === 'footer-nav') {
+    // Реальные поля: navHomeLink→home, navAboutText→about, navLinks[]→links
+    // Простые текстовые поля
+    setV('footer-nav-home',     lo.navHomeText     || lo.home     || gf.navHomeText     || '');
+    setV('footer-nav-about',    lo.navAboutText    || lo.about    || gf.navAboutText    || '');
+    setV('footer-nav-contacts', lo.navContactsText || lo.contacts || gf.navContactsText || '');
+
+    // Навигационные ссылки могут быть в navLinks[] или прямыми полями
+    const navLinks = lo.navLinks || gf.navLinks || [];
+    const catalogLink = navLinks.find(l => l.text?.toLowerCase().includes('catalog') || l.link?.includes('catalog'));
+    const blogLink    = navLinks.find(l => l.text?.toLowerCase().includes('blog') || l.text?.toLowerCase().includes('tech') || l.link?.includes('blog'));
+    const wholesaleLink = navLinks.find(l => l.text?.toLowerCase().includes('wholesale') || l.link?.includes('contact'));
+
+    setV('footer-nav-catalog',  lo.catalog   || catalogLink?.text   || gf.catalog   || '');
+    setV('footer-nav-blog',     lo.blog      || blogLink?.text      || gf.blog      || '');
+    setV('footer-nav-link1',    lo.link1     || catalogLink?.text   || gf.link1     || '');
+    setV('footer-nav-link2',    lo.link2     || blogLink?.text      || gf.link2     || '');
+    setV('footer-nav-link3',    lo.link3     || wholesaleLink?.text || gf.link3     || '');
+    setV('footer-nav-copyright',lo.copyright || gf.copyright || '');
+  }
+}
+
+// ── Settings fill ─────────────────────────────────────────────
+function fillSettings() {
+  const s = pagesCache['settings'] || {};
+  setV('settings-siteName',        s.siteName         || s.admin?.siteName         || '');
+  setV('settings-defaultLang',     s.defaultLang      || s.admin?.defaultLang      || 'en');
+  setV('settings-metaDescription', s.metaDescription  || '');
+  setV('settings-adminName',       s.admin            || '');
+  setV('settings-prefix-en',       s.languagePrefixes?.en || 'en');
+  setV('settings-prefix-ru',       s.languagePrefixes?.ru || 'ru');
+  setV('settings-prefix-ka',       s.languagePrefixes?.ka || 'ka');
+  setV('settings-prefix-hy',       s.languagePrefixes?.hy || 'hy');
+}
+
+// ── Save page document ────────────────────────────────────────
+window.savePageDoc = async function(pageId) {
+  const lang = pageLangs[pageId] || 'en';
+  const existing = pagesCache[pageId] || {};
+  const existingGF = existing.globalFields || {};
+  const existingTr = existing.translations || {};
+
+  let localizedFields = {};
+  let globalFields = {...existingGF};
+
+  if (pageId === 'home') {
+    localizedFields = {
+      productsLabel:   getV('home-productsLabel'),
+      productsTitle:   getV('home-productsTitle'),
+      blogLabel:       getV('home-blogLabel'),
+      blogTitle:       getV('home-blogTitle'),
+      reviewsLabel:    getV('home-reviewsLabel'),
+      reviewsTitle:    getV('home-reviewsTitle'),
+      seoTitle:        getV('home-seoTitle'),
+      metaDescription: getV('home-metaDescription'),
+      ogTitle:         getV('home-ogTitle'),
+      ogDescription:   getV('home-ogDescription'),
+      heroSlides:      collectSlides(),   // реальное имя поля в Firestore
+      reviews:         collectReviews().map(r => ({...r, reviewText: r.text})),
+    };
+    globalFields.ogImageUrl = getV('home-ogImageUrl');
+  } else if (pageId === 'catalog') {
+    localizedFields = {
+      heroTitle:       getV('catalog-title'),        // реальное имя поля
+      heroSubtitle:    getV('catalog-subtitle'),
+      heroDescription: getV('catalog-description'),
+      seoTitle:        getV('catalog-seoTitle'),
+      metaDescription: getV('catalog-metaDescription'),
+    };
+  } else if (pageId === 'contacts') {
+    localizedFields = {
+      label:           getV('contacts-label'),
+      title:           getV('contacts-title'),
+      ctaButton:       getV('contacts-ctaButton'),
+      logisticsTerms:  getV('contacts-logisticsTerms'),
+      seoTitle:        getV('contacts-seoTitle'),
+      metaDescription: getV('contacts-metaDescription'),
+    };
+    // Глобальные поля contacts
+    globalFields.phone     = getV('contacts-phone');
+    globalFields.email     = getV('contacts-email');
+    globalFields.ctaEmail  = getV('contacts-ctaEmail');
+    globalFields.mapsEmbed = getV('contacts-mapsEmbed');
+  } else if (pageId === 'footer-nav') {
+    localizedFields = {
+      // Сохраняем под обоими именами — старым (nav*) и новым
+      navHomeText:     getV('footer-nav-home'),
+      navAboutText:    getV('footer-nav-about'),
+      navContactsText: getV('footer-nav-contacts'),
+      home:      getV('footer-nav-home'),
+      about:     getV('footer-nav-about'),
+      contacts:  getV('footer-nav-contacts'),
+      // Ссылки в каталог/блог/wholesale — как массив navLinks
+      navLinks: [
+        { text: getV('footer-nav-link1') || getV('footer-nav-catalog'), link: '/en/catalog/' },
+        { text: getV('footer-nav-link2') || getV('footer-nav-blog'),    link: '/en/blog/' },
+        { text: getV('footer-nav-link3'), link: '#contacts' },
+      ].filter(l => l.text),
+      catalog:   getV('footer-nav-catalog'),
+      blog:      getV('footer-nav-blog'),
+      link1:     getV('footer-nav-link1'),
+      link2:     getV('footer-nav-link2'),
+      link3:     getV('footer-nav-link3'),
+      copyright: getV('footer-nav-copyright'),
+    };
+  }
+
+  const newData = {
+    ...existing,
+    globalFields,
+    translations: {
+      ...existingTr,
+      [lang]: {
+        ...(existingTr[lang] || {}),
+        ...localizedFields,
+      },
+    },
+  };
+
+  try {
+    await setDoc(doc(db,'pages',pageId), newData, { merge: true });
+    pagesCache[pageId] = newData;
+    showToast(`✅ ${pageId} сохранено!`);
+  } catch(err) {
+    showToast('Ошибка: '+err.message,'err');
+    console.error(err);
+  }
+};
+
+// ── Save settings ─────────────────────────────────────────────
+window.saveSettings = async function() {
+  const data = {
+    siteName:        getV('settings-siteName'),
+    defaultLang:     getV('settings-defaultLang'),
+    metaDescription: getV('settings-metaDescription'),
+    admin:           getV('settings-adminName'),
+    languagePrefixes: {
+      en: getV('settings-prefix-en') || 'en',
+      ru: getV('settings-prefix-ru') || 'ru',
+      ka: getV('settings-prefix-ka') || 'ka',
+      hy: getV('settings-prefix-hy') || 'hy',
+    },
+  };
+  try {
+    await setDoc(doc(db,'settings','main'), data, { merge: true });
+    pagesCache['settings'] = data;
+    showToast('✅ Settings сохранены!');
+  } catch(err) {
+    showToast('Ошибка: '+err.message,'err');
+    console.error(err);
+  }
+};
+
+// ── Init ──────────────────────────────────────────────────────
+checkMob();
+updProdUrl(); updBlogUrl(); updCatUrl();
+document.getElementById('cat-delete-btn').style.display='none';
+document.getElementById('prod-delete-btn').style.display='none';
+document.getElementById('blog-delete-btn').style.display='none';
+loadAllData();
+loadPagesAndSettings();
+</script>
+</body>
+</html>
