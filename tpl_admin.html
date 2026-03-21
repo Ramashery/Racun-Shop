@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>RAKUN Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<!-- Убедитесь, что admin.css лежит в папке public -->
+<link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+<div class="sov" id="sov" onclick="closeMob()"></div>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sbl"><div class="lmark">RK</div><div class="ltxt">RAKUN<small>Admin Panel</small></div></div>
+  <nav class="snav">
+    <div class="ngl">Content</div>
+    <div class="ni on" data-p="products"><span class="material-symbols-outlined ic">inventory_2</span><span class="lbl">Products</span><span class="bdg" id="bdgp">0</span></div>
+    <div class="ni" data-p="categories"><span class="material-symbols-outlined ic">category</span><span class="lbl">Categories</span><span class="bdg" id="bdgc">0</span></div>
+    <div class="ni" data-p="blog"><span class="material-symbols-outlined ic">article</span><span class="lbl">Blog Posts</span><span class="bdg" id="bdgb">0</span></div>
+    <div class="ngl">Pages</div>
+    <div class="ni" data-p="page-home"><span class="material-symbols-outlined ic">home</span><span class="lbl">Home Page</span></div>
+    <div class="ni" data-p="page-catalog"><span class="material-symbols-outlined ic">grid_view</span><span class="lbl">Catalog Page</span></div>
+    <div class="ni" data-p="page-contacts"><span class="material-symbols-outlined ic">location_on</span><span class="lbl">Contacts</span></div>
+    <div class="ni" data-p="page-footer"><span class="material-symbols-outlined ic">link</span><span class="lbl">Navigation &amp; Footer</span></div>
+    <div class="ngl">Settings</div>
+    <div class="ni" data-p="settings"><span class="material-symbols-outlined ic">settings</span><span class="lbl">Settings</span></div>
+  </nav>
+  <div class="sft"><div class="av">AD</div><div class="ui"><div class="un">Admin</div><div class="ur">Super Administrator</div></div></div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <button class="tbt" id="dtt" onclick="toggleSidebar()"><span class="material-symbols-outlined">menu</span></button>
+    <button class="tbt" id="mbt" style="display:none" onclick="openMob()"><span class="material-symbols-outlined">menu</span></button>
+    <span class="tt" id="tptitle">Products</span>
+    <span class="tc" id="tpcrumb">/ Catalog</span>
+    <div class="tr">
+      <span style="font-size:12px;color:var(--text2);margin-right:10px">Updated: {{ generated_at[:10] }}</span>
+      <a href="{{ base_url }}/en/" target="_blank" class="btn bg2b bxs bv" style="text-decoration:none;"><span class="material-symbols-outlined ic" style="font-size:15px">open_in_new</span>Visit Site</a>
+      <div class="av tav">AD</div>
+    </div>
+  </div>
+
+  <div class="ct">
+
+    <!-- PRODUCTS LIST -->
+    <div class="pn on" id="pn-products">
+      <div class="ph"><div class="pht"><h1>Products</h1><p>URL: /en/products/<strong>[category-slug]</strong>/<strong>[product-slug]</strong></p></div><div class="pha"><button class="btn bp" onclick="showM('mprod')"><span class="material-symbols-outlined ic">add</span>New Product</button></div></div>
+      <div class="tw">
+        <table class="dt">
+          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Translations</th><th>Status</th><th>URL</th><th>Actions</th></tr></thead>
+          <tbody id="products-tbody">
+            <!-- Dynamic Content -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="pn" id="pn-categories">
+      <div class="ph"><div class="pht"><h1>Categories</h1><p>URL: /en/products/<strong>[category-slug]</strong>/product-slug</p></div><div class="pha"><button class="btn bp" onclick="openNewCat()"><span class="material-symbols-outlined ic">add</span>New Category</button></div></div>
+      <div class="tw">
+        <div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between">All Categories<span style="font-size:12px;color:var(--text2);font-weight:500" id="catcntlbl">0 categories</span></div>
+        <table class="dt"><thead><tr><th>Name (EN)</th><th>Slug</th><th>Products</th><th>Translations</th><th>Status</th><th>URL</th><th>Actions</th></tr></thead><tbody id="cattbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- BLOG LIST -->
+    <div class="pn" id="pn-blog">
+      <div class="ph"><div class="pht"><h1>Blog Posts</h1><p>URL: /en/blog/<strong>[post-slug]</strong></p></div><div class="pha"><button class="btn bp" onclick="showM('mblog')"><span class="material-symbols-outlined ic">add</span>New Post</button></div></div>
+      <div class="tw">
+        <table class="dt">
+          <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Translations</th><th>Status</th><th>URL</th><th>Actions</th></tr></thead>
+          <tbody id="blog-tbody">
+            <!-- Dynamic Content -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Заглушки для остальных страниц (Settings, Home Page и т.д.) -->
+    <div class="pn" id="pn-page-home"><div class="ph"><div class="pht"><h1>Home Page</h1></div></div></div>
+    <div class="pn" id="pn-page-catalog"><div class="ph"><div class="pht"><h1>Catalog Page</h1></div></div></div>
+    <div class="pn" id="pn-page-contacts"><div class="ph"><div class="pht"><h1>Contacts</h1></div></div></div>
+    <div class="pn" id="pn-page-footer"><div class="ph"><div class="pht"><h1>Footer</h1></div></div></div>
+    <div class="pn" id="pn-settings"><div class="ph"><div class="pht"><h1>Settings</h1></div></div></div>
+  </div>
+</div>
+</div>
+
+<script>
+// ==========================================
+// 1. ПОЛУЧАЕМ ДАННЫЕ ИЗ PYTHON СТАТИЧЕСКИ
+// ==========================================
+window.SITE_DATA = {{ site_data_json | safe }};
+
+// ==========================================
+// 2. ОБРАБОТКА И ВЫВОД ДАННЫХ
+// ==========================================
+const LANGS=['en','ru','ka','hy'];
+
+// Функция-помощник для безопасного извлечения данных
+function getVal(doc, key, lang='en') {
+    let g = doc.globalFields || {};
+    let l = (doc.translations && doc.translations[lang]) ? doc.translations[lang] : (doc[lang] || {});
+    return l[key] || g[key] || '';
+}
+
+// Парсим категории
+let cats = (window.SITE_DATA.categories || []).map(c => {
+    let nameEn = getVal(c, 'name', 'en') || c._id;
+    let slug = c.globalFields?.slug || c._id;
+    let count = (window.SITE_DATA.products || []).filter(p => p.globalFields?.categoryId === c._id).length;
+    return { id: c._id, name: nameEn, slug: slug, color: c.globalFields?.color || '#4f7dff', status: c.globalFields?.status || 'Active', count: count, raw: c };
+});
+
+// Парсим продукты
+let prods = (window.SITE_DATA.products || []).map(p => {
+    return {
+        id: p._id,
+        name: getVal(p, 'productName', 'en') || getVal(p, 'name', 'en') || 'Unnamed Product',
+        cat: p.globalFields?.categoryId || 'Unknown',
+        price: p.globalFields?.price || '0',
+        slug: p.globalFields?.slug || p._id,
+        status: p.globalFields?.status || 'Draft',
+        img: (p.globalFields?.images && p.globalFields.images[0]) ? p.globalFields.images[0] : 'https://via.placeholder.com/44',
+        raw: p
+    };
+});
+
+// Парсим посты
+let posts = (window.SITE_DATA.posts || []).map(p => {
+    return {
+        id: p._id,
+        title: getVal(p, 'name', 'en') || getVal(p, 'title', 'en') || 'Untitled Post',
+        cat: p.globalFields?.categoryId || 'Unknown',
+        author: p.globalFields?.author || 'Admin',
+        slug: p.globalFields?.slug || p._id,
+        status: p.globalFields?.status || 'Draft',
+        img: (p.globalFields?.images && p.globalFields.images[0]) ? p.globalFields.images[0] : 'https://via.placeholder.com/44',
+        raw: p
+    };
+});
+
+// Рендер таблиц
+function renderAdminUI() {
+    // 1. Категории
+    document.getElementById('bdgc').textContent = cats.length;
+    document.getElementById('catcntlbl').textContent = cats.length + ' categories';
+    document.getElementById('cattbody').innerHTML = cats.map(c => `
+      <tr>
+        <td><div style="display:flex;align-items:center;gap:10px"><div style="width:10px;height:10px;border-radius:50%;background:${c.color};flex-shrink:0"></div><strong>${c.name}</strong></div></td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text2)">${c.slug}</td>
+        <td>${c.count}</td>
+        <td><div class="lf"><span class="lfl d">EN</span><span class="lfl d">RU</span><span class="lfl d">KA</span><span class="lfl d">HY</span></div></td>
+        <td><span class="sb2 ${c.status==='Active'?'sp':'sa'}">${c.status}</span></td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2)">/en/products/${c.slug}/</td>
+        <td><div class="ra"><button class="ib" onclick="alert('Static Mode: Edit via Firebase')"><span class="material-symbols-outlined ic">edit</span></button></div></td>
+      </tr>
+    `).join('');
+
+    // 2. Продукты
+    document.getElementById('bdgp').textContent = prods.length;
+    document.getElementById('products-tbody').innerHTML = prods.map(p => {
+      let catObj = cats.find(c => c.id === p.cat);
+      let catName = catObj ? catObj.name : p.cat;
+      let catSlug = catObj ? catObj.slug : 'category';
+      return `
+      <tr>
+        <td><div class="pnc"><img src="${p.img}" class="pth"><div class="pni"><div class="pnm">${p.name}</div><div class="pcm">${p.id}</div></div></div></td>
+        <td>${catName}</td>
+        <td><strong>${p.price}</strong></td>
+        <td><div class="lf"><span class="lfl d">EN</span><span class="lfl d">RU</span><span class="lfl d">KA</span><span class="lfl d">HY</span></div></td>
+        <td><span class="sb2 ${p.status.toLowerCase()==='published'?'sp':'sa'}">${p.status}</span></td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2)">/en/products/${catSlug}/${p.slug}/</td>
+        <td><div class="ra"><button class="ib" onclick="alert('Static Mode: Edit via Firebase')"><span class="material-symbols-outlined ic">edit</span></button></div></td>
+      </tr>
+    `}).join('');
+
+    // 3. Блог
+    document.getElementById('bdgb').textContent = posts.length;
+    document.getElementById('blog-tbody').innerHTML = posts.map(p => `
+      <tr>
+        <td><div class="pnc"><img src="${p.img}" class="pth"><div class="pni"><div class="pnm">${p.title}</div><div class="pcm">${p.id}</div></div></div></td>
+        <td>${p.cat}</td>
+        <td>${p.author}</td>
+        <td><div class="lf"><span class="lfl d">EN</span><span class="lfl d">RU</span><span class="lfl d">KA</span><span class="lfl d">HY</span></div></td>
+        <td><span class="sb2 ${p.status.toLowerCase()==='published'?'sp':'sa'}">${p.status}</span></td>
+        <td style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2)">/en/blog/${p.slug}/</td>
+        <td><div class="ra"><button class="ib" onclick="alert('Static Mode: Edit via Firebase')"><span class="material-symbols-outlined ic">edit</span></button></div></td>
+      </tr>
+    `).join('');
+}
+
+// Запуск при загрузке
+document.addEventListener('DOMContentLoaded', renderAdminUI);
+
+// ==========================================
+// 3. UI ЛОГИКА (ВКЛАДКИ САЙДБАРА)
+// ==========================================
+const META={
+  products:{t:'Products',c:'/ Catalog'},categories:{t:'Categories',c:'/ Catalog'},
+  blog:{t:'Blog Posts',c:'/ Content'},'page-home':{t:'Home Page',c:'/ Pages'},'page-catalog':{t:'Catalog Page',c:'/ Pages'},
+  'page-contacts':{t:'Contacts',c:'/ Pages'},'page-footer':{t:'Navigation & Footer',c:'/ Pages'},
+  settings:{t:'Settings',c:''},
+};
+
+function goP(id){
+  document.querySelectorAll('.pn').forEach(p=>p.classList.remove('on'));
+  const p=document.getElementById('pn-'+id);if(p)p.classList.add('on');
+  document.querySelectorAll('.ni[data-p]').forEach(n=>n.classList.remove('on'));
+  const ni=document.querySelector('.ni[data-p="'+id+'"]');if(ni)ni.classList.add('on');
+  const m=META[id]||{t:id,c:''};
+  document.getElementById('tptitle').textContent=m.t;
+  document.getElementById('tpcrumb').textContent=m.c;
+  document.querySelector('.ct').scrollTop=0;
+}
+document.querySelectorAll('.ni[data-p]').forEach(el=>el.addEventListener('click',()=>goP(el.dataset.p)));
+
+</script>
+</body>
+</html>
