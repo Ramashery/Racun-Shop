@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>RAKUN Admin Panel</title>
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+  <!-- Ваш существующий HTML код админ-панели -->
+  
+  <script>
+    // ВАЖНО: Получаем статичные данные, сгенерированные Python
+    const SITE_DATA = {{ site_data_json | safe }};
+    
+    // Инициализируем ваши переменные
+    let cats = SITE_DATA.categories || [];
+    let products = SITE_DATA.products || [];
+    let posts = SITE_DATA.posts || [];
+    
+    // Теперь вызываем вашу функцию отрисовки
+    document.addEventListener('DOMContentLoaded', () => {
+      if(typeof renderCats === 'function') renderCats();
+      // Вызовите renderProducts() и т.д.
+    });
+  </script>
+
+  <!-- Скрипт Firebase нужен только для сохранения изменений обратно в БД -->
+  <script type="module" src="/firebase-config.js"></script>
+  <script type="module">
+    import { db, doc, setDoc } from '/firebase-config.js';
+    // Ваша логика сохранения
+  </script>
+</body>
+</html>
