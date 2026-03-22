@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ product.seoTitle or product.name ~ " — RAKUN" }}</title>
+  <meta name="description" content="{{ product.metaDescription or product.shortDescription }}">
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="product">
+  <meta property="og:title"       content="{{ product.ogTitle or product.name }}">
+  <meta property="og:description" content="{{ product.ogDescription or product.shortDescription }}">
+  <meta property="og:image"       content="{{ product.firstImage }}">
+  <meta property="og:url"         content="{{ BASE_URL }}/{{ lang }}/products/{{ product._cat_slug }}/{{ product._slug }}/">
+  <meta property="og:locale"      content="{{ lang }}">
+
+  <!-- Hreflang -->
+  {% for l in SUPPORTED_LANGS %}
+  <link rel="alternate" hreflang="{{ l }}" href="{{ BASE_URL }}/{{ l }}/products/{{ product._cat_slug }}/{{ product._slug }}/">
+  {% endfor %}
+  <link rel="alternate" hreflang="x-default" href="{{ BASE_URL }}/en/products/{{ product._cat_slug }}/{{ product._slug }}/">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="{{ BASE_URL }}/{{ lang }}/products/{{ product._cat_slug }}/{{ product._slug }}/">
+
+  <!-- Schema.org JSON-LD -->
+  {% if product.schemaJsonLd %}
+  <script type="application/ld+json">{{ product.schemaJsonLd | safe }}</script>
+  {% endif %}
+
+  <!-- Styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <!-- ── NAV ──────────────────────────────────────────────── -->
+  <nav id="main-nav">
+    <a href="/{{ lang }}/index.html" class="nav-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo">
+    </a>
+    <ul class="nav-links">
+      <li><a href="/{{ lang }}/index.html">{{ nav.home }}</a></li>
+      <li><a href="/{{ lang }}/catalog/index.html" class="active">{{ nav.catalog }}</a></li>
+      <li><a href="/{{ lang }}/blog/index.html">{{ nav.blog }}</a></li>
+      <li><a href="/{{ lang }}/index.html#contacts">{{ nav.contacts }}</a></li>
+    </ul>
+
+    <!-- Lang switcher -->
+    <div class="lang-switcher">
+      {% for l in SUPPORTED_LANGS %}
+      <a href="/{{ l }}/products/{{ product._cat_slug }}/{{ product._slug }}/"
+         class="lang-btn{% if l == lang %} active{% endif %}">{{ l | upper }}</a>
+      {% endfor %}
+    </div>
+  </nav>
+
+  <!-- ── MOBILE HEADER ────────────────────────────────────── -->
+  <header class="mobile-header" id="mobile-header">
+    <a href="/{{ lang }}/index.html" class="nav-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN" style="height:24px;">
+    </a>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()">
+      <span class="line-1"></span><span class="line-2"></span>
+    </button>
+  </header>
+
+  <!-- Mobile menu overlay (структура из основного сайта) -->
+  <div id="mobile-menu-overlay" class="mobile-menu-overlay">
+    <ul>
+      <li><a href="/{{ lang }}/index.html"          onclick="toggleMobileMenu()">{{ nav.home }}</a></li>
+      <li><a href="/{{ lang }}/catalog/index.html"  onclick="toggleMobileMenu()">{{ nav.catalog }}</a></li>
+      <li><a href="/{{ lang }}/blog/index.html"     onclick="toggleMobileMenu()">{{ nav.blog }}</a></li>
+      <li><a href="/{{ lang }}/index.html#contacts" onclick="toggleMobileMenu()">{{ nav.contacts }}</a></li>
+    </ul>
+    <div class="lang-switcher">
+      {% for l in SUPPORTED_LANGS %}
+      <a href="/{{ l }}/products/{{ product._cat_slug }}/{{ product._slug }}/"
+         class="lang-btn{% if l == lang %} active{% endif %}">{{ l | upper }}</a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- ── BREADCRUMB ───────────────────────────────────────── -->
+  <div class="breadcrumb">
+    <a href="/{{ lang }}/index.html">{{ nav.home }}</a>
+    <span class="breadcrumb-sep">/</span>
+    <a href="/{{ lang }}/catalog/index.html">{{ nav.catalog }}</a>
+    {% if product.categoryLabel %}
+    <span class="breadcrumb-sep">/</span>
+    <a href="/{{ lang }}/catalog/index.html#{{ product._cat_slug }}">{{ product.categoryLabel }}</a>
+    {% endif %}
+    <span class="breadcrumb-sep">/</span>
+    <span>{{ product.name }}</span>
+  </div>
+
+  <!-- ── PRODUCT HERO ─────────────────────────────────────── -->
+  <section class="product-hero">
+
+    <!-- Images / Carousel -->
+    <div class="product-images">
+      <div class="product-main-img-wrap">
+
+        {% if product.badge %}
+        <div class="product-badge">{{ product.badge }}</div>
+        {% endif %}
+
+        {% if product.washes %}
+        <div class="product-badge-washes">{{ product.washes }}</div>
+        {% endif %}
+
+        {% if product.imageUrls | length == 1 %}
+        <!-- Single image — no Flickity overhead -->
+        <div class="product-single-img">
+          <img src="{{ product.imageUrls[0] }}"
+               alt="{{ product.imageAltText or product.name }}"
+               loading="eager">
+        </div>
+
+        {% elif product.imageUrls | length > 1 %}
+        <!-- Multi-image carousel -->
+        <div class="product-carousel js-flickity"
+             data-flickity-options='{"wrapAround":true,"pageDots":true,"prevNextButtons":true,"accessibility":true}'>
+          {% for img in product.imageUrls %}
+          <div class="carousel-cell">
+            <img src="{{ img }}"
+                 alt="{{ product.imageAltText or product.name }}{% if loop.index > 1 %} — {{ loop.index }}{% endif %}"
+                 loading="{% if loop.first %}eager{% else %}lazy{% endif %}">
+          </div>
+          {% endfor %}
+        </div>
+
+        {% else %}
+        <!-- Fallback placeholder -->
+        <div class="product-img-placeholder">
+          <span class="material-symbols-outlined">image_not_supported</span>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <!-- Info panel -->
+    <div class="product-info">
+
+      {% if product.categoryLabel %}
+      <span class="product-category">{{ product.categoryLabel }}</span>
+      {% endif %}
+
+      <h1 class="product-name">{{ product.name }}</h1>
+
+      {% if product.weightVolume %}
+      <span class="product-volume">{{ product.weightVolume }}</span>
+      {% endif %}
+
+      {% if product.shortDescription %}
+      <p class="product-subtitle">{{ product.shortDescription }}</p>
+      {% endif %}
+
+      <!-- Feature pills -->
+      {% if product.features %}
+      <div class="product-features">
+        {% for pill in product.features %}
+        <span class="feature-pill">{{ pill }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Dosage / Scent (если заполнены) -->
+      {% if product.dosage or product.scentNotes %}
+      <div class="product-dynamic-details">
+        {% if product.dosage %}
+        <div class="detail-row">
+          <span class="detail-label">Dosage</span>
+          <span class="detail-value">{{ product.dosage }}</span>
+        </div>
+        {% endif %}
+        {% if product.scentNotes %}
+        <div class="detail-row">
+          <span class="detail-label">Scent</span>
+          <span class="detail-value">{{ product.scentNotes }}</span>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- Volume variants -->
+      {% if product.availableVolumes and product.availableVolumes | length > 1 %}
+      <div class="product-volumes">
+        {% for vol in product.availableVolumes %}
+        <a href="{{ vol.link }}"
+           class="volume-btn{% if vol.value == product.weightVolume %} active{% endif %}">
+          {{ vol.label }}
+          {% if vol.badge %}<span class="vol-badge">{{ vol.badge }}</span>{% endif %}
+        </a>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Price -->
+      {% if product.price %}
+      <div class="product-price">
+        <span class="price-value">{{ product.price }}</span>
+        <span class="price-currency">GEL</span>
+        <span class="price-note">{{ ui.wholesaleNote }}</span>
+      </div>
+      {% endif %}
+
+      <!-- SKU -->
+      {% if product.sku %}
+      <div class="product-sku">SKU: <span>{{ product.sku }}</span></div>
+      {% endif %}
+
+      <!-- CTA buttons -->
+      <div class="product-cta">
+        <a href="{{ product.ctaLink or 'mailto:info@rakun.ge' }}"
+           class="btn-accent">{{ product.ctaButtonText or ui.ctaDefault }}</a>
+
+        {% if product.secondaryButtonText %}
+        <a href="{{ product.secondaryButtonLink or '#contacts' }}"
+           class="btn-secondary">{{ product.secondaryButtonText }}</a>
+        {% endif %}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── TABS ─────────────────────────────────────────────── -->
+  <div class="product-details">
+    <div class="tabs-header">
+      <button class="tab-btn active" data-tab="description">{{ ui.tabDescription }}</button>
+      {% if product.ingredients %}
+      <button class="tab-btn" data-tab="ingredients">{{ ui.tabIngredients }}</button>
+      {% endif %}
+      {% if product.safetyHtml %}
+      <button class="tab-btn" data-tab="safety">{{ ui.tabSafety }}</button>
+      {% endif %}
+    </div>
+
+    <div class="tabs-content">
+
+      <!-- Description tab -->
+      <div class="tab-panel active" id="tab-description">
+
+        {% if product.fullDescription %}
+        <div class="prod-full-desc">{{ product.fullDescription | safe }}</div>
+        {% endif %}
+
+        {% if product.descriptionPoints %}
+        <ul class="description-points">
+          {% for pt in product.descriptionPoints %}
+          <li class="desc-point">
+            <strong class="desc-point-title">{{ pt.title }}</strong>
+            <span class="desc-point-text">{{ pt.text }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if not product.fullDescription and not product.descriptionPoints %}
+        <p>{{ product.shortDescription }}</p>
+        {% endif %}
+
+      </div>
+
+      <!-- Ingredients tab -->
+      {% if product.ingredients %}
+      <div class="tab-panel" id="tab-ingredients">
+        <table class="ingredients-table">
+          <thead>
+            <tr>
+              <th>{{ ui.ingredientName }}</th>
+              <th>{{ ui.ingredientPercent }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ing in product.ingredients %}
+            <tr>
+              <td>{{ ing.name }}</td>
+              <td>{{ ing.percentage }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+
+      <!-- Safety tab -->
+      {% if product.safetyHtml %}
+      <div class="tab-panel" id="tab-safety">
+        {{ product.safetyHtml | safe }}
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <!-- ── RELATED PRODUCTS ─────────────────────────────────── -->
+  {% if related %}
+  <section class="related-section">
+    <span class="section-label">{{ ui.relatedLabel }}</span>
+    <h2 class="section-title">{{ ui.relatedTitle }}</h2>
+    <div class="related-grid">
+      {% for rp in related %}
+      <a class="product-card" href="/{{ lang }}/products/{{ rp._cat_slug }}/{{ rp._slug }}/">
+        {% if rp.firstImage %}
+        <div class="card-img-wrap">
+          <img src="{{ rp.firstImage }}" alt="{{ rp.name }}" loading="lazy">
+        </div>
+        {% endif %}
+        <div class="card-body">
+          {% if rp.categoryLabel %}
+          <span class="card-category">{{ rp.categoryLabel }}</span>
+          {% endif %}
+          <h3 class="card-title">{{ rp.name }}</h3>
+          {% if rp.shortDescription %}
+          <p class="card-desc">{{ rp.shortDescription }}</p>
+          {% endif %}
+          {% if rp.price %}
+          <span class="card-price">{{ rp.price }} GEL</span>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- ── FOOTER ────────────────────────────────────────────── -->
+  <footer>
+    <span class="footer-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo">
+    </span>
+    <div class="footer-links">
+      {% if footer.link1 %}<a href="{{ footer.link1 }}">{{ nav.catalog }}</a>{% endif %}
+      {% if footer.link2 %}<a href="{{ footer.link2 }}">{{ nav.blog }}</a>{% endif %}
+      {% if footer.link3 %}<a href="{{ footer.link3 }}">{{ nav.contacts }}</a>{% endif %}
+    </div>
+    <span>{{ footer.copyright }}</span>
+  </footer>
+
+  <!-- ── SCRIPTS ───────────────────────────────────────────── -->
+  <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+  <script>
+    // Mobile menu
+    window.toggleMobileMenu = function() {
+      var menu = document.getElementById('mobile-menu-overlay');
+      menu.classList.toggle('open');
+      document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+    };
+
+    // Tabs (pure JS, no dependency)
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var tabId = this.dataset.tab;
+        document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+        document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+        var panel = document.getElementById('tab-' + tabId);
+        if (panel) panel.classList.add('active');
+        this.classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
