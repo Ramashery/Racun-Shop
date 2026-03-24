@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ post.seoTitle or post.cardTitle or "RAKUN — Blog Post" }}</title>
+  <meta name="description" content="{{ post.metaDescription }}">
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="article">
+  <meta property="og:title"       content="{{ post.ogTitle or post.cardTitle }}">
+  <meta property="og:description" content="{{ post.ogDescription or post.metaDescription }}">
+  <meta property="og:image"       content="{{ post.firstImage }}">
+  <meta property="og:url"         content="{{ BASE_URL }}/{{ lang }}/blog/{{ post._slug }}/">
+  <meta property="article:published_time" content="{{ post.publishDate }}">
+
+  <!-- hreflang -->
+  {% for l in SUPPORTED_LANGS %}
+  <link rel="alternate" hreflang="{{ l }}" href="{{ BASE_URL }}/{{ l }}/blog/{{ post._slug }}/">
+  {% endfor %}
+  <link rel="alternate" hreflang="{{ post.xDefaultHreflang or 'en' }}" href="{{ BASE_URL }}/en/blog/{{ post._slug }}/">
+  <link rel="canonical" href="{{ BASE_URL }}/{{ lang }}/blog/{{ post._slug }}/">
+
+  <!-- Schema JSON-LD -->
+  {% if post.schemaJsonLd %}
+  <script type="application/ld+json">{{ post.schemaJsonLd | safe }}</script>
+  {% endif %}
+
+  <!-- Fonts & Styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <div class="read-progress"><div class="read-progress-bar" id="progress-bar"></div></div>
+
+  <!-- Desktop Nav -->
+  <nav id="main-nav">
+    <a href="/{{ lang }}/" class="nav-logo"><img src="{{ LOGO_URL }}" alt="RAKUN"></a>
+    <ul class="nav-links">
+      <li><a href="/{{ lang }}/">{{ nav.home }}</a></li>
+      <li><a href="/{{ lang }}/catalog/">{{ nav.catalog }}</a></li>
+      <li><a href="/{{ lang }}/blog/" class="active">{{ nav.blog }}</a></li>
+      <li><a href="/{{ lang }}/#contacts">{{ nav.contacts }}</a></li>
+    </ul>
+    <div class="lang-switcher">
+      {% for l in SUPPORTED_LANGS %}
+      <a href="/{{ l }}/blog/{{ post._slug }}/"{% if l == lang %} class="active"{% endif %}>{{ l | upper }}</a>
+      {% if not loop.last %}<span class="lang-separator">|</span>{% endif %}
+      {% endfor %}
+    </div>
+  </nav>
+
+  <!-- Mobile Header -->
+  <header class="mobile-header" id="mobile-header">
+    <a href="/{{ lang }}/" class="mobile-logo"><img src="{{ LOGO_URL }}" style="height:24px;display:block;" alt="RAKUN"></a>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()">
+      <span class="line-1"></span><span class="line-2"></span>
+    </button>
+  </header>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay">
+    <div class="mobile-menu-top">
+      <img src="{{ LOGO_URL }}" alt="RAKUN" style="height:24px;display:block;">
+      <button class="mobile-close" onclick="toggleMobileMenu()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <nav class="mobile-menu-nav">
+      <a href="/{{ lang }}/" onclick="toggleMobileMenu()">{{ nav.home }}</a>
+      <a href="/{{ lang }}/catalog/" onclick="toggleMobileMenu()">{{ nav.catalog }}</a>
+      <a href="/{{ lang }}/blog/" onclick="toggleMobileMenu()">{{ nav.blog }}</a>
+      <a href="/{{ lang }}/#contacts" onclick="toggleMobileMenu()">{{ nav.contacts }}</a>
+    </nav>
+    <div class="mobile-menu-bottom">
+      <div class="mobile-lang">
+        {% for l in SUPPORTED_LANGS %}
+        <a href="/{{ l }}/blog/{{ post._slug }}/"{% if l == lang %} class="active"{% endif %}>{{ l | upper }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- POST HERO -->
+  <section class="post-hero">
+    <div class="post-hero-inner">
+      <!-- Хлебные крошки в одну строку -->
+      <div class="post-breadcrumb" style="display: flex; flex-wrap: nowrap; overflow: hidden; white-space: nowrap;">
+        <a href="/{{ lang }}/" style="flex-shrink: 0;">{{ nav.home }}</a>
+        <span class="post-breadcrumb-sep" style="flex-shrink: 0;">/</span>
+        <a href="/{{ lang }}/blog/" style="flex-shrink: 0;">{{ nav.blog }}</a>
+        <span class="post-breadcrumb-sep" style="flex-shrink: 0;">/</span>
+        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ post.cardTitle }}</span>
+      </div>
+
+      <div class="post-hero-meta">
+        {% set badgeClass = 'tag-eco' %}
+        {% if 'tech' in (post.tagBadge | lower) or 'tech' in (post.category | lower) %}
+          {% set badgeClass = 'tag-tech' %}
+        {% endif %}
+        <span class="post-tag {{ badgeClass }}">{{ post.tagBadge or post.category }}</span>
+        <span class="post-hero-dot"></span>
+        <span class="post-hero-date">{{ post.publishDate }}</span>
+        <span class="post-hero-dot"></span>
+        <span class="post-hero-read">{{ post.readTime }} {{ ui.minRead }}</span>
+      </div>
+
+      <!-- Заголовок с поддержкой <span> из БД -->
+      <h1>{{ post.h1 | safe }}</h1>
+
+      <p class="post-hero-lead">{{ post.cardDescription }}</p>
+
+      <div class="post-hero-author">
+        <div class="post-author-avatar avatar-{{ post.authorAvatarColor or 'blue' }}">
+          {{ post.authorInitials }}
+        </div>
+        <div>
+          <div class="post-author-name">{{ post.authorName }}</div>
+          <div class="post-author-role">{{ post.authorRole }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POST COVER IMAGE -->
+  <div class="post-cover" style="background-image: url('{{ post.firstImage }}'); background-size: cover; background-position: center;">
+    <div class="post-cover-glow"></div>
+    <div class="post-cover-label">{{ post.emoji }}</div>
+  </div>
+
+  <!-- POST LAYOUT: Article + Sidebar -->
+  <div class="post-layout">
+    
+    <article class="post-body">
+      <!-- Основной контент (HTML) -->
+      {{ post.mainPageContentHtml | safe }}
+
+      <!-- Tags row -->
+      {% if post.tags %}
+      <div class="post-tags-row">
+        <span class="post-tags-label">{{ ui.tags }}</span>
+        {% for tag in post.tags %}
+        <a class="post-tag-chip" href="/{{ lang }}/blog/?tag={{ tag | lower | replace(' ', '-') }}">{{ tag }}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Share row -->
+      <div class="post-share-row">
+        <span class="post-share-label">{{ ui.share }}</span>
+        <button class="post-share-btn" onclick="navigator.clipboard.writeText(window.location.href)" title="Copy link">
+          <svg viewBox="0 0 24 24"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3"/></svg>
+        </button>
+      </div>
+    </article>
+
+    <aside class="post-sidebar">
+      <!-- Table of Contents (автоматически собирается из h2) -->
+      <div class="sidebar-widget" id="toc-widget">
+        <div class="sidebar-widget-head">{{ ui.contents }}</div>
+        <div class="sidebar-widget-body">
+          <ul class="toc-list" id="toc-list"></ul>
+        </div>
+      </div>
+
+      <!-- Author Widget -->
+      <div class="sidebar-widget">
+        <div class="sidebar-widget-head">{{ ui.author }}</div>
+        <div class="author-widget">
+          <div class="author-widget-avatar avatar-{{ post.authorAvatarColor or 'blue' }}">
+            {{ post.authorInitials }}
+          </div>
+          <div class="author-widget-name">{{ post.authorName }}</div>
+          <div class="author-widget-role">{{ post.authorRole }}</div>
+          {% if post.authorBio %}
+          <p class="author-widget-bio">{{ post.authorBio }}</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Related Posts in Sidebar -->
+      {% if related %}
+      <div class="sidebar-widget">
+        <div class="sidebar-widget-head">{{ ui.related }}</div>
+        <div class="sidebar-widget-body">
+          {% for r in related[:4] %}
+          <a class="related-post" href="/{{ lang }}/blog/{{ r._slug }}/">
+            <div class="related-post-thumb {{ loop.cycle('blue', 'green', 'dark', 'blue') }}">
+              <span style="font-size:1.4rem">{{ r.emoji or '📄' }}</span>
+            </div>
+            <div>
+              <div class="related-post-title">{{ r.cardTitle }}</div>
+              <div class="related-post-date">{{ r.publishDate }}</div>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </aside>
+  </div>
+
+  <!-- BOTTOM RELATED SECTION -->
+  {% if related %}
+  <section class="related-section" style="padding: 72px 56px;">
+    <div class="related-section-header">
+      <div class="related-section-label">{{ ui.continueReading }}</div>
+      <h2 class="related-section-title">{{ ui.moreArticles }}</h2>
+      <div class="related-section-divider"></div>
+    </div>
+    <div class="related-cards" style="display: grid; grid-template-columns: repeat(3,1fr); gap: 24px;">
+      {% for r in related[:3] %}
+      <a class="rel-card" href="/{{ lang }}/blog/{{ r._slug }}/">
+        <div class="rel-card-img {{ loop.cycle('blue', 'green', 'teal') }}">
+          <span style="font-size:2.5rem">{{ r.emoji or '📄' }}</span>
+        </div>
+        <div class="rel-card-body">
+          <span class="rel-card-cat">{{ r.tagBadge or r.category }}</span>
+          <div class="rel-card-title">{{ r.cardTitle }}</div>
+          <div class="rel-card-date">{{ r.publishDate }}</div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- BACK TO BLOG -->
+  <div class="back-to-blog">
+    <a href="/{{ lang }}/blog/" class="back-btn">
+      <span class="material-symbols-outlined">arrow_back</span> {{ ui.backToBlog }}
+    </a>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-logo"><img src="{{ LOGO_URL }}" alt="RAKUN"></span>
+    <div class="footer-links">
+      <a href="/{{ lang }}/catalog/">{{ nav.catalog }}</a>
+      <a href="/{{ lang }}/blog/">{{ nav.blog }}</a>
+      <a href="/{{ lang }}/#contacts">{{ nav.contacts }}</a>
+    </div>
+    <span class="footer-copy">{{ footer.copyright }}</span>
+  </footer>
+
+  <script>
+    // Mobile menu
+    window.toggleMobileMenu = function () {
+      var menu = document.getElementById('mobile-menu-overlay');
+      var isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    };
+
+    // Read progress bar
+    var bar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', function () {
+      var scrollTop = window.scrollY;
+      var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0) + '%';
+    }, { passive: true });
+
+    // Auto Table of Contents from h2
+    (function () {
+      var headings = document.querySelectorAll('.post-body h2');
+      var tocList  = document.getElementById('toc-list');
+      var tocWidget = document.getElementById('toc-widget');
+      if (!headings.length) { tocWidget.style.display = 'none'; return; }
+      
+      headings.forEach(function (h, i) {
+        h.id = h.id || ('section-' + (i + 1));
+        var li = document.createElement('li');
+        var a  = document.createElement('a');
+        a.href = '#' + h.id;
+        a.innerHTML = '<span class="toc-num">0' + (i + 1) + '</span>' + h.textContent;
+        li.appendChild(a);
+        tocList.appendChild(li);
+      });
+
+      var tocLinks = tocList.querySelectorAll('a');
+      window.addEventListener('scroll', function () {
+        var scrollY = window.scrollY + 120;
+        var active = null;
+        headings.forEach(function (h) {
+          if (h.offsetTop <= scrollY) active = h.id;
+        });
+        tocLinks.forEach(function (a) {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + active);
+        });
+      }, { passive: true });
+    })();
+  </script>
+
+</body>
+</html>
