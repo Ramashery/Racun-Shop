@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ product.seoTitle or product.name or "RAKUN — Product" }}</title>
+  <meta name="description" content="{{ product.metaDescription }}">
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="product">
+  <meta property="og:title"       content="{{ product.ogTitle or product.name }}">
+  <meta property="og:description" content="{{ product.ogDescription or product.metaDescription }}">
+  <meta property="og:image"       content="{{ product.firstImage }}">
+  <meta property="og:url"         content="{{ BASE_URL }}/{{ lang }}/products/{{ product._cat_slug }}/{{ product._slug }}/">
+
+  <!-- hreflang -->
+  {% for l in SUPPORTED_LANGS %}
+  <link rel="alternate" hreflang="{{ l }}" href="{{ BASE_URL }}/{{ l }}/products/{{ product._cat_slug }}/{{ product._slug }}/">
+  {% endfor %}
+  <link rel="alternate" hreflang="{{ product.xDefaultHreflang or 'en' }}" href="{{ BASE_URL }}/en/products/{{ product._cat_slug }}/{{ product._slug }}/">
+  <link rel="canonical" href="{{ BASE_URL }}/{{ lang }}/products/{{ product._cat_slug }}/{{ product._slug }}/">
+
+  <!-- Schema JSON-LD -->
+  {% if product.schemaJsonLd %}
+  <script type="application/ld+json">{{ product.schemaJsonLd | safe }}</script>
+  {% endif %}
+
+  <!-- Flickity -->
+  <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <!-- Desktop Nav -->
+  <nav id="main-nav">
+    <a href="/{{ lang }}/" class="nav-logo"><img src="{{ LOGO_URL }}" alt="RAKUN"></a>
+    <ul class="nav-links">
+      <li><a href="/{{ lang }}/">{{ nav.home }}</a></li>
+      <li><a href="/{{ lang }}/catalog/" class="active">{{ nav.catalog }}</a></li>
+      <li><a href="/{{ lang }}/blog/">{{ nav.blog }}</a></li>
+      <li><a href="/{{ lang }}/#contacts">{{ nav.contacts }}</a></li>
+    </ul>
+    <div class="lang-switcher">
+      {% for l in SUPPORTED_LANGS %}
+      <a href="/{{ l }}/products/{{ product._cat_slug }}/{{ product._slug }}/"{% if l == lang %} class="active"{% endif %}>{{ l | upper }}</a>
+      {% if not loop.last %}<span class="lang-separator">·</span>{% endif %}
+      {% endfor %}
+    </div>
+  </nav>
+
+  <!-- Mobile Header -->
+  <header class="mobile-header" id="mobile-header">
+    <a href="/{{ lang }}/" class="nav-logo"><img src="{{ LOGO_URL }}" style="height:24px;" alt="RAKUN"></a>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()">
+      <span class="line-1"></span><span class="line-2"></span>
+    </button>
+  </header>
+
+  <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay">
+    <div class="mobile-menu-top">
+      <a href="/{{ lang }}/" class="nav-logo"><img src="{{ LOGO_URL }}" alt="RAKUN"></a>
+      <button class="mobile-close" onclick="toggleMobileMenu()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <nav class="mobile-menu-nav">
+      <a href="/{{ lang }}/" onclick="toggleMobileMenu()">{{ nav.home }}</a>
+      <a href="/{{ lang }}/catalog/" onclick="toggleMobileMenu()">{{ nav.catalog }}</a>
+      <a href="/{{ lang }}/blog/" onclick="toggleMobileMenu()">{{ nav.blog }}</a>
+      <a href="/{{ lang }}/#contacts" onclick="toggleMobileMenu()">{{ nav.contacts }}</a>
+    </nav>
+    <div class="mobile-menu-bottom">
+      <div class="mobile-lang">
+        {% for l in SUPPORTED_LANGS %}
+        <a href="/{{ l }}/products/{{ product._cat_slug }}/{{ product._slug }}/"{% if l == lang %} class="active"{% endif %}>{{ l | upper }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="/{{ lang }}/">{{ nav.home }}</a>
+    <span class="breadcrumb-sep">/</span>
+    <a href="/{{ lang }}/catalog/">{{ nav.catalog }}</a>
+    <span class="breadcrumb-sep">/</span>
+    <span>{{ product.name }}</span>
+  </div>
+
+  <!-- PRODUCT HERO -->
+  <section class="product-hero">
+
+    <!-- Images -->
+    <div class="product-images">
+      <div class="product-main-img-wrap">
+
+        {% if product.badge %}
+        <div class="product-badge">{{ product.badge }}</div>
+        {% endif %}
+
+        {% if product.washes %}
+        <div class="product-badge-washes">
+          {{ product.washes }}<span>{{ ui.washes }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Image carousel / single image -->
+        {% if product.imageUrls | length > 1 %}
+        <div class="product-carousel" id="prod-carousel">
+          {% for img in product.imageUrls %}
+          <div class="carousel-cell">
+            <img src="{{ img }}" alt="{{ product.imageAltText }}">
+          </div>
+          {% endfor %}
+        </div>
+        {% elif product.firstImage %}
+        <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+          <img src="{{ product.firstImage }}" alt="{{ product.imageAltText }}"
+               style="width:80%;max-height:85%;object-fit:contain;filter:drop-shadow(0 20px 30px rgba(0,0,0,0.15));">
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="product-info">
+
+      <span class="product-category">{{ product.categoryLabel }}</span>
+      <h1 class="product-name">{{ product.name }}</h1>
+      <div class="product-divider"></div>
+      <p class="product-subtitle">{{ product.shortDescription }}</p>
+
+      <!-- Feature pills -->
+      {% if product.features %}
+      <div class="product-features">
+        {% for pill in product.features %}
+        <span class="feature-pill">{{ pill }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Scent notes -->
+      {% if product.scentNotes %}
+      <div class="scent-section">
+        <div class="scent-label">{{ ui.scentProfile }}</div>
+        <div class="scent-notes">
+          {% if product.scentNotes.top %}
+          <div class="scent-note">
+            <span class="scent-note-type">{{ ui.top }}</span>
+            <span class="scent-note-value">{{ product.scentNotes.top }}</span>
+          </div>
+          {% endif %}
+          {% if product.scentNotes.middle %}
+          <div class="scent-note">
+            <span class="scent-note-type">{{ ui.middle }}</span>
+            <span class="scent-note-value">{{ product.scentNotes.middle }}</span>
+          </div>
+          {% endif %}
+          {% if product.scentNotes.base %}
+          <div class="scent-note">
+            <span class="scent-note-type">{{ ui.base }}</span>
+            <span class="scent-note-value">{{ product.scentNotes.base }}</span>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Dosage -->
+      {% if product.dosage %}
+      <div class="dosage-section">
+        <div class="scent-label">{{ ui.dosage }}</div>
+        <div class="dosage-grid">
+          {% for item in product.dosage %}
+          <div class="dosage-item">
+            <div class="dosage-type">{{ item.type }}</div>
+            <span class="dosage-amount">{{ item.amount }}</span>
+            {% if item.weight %}<div class="dosage-weight">{{ item.weight }}</div>{% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Volume variants -->
+      {% if product.availableVolumes | length > 1 %}
+      <div class="volume-section">
+        <div class="scent-label">{{ ui.volume }}</div>
+        <div class="volume-options">
+          {% for vol in product.availableVolumes %}
+          <a href="/{{ lang }}/products/{{ product._cat_slug }}/{{ vol.value | lower | replace(' ', '-') | replace('.', '') }}/"
+             class="volume-btn{% if vol.value == product.weightVolume %} active{% endif %}">
+            {{ vol.label }}
+            {% if vol.badge %}<small style="display:block;font-size:0.5em;letter-spacing:0.1em;font-weight:600;color:var(--brand-yellow)">{{ vol.badge }}</small>{% endif %}
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Weight / volume (single) -->
+      {% if product.weightVolume and (not product.availableVolumes or product.availableVolumes | length <= 1) %}
+      <div style="margin-bottom:32px;">
+        <span class="scent-label">{{ ui.volume }}</span>
+        <span style="font-family:'Montserrat',sans-serif;font-size:1.4rem;font-weight:800;color:var(--brand-blue);">
+          {{ product.weightVolume }}
+        </span>
+      </div>
+      {% endif %}
+
+      <!-- Price -->
+      {% if product.priceRaw %}
+      <div style="margin-bottom:32px;">
+        <span class="scent-label">{{ ui.price }}</span>
+        <span style="font-family:'Montserrat',sans-serif;font-size:2rem;font-weight:900;color:var(--brand-blue);">
+          {{ product.priceRaw }}
+        </span>
+      </div>
+      {% endif %}
+
+      <!-- CTA buttons -->
+      <div class="product-cta">
+        <a href="{{ product.ctaLink or 'mailto:info@rakun.ge' }}"
+           class="btn-accent btn-accent-green">
+          {{ product.ctaButtonText or ui.ctaDefault }}
+        </a>
+        {% if product.secondaryButtonLink %}
+        <a href="{{ product.secondaryButtonLink }}" class="btn-outline">
+          {{ product.secondaryButtonText or ui.secondary }}
+        </a>
+        {% endif %}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TABS: Description / Ingredients / Safety -->
+  <div class="product-details">
+    <div class="tabs-header">
+      <button class="tab-btn active" onclick="switchTab('description', this)">
+        {{ ui.tabDescription }}
+      </button>
+      {% if product.ingredients %}
+      <button class="tab-btn" onclick="switchTab('ingredients', this)">
+        {{ ui.tabIngredients }}
+      </button>
+      {% endif %}
+      {% if product.safetyHtml %}
+      <button class="tab-btn" onclick="switchTab('safety', this)">
+        {{ ui.tabSafety }}
+      </button>
+      {% endif %}
+    </div>
+
+    <div class="tabs-content">
+
+      <!-- Description tab -->
+      <div class="tab-panel active" id="tab-description">
+        {% if product.descriptionPoints %}
+        <div class="product-desc-grid">
+          <div class="product-desc-text">
+            {{ product.fullDescription | safe }}
+          </div>
+          <div class="product-desc-points">
+            {% for point in product.descriptionPoints %}
+            <div class="desc-point">
+              <div class="desc-point-num">{{ "%02d" | format(loop.index) }}</div>
+              <div>
+                <div class="desc-point-title">{{ point.title }}</div>
+                <div class="desc-point-text">{{ point.text }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <div class="product-desc-text">{{ product.fullDescription | safe }}</div>
+        {% endif %}
+      </div>
+
+      <!-- Ingredients tab -->
+      {% if product.ingredients %}
+      <div class="tab-panel" id="tab-ingredients">
+        <table class="ingredients-table">
+          <thead>
+            <tr>
+              <td><strong>{{ ui.ingredientName }}</strong></td>
+              <td style="text-align:right"><strong>{{ ui.ingredientPercent }}</strong></td>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ing in product.ingredients %}
+            <tr>
+              <td>{{ ing.name }}</td>
+              <td>{{ ing.percentage }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+
+      <!-- Safety tab -->
+      {% if product.safetyHtml %}
+      <div class="tab-panel" id="tab-safety">
+        {{ product.safetyHtml | safe }}
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <!-- RELATED PRODUCTS -->
+  {% if related %}
+  <section class="related-section">
+    <span class="section-label">{{ ui.relatedLabel }}</span>
+    <h2 class="section-title">{{ ui.relatedTitle }}</h2>
+    <div class="related-grid">
+      {% for r in related %}
+      <a class="card-room-new" href="/{{ lang }}/products/{{ r._cat_slug }}/{{ r._slug }}/" style="text-decoration:none;">
+        <div class="card-img-wrap">
+          {% if r.firstImage %}
+          <img src="{{ r.firstImage }}" alt="{{ r.imageAltText }}">
+          {% endif %}
+        </div>
+        <div class="card-body">
+          <span class="card-category">{{ r.categoryLabel }}</span>
+          <div class="card-title">{{ r.name }}</div>
+          <p class="card-desc">{{ r.shortDescription }}</p>
+        </div>
+        <div class="card-footer">
+          <span class="card-price">{{ r.priceRaw }}</span>
+          <span class="card-link">{{ ui.viewProduct }}</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-logo"><img src="{{ LOGO_URL }}" alt="RAKUN"></span>
+    <div class="footer-links">
+      {% if footer.link1 %}<a href="{{ footer.link1.url or '/'+lang+'/catalog/' }}">{{ footer.link1.label or nav.catalog }}</a>{% endif %}
+      {% if footer.link2 %}<a href="{{ footer.link2.url or '/'+lang+'/blog/' }}">{{ footer.link2.label or nav.blog }}</a>{% endif %}
+      {% if footer.link3 %}<a href="{{ footer.link3.url or '/'+lang+'/#contacts' }}">{{ footer.link3.label or nav.contacts }}</a>{% endif %}
+    </div>
+    <span class="footer-copy">{{ footer.copyright }}</span>
+  </footer>
+
+  <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+  <script>
+    // Mobile menu
+    window.toggleMobileMenu = function () {
+      var menu = document.getElementById('mobile-menu-overlay');
+      var isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    };
+
+    // Tabs
+    window.switchTab = function (tabId, btn) {
+      document.querySelectorAll('.tab-panel').forEach(function (p) { p.classList.remove('active'); });
+      document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+      document.getElementById('tab-' + tabId).classList.add('active');
+      btn.classList.add('active');
+    };
+
+    // Flickity carousel (only if multiple images)
+    document.addEventListener('DOMContentLoaded', function () {
+      var carousel = document.getElementById('prod-carousel');
+      if (carousel && carousel.children.length > 1) {
+        new Flickity(carousel, {
+          accessibility: true,
+          prevNextButtons: true,
+          pageDots: true,
+          wrapAround: true
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>
