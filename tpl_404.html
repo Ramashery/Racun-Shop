@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>{{ ui.error404 or "404 — Page Not Found" }} | RAKUN</title>
+  <meta name="robots" content="noindex, nofollow">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/styles.css">
+
+  <style>
+    /* Дополнительные стили исключительно для центрирования контента 404 на основе вашего blog-hero */
+    .error-404-section {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding-top: 100px; /* Учет фиксированного хедера */
+      padding-bottom: 100px;
+    }
+    
+    .error-404-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      grid-template-columns: 1fr; /* Переопределяем грид из blog-hero-inner */
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .error-title-huge {
+      font-size: clamp(5rem, 15vw, 10rem);
+      font-weight: 900;
+      color: var(--brand-yellow);
+      line-height: 0.9;
+      margin-bottom: 16px;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .error-subtitle {
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      font-weight: 800;
+      color: #FFFFFF;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    .error-desc {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.8;
+      margin-bottom: 40px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .error-buttons {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* Кнопка в стиле желтой кнопки из hero-slider главной страницы */
+    .btn-404-primary {
+      display: inline-block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--brand-blue);
+      background: var(--brand-yellow);
+      padding: 20px 40px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-radius: 2px;
+    }
+    .btn-404-primary:hover {
+      background: #FFF;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(216,224,99,0.4);
+    }
+
+    /* Второстепенная кнопка */
+    .btn-404-secondary {
+      display: inline-block;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #FFF;
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.3);
+      padding: 18px 40px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border-radius: 2px;
+    }
+    .btn-404-secondary:hover {
+      border-color: var(--brand-green);
+      background: var(--brand-green);
+      color: #FFF;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV DESKTOP ─────────────────────────────────────────── -->
+  <nav id="main-nav">
+    <a href="/{{ lang }}/" class="nav-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo">
+    </a>
+    <ul class="nav-links">
+      <li><a href="/{{ lang }}/">{{ nav.home }}</a></li>
+      <li><a href="/{{ lang }}/#about">{{ nav.about if nav.about else "About us" }}</a></li>
+      <li><a href="/{{ lang }}/catalog/">{{ nav.catalog }}</a></li>
+      <li><a href="/{{ lang }}/blog/">{{ nav.blog }}</a></li>
+      <li><a href="/{{ lang }}/#contacts">{{ nav.contacts }}</a></li>
+    </ul>
+    <div class="lang-switcher">
+      {% for l in SUPPORTED_LANGS %}
+      <a href="/{{ l }}/"{% if l == lang %} class="active"{% endif %}>{{ l | upper }}</a>
+      {% if not loop.last %}<span class="lang-separator">|</span>{% endif %}
+      {% endfor %}
+    </div>
+  </nav>
+
+  <!-- ── MOBILE HEADER ───────────────────────────────────────── -->
+  <header class="mobile-header" id="mobile-header">
+    <a href="/{{ lang }}/" class="nav-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo" style="height:24px;display:block;">
+    </a>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()">
+      <span class="line-1"></span><span class="line-2"></span>
+    </button>
+  </header>
+
+  <!-- ── MOBILE MENU ─────────────────────────────────────────── -->
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay">
+    <div class="mobile-menu-top">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo" style="height:24px;display:block;">
+      <button class="mobile-close" onclick="toggleMobileMenu()">
+        <span class="material-symbols-outlined" style="font-size:32px;">close</span>
+      </button>
+    </div>
+    <nav class="mobile-menu-nav">
+      <a href="/{{ lang }}/">{{ nav.home }}</a>
+      <a href="/{{ lang }}/#about">{{ nav.about if nav.about else "About us" }}</a>
+      <a href="/{{ lang }}/catalog/">{{ nav.catalog }}</a>
+      <a href="/{{ lang }}/blog/">{{ nav.blog }}</a>
+      <a href="/{{ lang }}/#contacts">{{ nav.contacts }}</a>
+    </nav>
+    <div class="mobile-menu-bottom">
+      <div class="mobile-lang">
+        {% for l in SUPPORTED_LANGS %}
+        <a href="/{{ l }}/"{% if l == lang %} class="active"{% endif %}>{{ l | upper }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 404 HERO SECTION (Используем базу от blog-hero) ─────── -->
+  <section class="blog-hero error-404-section">
+    <div class="blog-hero-inner error-404-inner">
+      
+      <div class="blog-hero-label" style="justify-content: center; margin-bottom: 24px;">
+        {{ ui.errorLabel or 'System Error' }}
+      </div>
+      
+      <div class="error-title-huge">404</div>
+      
+      <h1 class="error-subtitle">{{ ui.pageNotFound or 'Page Not Found' }}</h1>
+      
+      <p class="error-desc">
+        {{ ui.pageNotFoundDesc or "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable. Let's get you back on track." }}
+      </p>
+
+      <div class="error-buttons">
+        <a href="/{{ lang }}/" class="btn-404-primary">
+          {{ nav.home or 'Back to Home' }}
+        </a>
+        <a href="/{{ lang }}/catalog/" class="btn-404-secondary">
+          {{ nav.catalog or 'View Catalog' }}
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── FOOTER ───────────────────────────────────────────────── -->
+  <footer>
+    <span class="footer-logo"><img src="{{ LOGO_URL }}" alt="RAKUN Logo"></span>
+    <div class="footer-links">
+      {% if footer.link1 %}<a href="{{ footer.link1 }}">{{ nav.catalog }}</a>{% endif %}
+      {% if footer.link2 %}<a href="{{ footer.link2 }}">{{ nav.blog }}</a>{% endif %}
+      {% if footer.link3 %}<a href="{{ footer.link3 }}">{{ nav.contacts }}</a>{% endif %}
+    </div>
+    <span class="footer-copy">{{ footer.copyright }}</span>
+  </footer>
+
+  <!-- ── SCRIPTS ──────────────────────────────────────────────── -->
+  <script>
+    // Скрипт мобильного меню, скопированный из вашего tpl_blog1.html
+    window.toggleMobileMenu = function () {
+      var menu = document.getElementById('mobile-menu-overlay');
+      var isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    };
+
+    // Логика скролла для навигации (чтобы появлялась подложка при прокрутке)
+    document.addEventListener('DOMContentLoaded', function() {
+      var nav = document.getElementById('main-nav');
+      var mobileHeader = document.getElementById('mobile-header');
+      window.addEventListener('scroll', function() {
+        if (nav) nav.classList.toggle('scrolled', window.scrollY > 50);
+        if (mobileHeader) mobileHeader.classList.toggle('scrolled', window.scrollY > 50);
+      }, { passive: true });
+    });
+  </script>
+
+</body>
+</html>
