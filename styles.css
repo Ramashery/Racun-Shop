@@ -38,7 +38,7 @@
  *  27.  catalog.html — Card Badges & List View
  *
  *  28.  blog.html  — Blog Hero
- *  29.  blog.html  — Category Filters & Search (NEW)
+ *  29.  blog.html  — Category Tabs & Search
  *  30.  blog.html  — Featured Article
  *  31.  blog.html  — Articles Grid
  *  32.  blog.html  — Newsletter Banner
@@ -1409,6 +1409,7 @@ a.contact-detail-value:hover { color: var(--brand-blue); }
 
 /* ============================================================
    24. CATALOG.HTML — STATS STRIP
+24. CATALOG.HTML — STATS STRIP
    ============================================================ */
 .catalog-stats {
   display: grid;
@@ -1768,73 +1769,50 @@ a.contact-detail-value:hover { color: var(--brand-blue); }
 
 
 /* ============================================================
-   29. BLOG.HTML — CATEGORY FILTERS & SEARCH (NEW)
+   29. BLOG.HTML — CATEGORY TABS & SEARCH
    ============================================================ */
-.blog-controls {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 24px;
+.blog-tabs-row {
   padding: 40px 56px 0;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 24px; flex-wrap: wrap;
 }
-.blog-filters {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.filter-pill {
+.blog-tabs { display: flex; gap: 12px; flex-wrap: wrap; }
+.blog-tabs .tab-btn {
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-main);
-  background: var(--bg-white);
-  border: 1px solid var(--border-color);
-  border-radius: 40px;
-  padding: 10px 24px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.filter-pill:hover {
-  border-color: var(--brand-blue);
+  font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em;
   color: var(--brand-blue);
+  background: rgba(47,59,129,0.06);
+  border: 1px solid transparent;
+  border-radius: 30px; 
+  padding: 10px 24px;
+  cursor: pointer; transition: all 0.3s;
 }
-.filter-pill.active {
-  background: var(--brand-blue);
-  border-color: var(--brand-blue);
-  color: var(--brand-yellow);
-  box-shadow: 0 8px 16px rgba(47, 59, 129, 0.15);
+.blog-tabs .tab-btn:hover { background: rgba(47,59,129,0.1); }
+.blog-tabs .tab-btn.active { 
+  background: var(--brand-blue); 
+  color: #FFF; 
+  box-shadow: 0 4px 12px rgba(47,59,129,0.2); 
 }
-.blog-search-box {
-  display: flex;
-  align-items: center;
-  background: var(--bg-white);
-  border: 1px solid var(--border-color);
-  border-radius: 40px;
-  padding: 6px 16px;
-  width: 280px;
-  transition: border-color 0.3s;
+
+.blog-search {
+  display: flex; align-items: center;
+  border: 1px solid var(--border-color); border-radius: 2px; overflow: hidden;
 }
-.blog-search-box:focus-within {
-  border-color: var(--brand-blue);
-  box-shadow: 0 0 0 4px rgba(47, 59, 129, 0.05);
+.blog-search input {
+  font-family: 'Inter', sans-serif; font-size: 0.8rem;
+  color: var(--text-main); background: transparent;
+  border: none; outline: none; padding: 10px 16px; width: 220px;
 }
-.blog-search-box .icon {
-  color: var(--text-muted);
-  font-size: 20px;
-  margin-right: 8px;
+.blog-search input::placeholder { color: var(--text-muted); }
+.blog-search button {
+  background: var(--brand-blue); border: none; cursor: pointer;
+  padding: 10px 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.25s;
 }
-.blog-search-box input {
-  border: none;
-  outline: none;
-  background: transparent;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-  color: var(--text-main);
-  width: 100%;
-}
+.blog-search button:hover { background: var(--bg-dark); }
+.blog-search button .material-symbols-outlined { font-size: 18px; color: #FFF; }
 
 
 /* ============================================================
@@ -1876,17 +1854,14 @@ a.contact-detail-value:hover { color: var(--brand-blue); }
   background: radial-gradient(circle, rgba(216,224,99,0.2) 0%, transparent 70%);
 }
 .featured-img-icon { position: relative; z-index: 2; font-size: 5rem; opacity: 0.8; }
-
-/* Category Badge — Featured */
 .featured-tag {
-  position: absolute; top: 24px; left: 24px;
+  position: absolute; top: 20px; left: 20px;
   background: var(--brand-green); color: #FFF;
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.65rem; font-weight: 700;
+  font-size: 0.6rem; font-weight: 700;
   text-transform: uppercase; letter-spacing: 0.15em;
-  padding: 6px 14px; border-radius: 2px; z-index: 10;
+  padding: 6px 14px; border-radius: 2px; z-index: 3;
 }
-
 .featured-body { padding: 48px; display: flex; flex-direction: column; justify-content: center; }
 .featured-meta { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
 .featured-cat {
@@ -1969,14 +1944,13 @@ a.contact-detail-value:hover { color: var(--brand-blue); }
 }
 .article-img-emoji { position: relative; z-index: 1; }
 
-/* Category Badge — Grid Article */
 .article-tag {
   position: absolute; top: 16px; left: 16px;
-  background: var(--brand-green); color: #FFF;
   font-family: 'Montserrat', sans-serif;
-  font-size: 0.65rem; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.15em;
-  padding: 6px 14px; border-radius: 2px; z-index: 10;
+  font-size: 0.6rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 6px 14px; border-radius: 2px; z-index: 2;
+  background: var(--brand-green); color: #FFF;
 }
 
 .article-body { padding: 28px; flex: 1; display: flex; flex-direction: column; }
@@ -2014,17 +1988,16 @@ a.contact-detail-value:hover { color: var(--brand-blue); }
 .article-author-name { font-size: 0.72rem; font-weight: 600; color: var(--text-main); }
 .article-author-role { font-size: 0.65rem; color: var(--text-muted); }
 
-/* Blue Arrow Button inside Article Card */
 .article-arrow {
-  width: 36px; height: 36px;
-  background: var(--brand-blue);
-  border-radius: 50%;
+  width: 32px; height: 32px;
+  border: 1px solid var(--brand-blue); border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  transition: all 0.3s; flex-shrink: 0;
+  transition: all 0.25s; flex-shrink: 0;
+  background: var(--brand-blue);
 }
-.article-arrow .material-symbols-outlined { font-size: 18px; color: #FFF; transition: transform 0.3s; }
-.article-card:hover .article-arrow { background: var(--brand-green); }
-.article-card:hover .article-arrow .material-symbols-outlined { transform: translateX(4px); }
+.article-arrow .material-symbols-outlined { font-size: 16px; color: #FFF; transition: transform 0.25s; }
+.article-card:hover .article-arrow { background: var(--brand-green); border-color: var(--brand-green); }
+.article-card:hover .article-arrow .material-symbols-outlined { transform: translateX(3px); }
 
 
 /* ============================================================
@@ -2548,7 +2521,102 @@ a.contact-detail-value:hover { color: var(--brand-blue); }
 
 
 /* ============================================================
-   43. RESPONSIVE — ≤ 1200px
+   43. INDEX.HTML — CLICKABLE SECTION TITLES
+   ============================================================ */
+.section-title-link { position: relative; display: inline-block; }
+.section-title-anchor {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.section-title-anchor::after {
+  content: ' →';
+  font-size: 0.6em;
+  opacity: 0;
+  display: inline-block;
+  transform: translateX(-6px);
+  transition: opacity 0.3s, transform 0.3s;
+  vertical-align: middle;
+}
+.section-title-anchor:hover { color: var(--brand-green); }
+.section-title-anchor:hover::after { opacity: 1; transform: translateX(4px); }
+
+
+/* ============================================================
+   44. INDEX.HTML — ARTICLE CARDS IN SLIDER
+   ============================================================ */
+/* article-card внутри слайдера */
+.rakun-slide .article-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 340px;
+}
+.service-cards-grid .article-card { min-height: 320px; }
+
+/* На bg-light фоне секции блога карточки остаются белыми */
+#blog .article-card { background: var(--bg-white); }
+
+
+/* ============================================================
+   45. BLOG.HTML — FILTER BAR (replaces .blog-tabs-row)
+   ============================================================ */
+.blog-filter-bar {
+  padding: 32px 56px 0;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-white);
+}
+.blog-filter-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.blog-filter-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.blog-tabs { display: flex; gap: 0; flex-wrap: wrap; }
+.blog-tab-btn {
+  position: relative;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  padding: 16px 22px;
+  cursor: pointer;
+  transition: color 0.25s;
+  white-space: nowrap;
+}
+.blog-tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--brand-blue);
+  transform: scaleX(0);
+  transition: transform 0.25s ease;
+}
+.blog-tab-btn:hover { color: var(--brand-blue); }
+.blog-tab-btn.active { color: var(--brand-blue); }
+.blog-tab-btn.active::after { transform: scaleX(1); }
+
+/* featured-as-card: скрыт по умолчанию, виден только на мобиле */
+.featured-as-card { display: none; }
+
+
+/* ============================================================
+   46. RESPONSIVE — ≤ 1200px
    ============================================================ */
 @media (max-width: 1200px) {
   .rakun-slide .products-grid { grid-template-columns: repeat(2,1fr); }
@@ -2557,7 +2625,7 @@ a.contact-detail-value:hover { color: var(--brand-blue); }
 
 
 /* ============================================================
-   44. RESPONSIVE — ≤ 1024px
+   47. RESPONSIVE — ≤ 1024px
    ============================================================ */
 @media (max-width: 1024px) {
   /* Nav */
@@ -2601,8 +2669,6 @@ a.contact-detail-value:hover { color: var(--brand-blue); }
   .products-grid { grid-template-columns: repeat(2,1fr); }
 
   /* blog.html */
-  .blog-controls { padding: 32px 32px 0; flex-direction: column; align-items: flex-start; }
-  .blog-search-box { width: 100%; }
   .articles-grid { grid-template-columns: repeat(2,1fr); }
   .topics-grid { grid-template-columns: repeat(2,1fr); }
   .newsletter-inner { grid-template-columns: 1fr; gap: 40px; }
@@ -2650,7 +2716,7 @@ a.contact-detail-value:hover { color: var(--brand-blue); }
 
 
 /* ============================================================
-   45. RESPONSIVE — ≤ 768px  
+   48. RESPONSIVE — ≤ 768px  
    ============================================================ */
 @media (max-width: 768px) {
   .post-hero { padding: 90px 20px 48px; }
@@ -2680,7 +2746,7 @@ a.contact-detail-value:hover { color: var(--brand-blue); }
 
 
 /* ============================================================
-   46. RESPONSIVE — ≤ 640px
+   49. RESPONSIVE — ≤ 640px
    ============================================================ */
 @media (max-width: 640px) {
   /* index */
@@ -2718,7 +2784,7 @@ a.contact-detail-value:hover { color: var(--brand-blue); }
   /* blog */
   .blog-hero { padding: 90px 24px 48px; }
   .blog-hero h1 { font-size: 2.8rem; }
-  .blog-controls,
+  .blog-tabs-row,
   .featured-section,
   .articles-section,
   .newsletter,
@@ -2726,11 +2792,24 @@ a.contact-detail-value:hover { color: var(--brand-blue); }
   .pagination { padding-left: 24px; padding-right: 24px; }
   .articles-grid { grid-template-columns: 1fr; }
   .topics-grid { grid-template-columns: repeat(2,1fr); }
+  .blog-search { display: none; }
+
+  /* blog filter bar — мобиле */
+  .blog-filter-bar { padding: 0; overflow-x: auto; scrollbar-width: none; }
+  .blog-filter-bar::-webkit-scrollbar { display: none; }
+  .blog-filter-inner { flex-wrap: nowrap; padding: 0 24px; gap: 0; }
+  .blog-filter-label { display: none; }
+  .blog-tabs { flex-wrap: nowrap; }
+  .blog-tab-btn { padding: 14px 16px; font-size: 0.65rem; }
+
+  /* featured card на мобиле как обычная карточка */
+  .featured-section { display: none !important; }
+  .featured-as-card { display: flex !important; }
 }
 
 
 /* ============================================================
-   47. RESPONSIVE — ≤ 480px 
+   50. RESPONSIVE — ≤ 480px 
    ============================================================ */
 @media (max-width: 480px) {
   .post-hero h1 { font-size: 1.5rem; letter-spacing: -0.02em; }
