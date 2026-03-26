@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Pages Configuration | RAKUN Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+<style>
+  a.ni { text-decoration: none; color: inherit; display: flex; }
+  @media(max-width: 768px) {
+    .sidebar { position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%);transition:transform 0.25s ease-out;z-index:260;width:var(--sw,256px)!important;min-width:var(--sw,256px)!important; }
+    .sidebar.mo { transform:translateX(0); }
+    .sov { display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:250; }
+    .sov.on { display:block; }
+  }
+</style>
+</head>
+<body>
+<div class="sov" id="sov" onclick="closeMob()"></div>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sbl"><div class="lmark">RK</div><div class="ltxt">RAKUN<small>Admin Panel</small></div></div>
+  <nav class="snav">
+    <div class="ngl">Content</div>
+    <a href="content.html" class="ni"><span class="material-symbols-outlined ic">inventory_2</span><span class="lbl">Products & Blog</span></a>
+
+    <div class="ngl">Pages Configuration</div>
+    <div class="ni on" data-p="page-home"><span class="material-symbols-outlined ic">home</span><span class="lbl">Home Page</span></div>
+    <div class="ni" data-p="page-catalog"><span class="material-symbols-outlined ic">grid_view</span><span class="lbl">Catalog Page</span></div>
+    <div class="ni" data-p="page-blog-list"><span class="material-symbols-outlined ic">rss_feed</span><span class="lbl">Blog Page</span></div>
+    <div class="ni" data-p="page-about"><span class="material-symbols-outlined ic">info</span><span class="lbl">About Us</span></div>
+    <div class="ni" data-p="page-contacts"><span class="material-symbols-outlined ic">location_on</span><span class="lbl">Contacts</span></div>
+    <div class="ni" data-p="page-footer"><span class="material-symbols-outlined ic">link</span><span class="lbl">Footer & Nav</span></div>
+
+    <div class="ngl">System</div>
+    <a href="settings.html" class="ni"><span class="material-symbols-outlined ic">settings</span><span class="lbl">Global Settings</span></a>
+  </nav>
+  <div class="sft"><div class="av">AD</div><div class="ui"><div class="un">Admin</div><div class="ur">Super Administrator</div></div></div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <button class="tbt" id="dtt" onclick="toggleSidebar()"><span class="material-symbols-outlined">menu</span></button>
+    <button class="tbt" id="mbt" style="display:none" onclick="openMob()"><span class="material-symbols-outlined">menu</span></button>
+    <span class="tt" id="tptitle">Home Page</span>
+    <span class="tc" id="tpcrumb">/ Pages</span>
+    <div class="tr">
+      <button class="btn bg2b bxs bv"><span class="material-symbols-outlined ic" style="font-size:15px">open_in_new</span>Visit Site</button>
+      <div class="av tav">AD</div>
+    </div>
+  </div>
+
+  <div class="ct">
+
+    <!-- ══ HOME PAGE ════════════════════════════════════════ -->
+    <div class="pn on" id="pn-page-home">
+      <div class="ph">
+        <div class="pht"><h1>Home Page</h1><p>URL: / (Index)</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('home',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('home')"><span class="material-symbols-outlined ic">save</span>Save Home</button>
+        </div>
+      </div>
+
+      <!-- Hero Slider -->
+      <div class="se">
+        <div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">view_carousel</span><h4>Hero Slider</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3 on">
+          <div id="home-slides-body"></div>
+          <button class="btn bg2b bxs" style="margin-top:10px" onclick="addSlide()"><span class="material-symbols-outlined ic">add</span>Add Slide</button>
+        </div>
+      </div>
+
+      <!-- Reviews -->
+      <div class="se">
+        <div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">star</span><h4>Customer Reviews</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3">
+          <div id="home-reviews-body"></div>
+          <button class="btn bg2b bxs" style="margin-top:10px" onclick="addReview()"><span class="material-symbols-outlined ic">add</span>Add Review</button>
+        </div>
+      </div>
+
+      <!-- Section Titles -->
+      <div class="se">
+        <div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">campaign</span><h4>Section Titles</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3"><div class="fg">
+          <div class="fi"><label class="fl">Products — Label</label><input class="fin" id="home-productsLabel"></div>
+          <div class="fi"><label class="fl">Products — Title</label><input class="fin" id="home-productsTitle"></div>
+          <div class="fi"><label class="fl">Blog — Label</label><input class="fin" id="home-blogLabel"></div>
+          <div class="fi"><label class="fl">Blog — Title</label><input class="fin" id="home-blogTitle"></div>
+          <div class="fi"><label class="fl">Reviews — Label</label><input class="fin" id="home-reviewsLabel"></div>
+          <div class="fi"><label class="fl">Reviews — Title</label><input class="fin" id="home-reviewsTitle"></div>
+        </div></div>
+      </div>
+
+      <!-- SEO -->
+      <div class="se">
+        <div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO & Social Media (OG)</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3"><div class="fg">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin" id="home-seoTitle"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="home-ogTitle"></div>
+          <div class="fi full"><label class="fl">Meta Description</label><textarea class="fta" id="home-metaDescription" style="min-height:60px"></textarea></div>
+          <div class="fi full"><label class="fl">OG Description</label><textarea class="fta" id="home-ogDescription" style="min-height:60px"></textarea></div>
+          <div class="fi full"><label class="fl">OG Image URL (1200x630)</label><input class="fin" id="home-ogImageUrl"></div>
+          <div class="fi full"><label class="fl">Schema.org JSON-LD</label><textarea class="fmono" id="home-schema" placeholder='{"@context":"https://schema.org",...}'></textarea></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ══ CATALOG PAGE ══════════════════════════════════════ -->
+    <div class="pn" id="pn-page-catalog">
+      <div class="ph">
+        <div class="pht"><h1>Catalog Page</h1><p>URL: /en/products/</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('catalog',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('catalog')"><span class="material-symbols-outlined ic">save</span>Save Catalog</button>
+        </div>
+      </div>
+      <div class="se">
+        <div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">campaign</span><h4>Catalog Hero</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3 on"><div class="fg">
+          <div class="fi"><label class="fl">Title</label><input class="fin" id="catalog-title"></div>
+          <div class="fi"><label class="fl">Subtitle</label><input class="fin" id="catalog-subtitle"></div>
+          <div class="fi full"><label class="fl">Description</label><textarea class="fta" id="catalog-description" style="min-height:60px"></textarea></div>
+        </div></div>
+      </div>
+      <div class="se">
+        <div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO & Social Media (OG)</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3"><div class="fg">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin" id="catalog-seoTitle"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="catalog-ogTitle"></div>
+          <div class="fi full"><label class="fl">Meta Description</label><textarea class="fta" id="catalog-metaDescription" style="min-height:60px"></textarea></div>
+          <div class="fi full"><label class="fl">OG Description</label><textarea class="fta" id="catalog-ogDescription" style="min-height:60px"></textarea></div>
+          <div class="fi full"><label class="fl">OG Image URL</label><input class="fin" id="catalog-ogImageUrl"></div>
+          <div class="fi full"><label class="fl">Schema.org JSON-LD</label><textarea class="fmono" id="catalog-schema"></textarea></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ══ BLOG LIST PAGE ════════════════════════════════════ -->
+    <div class="pn" id="pn-page-blog-list">
+      <div class="ph">
+        <div class="pht"><h1>Blog Page Settings</h1><p>URL: /en/blog/</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('blog-list',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('blog-list')"><span class="material-symbols-outlined ic">save</span>Save Blog</button>
+        </div>
+      </div>
+      <div class="se">
+        <div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">article</span><h4>Header Content</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3 on"><div class="fg">
+          <div class="fi"><label class="fl">Page Title</label><input class="fin" id="blog-list-title"></div>
+          <div class="fi"><label class="fl">Subtitle</label><input class="fin" id="blog-list-subtitle"></div>
+        </div></div>
+      </div>
+      <div class="se">
+        <div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO & Social Media (OG)</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3"><div class="fg">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin" id="blog-list-seoTitle"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="blog-list-ogTitle"></div>
+          <div class="fi full"><label class="fl">Meta Description</label><textarea class="fta" id="blog-list-metaDescription" style="min-height:60px"></textarea></div>
+          <div class="fi full"><label class="fl">OG Description</label><textarea class="fta" id="blog-list-ogDescription" style="min-height:60px"></textarea></div>
+          <div class="fi full"><label class="fl">OG Image URL</label><input class="fin" id="blog-list-ogImageUrl"></div>
+          <div class="fi full"><label class="fl">Schema.org JSON-LD</label><textarea class="fmono" id="blog-list-schema"></textarea></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ══ ABOUT US PAGE ════════════════════════════════════ -->
+    <div class="pn" id="pn-page-about">
+      <div class="ph">
+        <div class="pht"><h1>About Us</h1><p>URL: /en/about/</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('about',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('about')"><span class="material-symbols-outlined ic">save</span>Save About</button>
+        </div>
+      </div>
+      <div class="se">
+        <div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">business</span><h4>Main Content</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3 on"><div class="fg">
+          <div class="fi full"><label class="fl">Hero Heading</label><input class="fin" id="about-heroTitle"></div>
+          <div class="fi full"><label class="fl">Page Content (HTML)</label><textarea class="fta fin-html" id="about-contentHtml" style="min-height:300px"></textarea></div>
+          <div class="fi full"><label class="fl">Media URL (Main Image)</label><input class="fin" id="about-mainImage"></div>
+        </div></div>
+      </div>
+      <div class="se">
+        <div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO & Social Media (OG)</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3"><div class="fg">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin" id="about-seoTitle"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="about-ogTitle"></div>
+          <div class="fi full"><label class="fl">Meta Description</label><textarea class="fta" id="about-metaDescription" style="min-height:60px"></textarea></div>
+          <div class="fi full"><label class="fl">OG Description</label><textarea class="fta" id="about-ogDescription" style="min-height:60px"></textarea></div>
+          <div class="fi full"><label class="fl">OG Image URL</label><input class="fin" id="about-ogImageUrl"></div>
+          <div class="fi full"><label class="fl">Schema.org JSON-LD</label><textarea class="fmono" id="about-schema"></textarea></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ══ CONTACTS PAGE ════════════════════════════════════ -->
+    <div class="pn" id="pn-page-contacts">
+      <div class="ph">
+        <div class="pht"><h1>Contacts Page</h1><p>URL: /en/contacts/</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('contacts',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('contacts')"><span class="material-symbols-outlined ic">save</span>Save Contacts</button>
+        </div>
+      </div>
+      <div class="se">
+        <div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">contact_phone</span><h4>Contact Details</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3 on"><div class="fg">
+          <div class="fi"><label class="fl">Label</label><input class="fin" id="contacts-label"></div>
+          <div class="fi"><label class="fl">Title</label><input class="fin" id="contacts-title"></div>
+          <div class="fi"><label class="fl">Phone (Global)</label><input class="fin" id="contacts-phone"></div>
+          <div class="fi"><label class="fl">Email (Global)</label><input class="fin" id="contacts-email"></div>
+          <div class="fi"><label class="fl">CTA Button Text</label><input class="fin" id="contacts-ctaButton"></div>
+          <div class="fi full"><label class="fl">Logistics Terms</label><textarea class="fta" id="contacts-logisticsTerms"></textarea></div>
+          <div class="fi full"><label class="fl">Maps Embed URL (Global)</label><input class="fin" id="contacts-mapsEmbed"></div>
+        </div></div>
+      </div>
+      <div class="se">
+        <div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO & Social Media (OG)</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3"><div class="fg">
+          <div class="fi"><label class="fl">SEO Title Tag</label><input class="fin" id="contacts-seoTitle"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="contacts-ogTitle"></div>
+          <div class="fi full"><label class="fl">Meta Description</label><textarea class="fta" id="contacts-metaDescription" style="min-height:60px"></textarea></div>
+          <div class="fi full"><label class="fl">OG Description</label><textarea class="fta" id="contacts-ogDescription" style="min-height:60px"></textarea></div>
+          <div class="fi full"><label class="fl">OG Image URL</label><input class="fin" id="contacts-ogImageUrl"></div>
+          <div class="fi full"><label class="fl">Schema.org JSON-LD</label><textarea class="fmono" id="contacts-schema"></textarea></div>
+        </div></div>
+      </div>
+    </div>
+
+    <!-- ══ FOOTER / NAV ══════════════════════════════════════ -->
+    <div class="pn" id="pn-page-footer">
+      <div class="ph">
+        <div class="pht"><h1>Navigation & Footer</h1><p>Global site structure</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('footer-nav',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('footer-nav')"><span class="material-symbols-outlined ic">save</span>Save Footer</button>
+        </div>
+      </div>
+      <div class="se">
+        <div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">menu</span><h4>Navigation Labels</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3 on"><div class="fg">
+          <div class="fi"><label class="fl">Home</label><input class="fin" id="footer-nav-home"></div>
+          <div class="fi"><label class="fl">About Us</label><input class="fin" id="footer-nav-about"></div>
+          <div class="fi"><label class="fl">Catalog</label><input class="fin" id="footer-nav-catalog"></div>
+          <div class="fi"><label class="fl">Blog</label><input class="fin" id="footer-nav-blog"></div>
+          <div class="fi"><label class="fl">Contacts</label><input class="fin" id="footer-nav-contacts"></div>
+        </div></div>
+      </div>
+      <div class="se">
+        <div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">image</span><h4>Footer Info</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3"><div class="fg">
+          <div class="fi"><label class="fl">Copyright</label><input class="fin" id="footer-nav-copyright"></div>
+          <div class="fi"><label class="fl">Additional Link</label><input class="fin" id="footer-nav-link1"></div>
+        </div></div>
+      </div>
+    </div>
+
+  </div><!-- /ct -->
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- MOBILE BOTTOM NAVIGATION -->
+<nav class="mn">
+  <div class="mni2">
+    <button class="mni on" data-p="page-home"><span class="material-symbols-outlined ic">home</span><span class="mnl">Home</span></button>
+    <button class="mni" data-p="page-catalog"><span class="material-symbols-outlined ic">grid_view</span><span class="mnl">Catalog</span></button>
+    <button class="mni" data-p="page-contacts"><span class="material-symbols-outlined ic">location_on</span><span class="mnl">Contacts</span></button>
+    <button class="mni" onclick="openMob()"><span class="material-symbols-outlined ic">menu</span><span class="mnl">More</span></button>
+  </div>
+</nav>
+
+<!-- Единственный скрипт — вся логика в admin.js -->
+<script type="module" src="/admin.js"></script>
+</body>
+</html>
