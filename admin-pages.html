@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>RAKUN Admin — Pages</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+<div class="sov" id="sov" onclick="closeMob()"></div>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sbl"><div class="lmark">RK</div><div class="ltxt">RAKUN<small>Admin Panel</small></div></div>
+  <nav class="snav">
+    <div class="ngl">Content</div>
+    <div class="ni" data-href="admin-content.html#products"><span class="material-symbols-outlined ic">inventory_2</span><span class="lbl">Products</span></div>
+    <div class="ni" data-href="admin-content.html#categories"><span class="material-symbols-outlined ic">category</span><span class="lbl">Categories</span></div>
+    <div class="ni" data-href="admin-content.html#blog"><span class="material-symbols-outlined ic">article</span><span class="lbl">Blog Posts</span></div>
+    <div class="ngl">Pages</div>
+    <div class="ni on" data-p="page-home"><span class="material-symbols-outlined ic">home</span><span class="lbl">Home Page</span></div>
+    <div class="ni" data-p="page-catalog"><span class="material-symbols-outlined ic">grid_view</span><span class="lbl">Catalog Page</span></div>
+    <div class="ni" data-p="page-blog"><span class="material-symbols-outlined ic">newspaper</span><span class="lbl">Blog Page</span></div>
+    <div class="ni" data-p="page-contacts"><span class="material-symbols-outlined ic">location_on</span><span class="lbl">Contacts</span></div>
+    <div class="ni" data-p="page-about"><span class="material-symbols-outlined ic">info</span><span class="lbl">About Us</span></div>
+    <div class="ngl">Settings</div>
+    <div class="ni" data-p="settings"><span class="material-symbols-outlined ic">settings</span><span class="lbl">Settings</span></div>
+  </nav>
+  <div class="sft"><div class="av">AD</div><div class="ui"><div class="un">Admin</div><div class="ur">Super Administrator</div></div></div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <button class="tbt" id="dtt" onclick="toggleSidebar()"><span class="material-symbols-outlined">menu</span></button>
+    <button class="tbt" id="mbt" style="display:none" onclick="openMob()"><span class="material-symbols-outlined">menu</span></button>
+    <span class="tt" id="tptitle">Home Page</span>
+    <span class="tc" id="tpcrumb">/ Pages</span>
+    <div class="tr">
+      <button class="btn bg2b bxs bv"><span class="material-symbols-outlined ic" style="font-size:15px">open_in_new</span>Visit Site</button>
+      <div class="av tav">AD</div>
+    </div>
+  </div>
+
+  <div class="ct">
+
+    <!-- ═══════════════════════════════════════════════════
+         HOME PAGE
+    ═══════════════════════════════════════════════════ -->
+    <div class="pn on" id="pn-page-home">
+      <div class="ph">
+        <div class="pht"><h1>Home Page</h1><p>index.html — Hero, Products, Blog, Reviews</p></div>
+        <div class="pha">
+          <select class="fs" id="home-lang-sel" onchange="switchPageLang('home',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('home')"><span class="material-symbols-outlined ic">save</span>Save</button>
+        </div>
+      </div>
+      <div class="nt"><span class="material-symbols-outlined ic">info</span>Editing: <strong id="hll" style="margin:0 4px">English (EN)</strong> prefix: <code id="hlp" style="font-family:'IBM Plex Mono',monospace;margin-left:4px">/en/</code></div>
+
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">view_carousel</span><h4>Hero Slider</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3 on" id="home-slides-body"></div>
+        <div style="padding:0 0 18px 0"><button class="btn bg2b bxs" onclick="addSlide()"><span class="material-symbols-outlined ic">add</span>Add Slide</button></div>
+      </div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">campaign</span><h4>Section Titles</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">Products — Label</label><input class="fin" id="home-productsLabel"></div>
+        <div class="fi"><label class="fl">Products — Title</label><input class="fin" id="home-productsTitle"></div>
+        <div class="fi"><label class="fl">Blog — Label</label><input class="fin" id="home-blogLabel"></div>
+        <div class="fi"><label class="fl">Blog — Title</label><input class="fin" id="home-blogTitle"></div>
+        <div class="fi"><label class="fl">Reviews — Label</label><input class="fin" id="home-reviewsLabel"></div>
+        <div class="fi"><label class="fl">Reviews — Title</label><input class="fin" id="home-reviewsTitle"></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">star</span><h4>Reviews</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div id="home-reviews-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px" onclick="addReview()"><span class="material-symbols-outlined ic">add</span>Add Review</button>
+      </div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO &amp; Meta</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div class="fg">
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="home-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="home-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="home-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="home-ogDescription"></div>
+          <div class="fi"><label class="fl">OG Image URL <span class="tip">(global)</span></label><input class="fin" id="home-ogImageUrl"></div>
+        </div>
+        <div class="fi" style="margin-top:14px"><label class="fl">Schema.org JSON-LD <span class="tip">(WebSite / Organization)</span></label><textarea class="fmono" id="home-schemaOrg" style="min-height:110px" placeholder="{&#10;  &quot;@context&quot;: &quot;https://schema.org&quot;,&#10;  &quot;@type&quot;: &quot;WebSite&quot;,&#10;  &quot;name&quot;: &quot;RAKUN&quot;&#10;}"></textarea></div>
+      </div></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         CATALOG PAGE
+    ═══════════════════════════════════════════════════ -->
+    <div class="pn" id="pn-page-catalog">
+      <div class="ph">
+        <div class="pht"><h1>Catalog Page</h1><p>URL: /en/products/</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('catalog',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('catalog')"><span class="material-symbols-outlined ic">save</span>Save</button>
+        </div>
+      </div>
+
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">campaign</span><h4>Catalog Hero</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg">
+        <div class="fi"><label class="fl">Title</label><input class="fin" id="catalog-title"></div>
+        <div class="fi"><label class="fl">Subtitle</label><input class="fin" id="catalog-subtitle"></div>
+        <div class="fi full"><label class="fl">Description</label><textarea class="fta" id="catalog-description" style="min-height:60px"></textarea></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO &amp; Meta</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div class="fg">
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="catalog-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="catalog-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="catalog-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="catalog-ogDescription"></div>
+          <div class="fi"><label class="fl">OG Image URL <span class="tip">(global)</span></label><input class="fin" id="catalog-ogImageUrl"></div>
+        </div>
+        <div class="fi" style="margin-top:14px"><label class="fl">Schema.org JSON-LD <span class="tip">(CollectionPage)</span></label><textarea class="fmono" id="catalog-schemaOrg" style="min-height:110px" placeholder="{&#10;  &quot;@context&quot;: &quot;https://schema.org&quot;,&#10;  &quot;@type&quot;: &quot;CollectionPage&quot;,&#10;  &quot;name&quot;: &quot;Catalog — RAKUN&quot;&#10;}"></textarea></div>
+      </div></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         BLOG PAGE
+    ═══════════════════════════════════════════════════ -->
+    <div class="pn" id="pn-page-blog">
+      <div class="ph">
+        <div class="pht"><h1>Blog Page</h1><p>URL: /en/blog/</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('blog-page',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('blog-page')"><span class="material-symbols-outlined ic">save</span>Save</button>
+        </div>
+      </div>
+
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">campaign</span><h4>Blog Hero</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg">
+        <div class="fi"><label class="fl">Title</label><input class="fin" id="blog-page-title"></div>
+        <div class="fi"><label class="fl">Subtitle</label><input class="fin" id="blog-page-subtitle"></div>
+        <div class="fi full"><label class="fl">Description</label><textarea class="fta" id="blog-page-description" style="min-height:60px"></textarea></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">label</span><h4>UI Labels</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">All Posts Label</label><input class="fin" id="blog-page-allLabel" placeholder="All"></div>
+        <div class="fi"><label class="fl">Featured Label</label><input class="fin" id="blog-page-featuredLabel" placeholder="Featured"></div>
+        <div class="fi"><label class="fl">Read More Button</label><input class="fin" id="blog-page-readMore" placeholder="Read more"></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO &amp; Meta</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div class="fg">
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="blog-page-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="blog-page-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="blog-page-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="blog-page-ogDescription"></div>
+          <div class="fi"><label class="fl">OG Image URL <span class="tip">(global)</span></label><input class="fin" id="blog-page-ogImageUrl"></div>
+        </div>
+        <div class="fi" style="margin-top:14px"><label class="fl">Schema.org JSON-LD <span class="tip">(Blog)</span></label><textarea class="fmono" id="blog-page-schemaOrg" style="min-height:110px" placeholder="{&#10;  &quot;@context&quot;: &quot;https://schema.org&quot;,&#10;  &quot;@type&quot;: &quot;Blog&quot;,&#10;  &quot;name&quot;: &quot;RAKUN Blog&quot;&#10;}"></textarea></div>
+      </div></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         CONTACTS PAGE
+    ═══════════════════════════════════════════════════ -->
+    <div class="pn" id="pn-page-contacts">
+      <div class="ph">
+        <div class="pht"><h1>Contacts Page</h1><p>URL: /en/contacts/</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('contacts',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('contacts')"><span class="material-symbols-outlined ic">save</span>Save</button>
+        </div>
+      </div>
+      <div class="nt"><span class="material-symbols-outlined ic">info</span>Standalone Contacts page <code>/[lang]/contacts/</code>. The contacts block on the Home page is managed separately.</div>
+
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">campaign</span><h4>Page Hero</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg">
+        <div class="fi"><label class="fl">Label <span class="tip">(локализованный)</span></label><input class="fin" id="contacts-label"></div>
+        <div class="fi"><label class="fl">Title <span class="tip">(локализованный)</span></label><input class="fin" id="contacts-title"></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">contact_phone</span><h4>Contact Details</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">Phone <span class="tip">(global)</span></label><input class="fin" id="contacts-phone"></div>
+        <div class="fi"><label class="fl">Email <span class="tip">(global)</span></label><input class="fin" id="contacts-email"></div>
+        <div class="fi"><label class="fl">CTA Button Text <span class="tip">(локализованный)</span></label><input class="fin" id="contacts-ctaButton"></div>
+        <div class="fi"><label class="fl">CTA Email <span class="tip">(global)</span></label><input class="fin" id="contacts-ctaEmail"></div>
+        <div class="fi full"><label class="fl">Logistics Terms <span class="tip">(локализованный)</span></label><textarea class="fta" id="contacts-logisticsTerms" style="min-height:60px"></textarea></div>
+        <div class="fi full"><label class="fl">Maps Embed URL <span class="tip">(global)</span></label><input class="fin" id="contacts-mapsEmbed"></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO &amp; Meta</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div class="fg">
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="contacts-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="contacts-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="contacts-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="contacts-ogDescription"></div>
+          <div class="fi"><label class="fl">OG Image URL <span class="tip">(global)</span></label><input class="fin" id="contacts-ogImageUrl"></div>
+        </div>
+        <div class="fi" style="margin-top:14px"><label class="fl">Schema.org JSON-LD <span class="tip">(ContactPage)</span></label><textarea class="fmono" id="contacts-schemaOrg" style="min-height:110px" placeholder="{&#10;  &quot;@context&quot;: &quot;https://schema.org&quot;,&#10;  &quot;@type&quot;: &quot;ContactPage&quot;,&#10;  &quot;name&quot;: &quot;Contacts — RAKUN&quot;&#10;}"></textarea></div>
+      </div></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         ABOUT US PAGE
+    ═══════════════════════════════════════════════════ -->
+    <div class="pn" id="pn-page-about">
+      <div class="ph">
+        <div class="pht"><h1>About Us Page</h1><p>URL: /en/about/</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('about',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('about')"><span class="material-symbols-outlined ic">save</span>Save</button>
+        </div>
+      </div>
+
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">campaign</span><h4>Page Hero</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg">
+        <div class="fi"><label class="fl">Label</label><input class="fin" id="about-label"></div>
+        <div class="fi"><label class="fl">Title</label><input class="fin" id="about-title"></div>
+        <div class="fi full"><label class="fl">Subtitle / Tagline</label><input class="fin" id="about-subtitle"></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">article</span><h4>Main Content</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div class="fi" style="margin-bottom:14px">
+          <label class="fl">Main Text <span class="tip">(HTML)</span></label>
+          <textarea class="fta fin-html" id="about-mainHtml" style="min-height:160px" placeholder="<h2>Our Story</h2>&#10;<p>RAKUN was founded…</p>"></textarea>
+        </div>
+        <div class="fg">
+          <div class="fi"><label class="fl">Founded Year</label><input class="fin" id="about-foundedYear" placeholder="2020"></div>
+          <div class="fi"><label class="fl">Headquarters</label><input class="fin" id="about-headquarters" placeholder="Tbilisi, Georgia"></div>
+        </div>
+      </div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">group</span><h4>Values / Mission</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div class="fi">
+          <label class="fl">Values HTML <span class="tip">(optional)</span></label>
+          <textarea class="fta fin-html" id="about-valuesHtml" style="min-height:100px" placeholder="<ul><li>Eco-friendly formulations</li></ul>"></textarea>
+        </div>
+      </div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">image</span><h4>Media</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">Hero Image URL</label><input class="fin" id="about-heroImage" placeholder="https://…/about-hero.jpg"></div>
+        <div class="fi"><label class="fl">Hero Image Alt</label><input class="fin" id="about-heroImageAlt"></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO &amp; Meta</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div class="fg">
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="about-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="about-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="about-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="about-ogDescription"></div>
+          <div class="fi"><label class="fl">OG Image URL <span class="tip">(global)</span></label><input class="fin" id="about-ogImageUrl"></div>
+        </div>
+        <div class="fi" style="margin-top:14px"><label class="fl">Schema.org JSON-LD <span class="tip">(AboutPage / Organization)</span></label><textarea class="fmono" id="about-schemaOrg" style="min-height:110px" placeholder="{&#10;  &quot;@context&quot;: &quot;https://schema.org&quot;,&#10;  &quot;@type&quot;: &quot;AboutPage&quot;,&#10;  &quot;name&quot;: &quot;About RAKUN&quot;&#10;}"></textarea></div>
+      </div></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         SETTINGS
+    ═══════════════════════════════════════════════════ -->
+    <div class="pn" id="pn-settings">
+      <div class="ph"><div class="pht"><h1>Settings</h1></div></div>
+
+      <!-- General + Lang prefixes -->
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">settings</span><h4>General</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on">
+        <div class="fg">
+          <div class="fi"><label class="fl">Site Name</label><input class="fin" id="settings-siteName"></div>
+          <div class="fi"><label class="fl">Default Language</label>
+            <select class="fsel" id="settings-defaultLang">
+              <option value="en">English (EN)</option><option value="ru">Russian (RU)</option>
+              <option value="ka">Georgian (KA)</option><option value="hy">Armenian (HY)</option>
+            </select>
+          </div>
+          <div class="fi full"><label class="fl">Default Meta Description</label><textarea class="fta" id="settings-metaDescription" style="min-height:70px"></textarea></div>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin:14px 0 10px;text-transform:uppercase;letter-spacing:.06em">Language URL Prefixes</div>
+        <div class="fg">
+          <div class="fi"><label class="fl">English</label><div class="sr2"><div class="sp2">/</div><input class="fin si2" id="settings-prefix-en" value="en"></div></div>
+          <div class="fi"><label class="fl">Russian</label><div class="sr2"><div class="sp2">/</div><input class="fin si2" id="settings-prefix-ru" value="ru"></div></div>
+          <div class="fi"><label class="fl">Georgian</label><div class="sr2"><div class="sp2">/</div><input class="fin si2" id="settings-prefix-ka" value="ka"></div></div>
+          <div class="fi"><label class="fl">Armenian</label><div class="sr2"><div class="sp2">/</div><input class="fin si2" id="settings-prefix-hy" value="hy"></div></div>
+        </div>
+      </div></div>
+
+      <!-- Admin + Firebase -->
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">manage_accounts</span><h4>Admin &amp; Firebase</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">Admin Name</label><input class="fin" id="settings-adminName"></div>
+        <div class="fi"><label class="fl">Firebase Project ID</label><input class="fin" value="racun-shop" readonly style="opacity:.6"></div>
+        <div class="fi"><label class="fl">Firebase Status</label><input class="fin" id="fb-status" value="Connecting…" readonly style="opacity:.6"></div>
+      </div></div></div>
+
+      <!-- Navigation & Footer -->
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">link</span><h4>Navigation &amp; Footer <span class="tip" style="font-weight:400;font-size:12px">(global — all pages)</span></h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px">
+          <select class="fs" onchange="switchPageLang('footer-nav',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp bxs" onclick="savePageDoc('footer-nav')"><span class="material-symbols-outlined ic">save</span>Save Nav &amp; Footer</button>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Navigation Labels</div>
+        <div class="fg" style="margin-bottom:18px">
+          <div class="fi"><label class="fl">Home</label><input class="fin" id="footer-nav-home"></div>
+          <div class="fi"><label class="fl">About Us</label><input class="fin" id="footer-nav-about"></div>
+          <div class="fi"><label class="fl">Catalog</label><input class="fin" id="footer-nav-catalog"></div>
+          <div class="fi"><label class="fl">Blog</label><input class="fin" id="footer-nav-blog"></div>
+          <div class="fi"><label class="fl">Contacts</label><input class="fin" id="footer-nav-contacts"></div>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Footer Links</div>
+        <div class="fg">
+          <div class="fi"><label class="fl">Footer Link 1</label><input class="fin" id="footer-nav-link1"></div>
+          <div class="fi"><label class="fl">Footer Link 2</label><input class="fin" id="footer-nav-link2"></div>
+          <div class="fi"><label class="fl">Footer Link 3</label><input class="fin" id="footer-nav-link3"></div>
+          <div class="fi full"><label class="fl">Copyright</label><input class="fin" id="footer-nav-copyright"></div>
+        </div>
+      </div></div>
+
+      <div style="margin-top:18px;text-align:right">
+        <button class="btn bp" onclick="saveSettings()"><span class="material-symbols-outlined ic">save</span>Save All Settings</button>
+      </div>
+    </div>
+
+  </div><!-- /ct -->
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- MOBILE NAV -->
+<nav class="mn">
+  <div class="mni2">
+    <button class="mni on" data-p="page-home"><span class="material-symbols-outlined ic">home</span><span class="mnl">Home</span></button>
+    <button class="mni" data-p="page-catalog"><span class="material-symbols-outlined ic">grid_view</span><span class="mnl">Catalog</span></button>
+    <button class="mni" data-p="page-contacts"><span class="material-symbols-outlined ic">location_on</span><span class="mnl">Contacts</span></button>
+    <button class="mni" onclick="openMob()"><span class="material-symbols-outlined ic">menu</span><span class="mnl">More</span></button>
+  </div>
+</nav>
+
+<script type="module" src="/admin.js"></script>
+</body>
+</html>
