@@ -38,10 +38,10 @@
     </a>
     <ul class="nav-links">
       <li><a href="/{{ lang }}/">{{ nav.home or 'Home' }}</a></li>
-      <li><a href="/{{ lang }}/#about">{{ nav.about or 'About us' }}</a></li>
+      <li><a href="/{{ lang }}/about/">{{ nav.about or 'About us' }}</a></li>
       <li><a href="/{{ lang }}/catalog/">{{ nav.catalog or 'Catalog' }}</a></li>
       <li><a href="/{{ lang }}/blog/">{{ nav.blog or 'Blog' }}</a></li>
-      <li><a href="#contacts">{{ nav.contacts or 'Contacts' }}</a></li>
+      <li><a href="/{{ lang }}/contacts/">{{ nav.contacts or 'Contacts' }}</a></li>
     </ul>
     <div class="lang-switcher">
       {% for l in SUPPORTED_LANGS %}
@@ -75,7 +75,7 @@
       <a href="/{{ lang }}/#about"      onclick="toggleMobileMenu()">{{ nav.about   or 'About us' }}</a>
       <a href="/{{ lang }}/catalog/"   onclick="toggleMobileMenu()">{{ nav.catalog or 'Catalog' }}</a>
       <a href="/{{ lang }}/blog/"      onclick="toggleMobileMenu()">{{ nav.blog    or 'Blog' }}</a>
-      <a href="#contacts"              onclick="toggleMobileMenu()">{{ nav.contacts or 'Contacts' }}</a>
+      <a href="/{{ lang }}/contacts/"              onclick="toggleMobileMenu()">{{ nav.contacts or 'Contacts' }}</a>
     </nav>
     <div class="mobile-menu-bottom">
       <div class="mobile-lang">
