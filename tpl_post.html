@@ -42,10 +42,10 @@
     <a href="/{{ lang }}/" class="nav-logo"><img src="{{ LOGO_URL }}" alt="RAKUN"></a>
     <ul class="nav-links">
       <li><a href="/{{ lang }}/">{{ nav.home }}</a></li>
-      <li><a href="/{{ lang }}/#about">{{ nav.about or 'About us' }}</a></li>
+      <li><a href="/{{ lang }}/about/">{{ nav.about or 'About us' }}</a></li>
       <li><a href="/{{ lang }}/catalog/">{{ nav.catalog }}</a></li>
       <li><a href="/{{ lang }}/blog/" class="active">{{ nav.blog }}</a></li>
-      <li><a href="/{{ lang }}/#contacts">{{ nav.contacts }}</a></li>
+      <li><a href="/{{ lang }}/contacts/">{{ nav.contacts }}</a></li>
     </ul>
     <div class="lang-switcher">
       {% for l in SUPPORTED_LANGS %}
@@ -73,10 +73,10 @@
     </div>
     <nav class="mobile-menu-nav">
       <a href="/{{ lang }}/" onclick="toggleMobileMenu()">{{ nav.home }}</a>
-      <a href="/{{ lang }}/#about" onclick="toggleMobileMenu()">{{ nav.about or 'About us' }}</a>
+      <a href="/{{ lang }}/about/" onclick="toggleMobileMenu()">{{ nav.about or 'About us' }}</a>
       <a href="/{{ lang }}/catalog/" onclick="toggleMobileMenu()">{{ nav.catalog }}</a>
       <a href="/{{ lang }}/blog/" onclick="toggleMobileMenu()">{{ nav.blog }}</a>
-      <a href="/{{ lang }}/#contacts" onclick="toggleMobileMenu()">{{ nav.contacts }}</a>
+      <a href="/{{ lang }}/contacts/" onclick="toggleMobileMenu()">{{ nav.contacts }}</a>
     </nav>
     <div class="mobile-menu-bottom">
       <div class="mobile-lang">
