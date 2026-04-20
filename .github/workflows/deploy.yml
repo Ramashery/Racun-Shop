@@ -34,7 +34,7 @@ jobs:
         env:
           # FIREBASE_SERVICE_ACCOUNT — добавьте в Settings → Secrets → Actions
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          BASE_URL: "https://racun-shop.web.app"   # ← ваш домен
+          BASE_URL: "https://rakun-official.com"   # ← ваш домен
         run: python generate_site.py
 
       - name: Deploy to Firebase Hosting
