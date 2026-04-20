@@ -39,43 +39,37 @@ jobs:
           BASE_URL: "https://rakun-official.com"
         run: python generate_site.py
 
-      - name: Clean URLs Fix (Remove Trailing Slashes)
+      - name: Prepare structure for GitHub Pages
         run: |
+          # Заходим в папку с собранным сайтом
           cd public
-          # Создаем .nojekyll
+          
+          # 1. Создаем .nojekyll (обязательно)
           touch .nojekyll
           
-          # Переименовываем папка/index.html в папка.html
-          # Это позволит GitHub Pages открывать /about вместо /about/
-          find . -name "index.html" | while read f; do
-            # Не трогаем главные страницы языковых разделов (en/index.html и т.д.)
-            if [[ "$f" == "./en/index.html" || "$f" == "./ru/index.html" || "$f" == "./ka/index.html" || "$f" == "./hy/index.html" || "$f" == "./index.html" ]]; then
-              continue
+          # 2. Делаем копии для Clean URLs (чтобы работало без слэша)
+          # Было: en/index.html -> Станет: en.html (откроется как /en)
+          # Было: en/catalog/index.html -> Станет: en/catalog.html (откроется как /en/catalog)
+          find . -name "index.html" -type f | while read f; do
+            if [ "$f" != "./index.html" ]; then
+              cp "$f" "${f%/index.html}.html"
             fi
-            
-            dir=$(dirname "$f")
-            mv "$f" "$dir.html"
-            rmdir "$dir"
           done
 
-          # Исправляем 404 ошибку
+          # 3. Исправляем 404 ошибку (GitHub ждет 404.html в корне)
           if [ -f 404/index.html ]; then
-            mv 404/index.html 404.html
-            rmdir 404
+            cp 404/index.html 404.html
           fi
 
-          # Копируем админку в корень для прямого доступа
+          # 4. Копируем файлы админки из корня репозитория в папку сборки
           cp ../admin-content.html ./admin-content.html || true
           cp ../admin-pages.html ./admin-pages.html || true
+          cp ../admin.js ./admin.js || true
+          cp ../admin.css ./admin.css || true
+          
+          # Проверка для логов (увидим, какие файлы в итоге загружаются)
+          ls -R
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: 'public'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
