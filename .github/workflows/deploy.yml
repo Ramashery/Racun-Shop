@@ -39,32 +39,10 @@ jobs:
           BASE_URL: "https://rakun-official.com"
         run: python generate_site.py
 
-      - name: Force Clean URLs (Rename Structure)
+      - name: Setup public dir
         run: |
           cd public
           touch .nojekyll
-          
-          # Находим все index.html во вложенных папках
-          # Пример: en/products/gel/index.html -> переименовываем в en/products/gel.html
-          find . -name "index.html" -type f | while read f; do
-            if [ "$f" != "./index.html" ]; then
-              # Определяем путь без /index.html
-              base="${f%/index.html}"
-              # Переименовываем папку во флаг .html
-              mv "$f" "${base}.html"
-            fi
-          done
-
-          # Удаляем теперь уже пустые директории, чтобы GitHub не считал их папками
-          find . -type d -empty -delete || true
-
-          # Исправляем 404
-          if [ -d 404 ]; then
-            mv 404/index.html ./404.html || true
-            rmdir 404 || true
-          fi
-
-          # Копируем админку
           cp ../admin-content.html ./admin-content.html || true
           cp ../admin-pages.html ./admin-pages.html || true
           cp ../admin.js ./admin.js || true
@@ -78,3 +56,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
