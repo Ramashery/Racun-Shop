@@ -1,0 +1,57 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Скрипт сработает при пуше в основную ветку
+  workflow_dispatch: # Позволяет запускать сборку вручную
+
+# Разрешения для работы с GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Отменяет старые запуски, если вы сделали новый пуш до завершения предыдущего
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Generate static site
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          BASE_URL: "https://rakun-official.com"
+        run: python generate_site.py
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # ВНИМАНИЕ: Если ваш скрипт сохраняет файлы в корень, оставьте '.'
+          # Если он создает папку 'public' или 'dist', замените на './public'
+          path: '.' 
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
