@@ -3,16 +3,14 @@ name: Build and Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # Скрипт сработает при пуше в основную ветку
-  workflow_dispatch: # Позволяет запускать сборку вручную
+      - main
+  workflow_dispatch:
 
-# Разрешения для работы с GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Отменяет старые запуски, если вы сделали новый пуш до завершения предыдущего
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -33,8 +31,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Generate static site
         env:
@@ -42,15 +39,25 @@ jobs:
           BASE_URL: "https://rakun-official.com"
         run: python generate_site.py
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+      # ЭТОТ ШАГ РЕШАЕТ ПРОБЛЕМУ 404 И СТРУКТУРЫ
+      - name: Fix for GitHub Pages
+        run: |
+          # 1. Говорим GitHub не игнорировать папки с нижним подчеркиванием
+          touch public/.nojekyll
+          # 2. GitHub требует, чтобы файл 404 лежал в корне, а не в папке 404/index.html
+          if [ -f public/404/index.html ]; then
+            cp public/404/index.html public/404.html
+          fi
+          # 3. Если админка лежит в папке admin/index.html, GitHub её найдет.
+          # Но если вы заходите на /admin (без слеша), GitHub выдаст 404.
+          # Создадим копию для корня, если нужно:
+          cp admin-content.html public/admin-content.html || true
+          cp admin-pages.html public/admin-pages.html || true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # ВНИМАНИЕ: Если ваш скрипт сохраняет файлы в корень, оставьте '.'
-          # Если он создает папку 'public' или 'dist', замените на './public'
-          path: '.' 
+          path: 'public' # Указываем папку public, как в firebase.json
 
       - name: Deploy to GitHub Pages
         id: deployment
