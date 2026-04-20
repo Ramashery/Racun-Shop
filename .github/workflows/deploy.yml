@@ -39,34 +39,43 @@ jobs:
           BASE_URL: "https://rakun-official.com"
         run: python generate_site.py
 
-      - name: Flatten Structure for Clean URLs (No Trailing Slashes)
+      - name: Clean URLs Fix (Remove Trailing Slashes)
         run: |
           cd public
+          # Создаем .nojekyll
           touch .nojekyll
           
-          # Переносим все вложенные index.html на уровень выше с названием папки
-          # Пример: en/index.html -> en.html, en/catalog/index.html -> en/catalog.html
-          find . -name "index.html" -type f ! -path "./index.html" | while read f; do
-            target="${f%/index.html}.html"
-            mv "$f" "$target"
+          # Переименовываем папка/index.html в папка.html
+          # Это позволит GitHub Pages открывать /about вместо /about/
+          find . -name "index.html" | while read f; do
+            # Не трогаем главные страницы языковых разделов (en/index.html и т.д.)
+            if [[ "$f" == "./en/index.html" || "$f" == "./ru/index.html" || "$f" == "./ka/index.html" || "$f" == "./hy/index.html" || "$f" == "./index.html" ]]; then
+              continue
+            fi
+            
+            dir=$(dirname "$f")
+            mv "$f" "$dir.html"
+            rmdir "$dir"
           done
 
-          # Удаляем теперь уже пустые папки
-          find . -type d -empty -delete
-
-          # Исправляем 404.html (должен быть в корне)
-          if [ -f 404.html ]; then
-             echo "404 is already in root"
-          elif [ -f 404/index.html ] || [ -f 404.html ]; then
-             mv 404.html 404_tmp.html || true
-             mv 404/index.html 404.html || true
-             rmdir 404 || true
+          # Исправляем 404 ошибку
+          if [ -f 404/index.html ]; then
+            mv 404/index.html 404.html
+            rmdir 404
           fi
 
-          # Копируем админку для прямого доступа без слэша
+          # Копируем админку в корень для прямого доступа
           cp ../admin-content.html ./admin-content.html || true
           cp ../admin-pages.html ./admin-pages.html || true
 
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'public'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
