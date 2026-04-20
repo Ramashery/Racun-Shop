@@ -39,36 +39,36 @@ jobs:
           BASE_URL: "https://rakun-official.com"
         run: python generate_site.py
 
-      - name: Prepare structure for GitHub Pages
+      - name: Force Clean URLs (Rename Structure)
         run: |
-          # Заходим в папку с собранным сайтом
           cd public
-          
-          # 1. Создаем .nojekyll (обязательно)
           touch .nojekyll
           
-          # 2. Делаем копии для Clean URLs (чтобы работало без слэша)
-          # Было: en/index.html -> Станет: en.html (откроется как /en)
-          # Было: en/catalog/index.html -> Станет: en/catalog.html (откроется как /en/catalog)
+          # Находим все index.html во вложенных папках
+          # Пример: en/products/gel/index.html -> переименовываем в en/products/gel.html
           find . -name "index.html" -type f | while read f; do
             if [ "$f" != "./index.html" ]; then
-              cp "$f" "${f%/index.html}.html"
+              # Определяем путь без /index.html
+              base="${f%/index.html}"
+              # Переименовываем папку во флаг .html
+              mv "$f" "${base}.html"
             fi
           done
 
-          # 3. Исправляем 404 ошибку (GitHub ждет 404.html в корне)
-          if [ -f 404/index.html ]; then
-            cp 404/index.html 404.html
+          # Удаляем теперь уже пустые директории, чтобы GitHub не считал их папками
+          find . -type d -empty -delete || true
+
+          # Исправляем 404
+          if [ -d 404 ]; then
+            mv 404/index.html ./404.html || true
+            rmdir 404 || true
           fi
 
-          # 4. Копируем файлы админки из корня репозитория в папку сборки
+          # Копируем админку
           cp ../admin-content.html ./admin-content.html || true
           cp ../admin-pages.html ./admin-pages.html || true
           cp ../admin.js ./admin.js || true
           cp ../admin.css ./admin.css || true
-          
-          # Проверка для логов (увидим, какие файлы в итоге загружаются)
-          ls -R
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
