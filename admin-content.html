@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>RAKUN Admin — Content</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+<div class="sov" id="sov" onclick="closeMob()"></div>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sbl"><div class="lmark">RK</div><div class="ltxt">RAKUN<small>Admin Panel</small></div></div>
+  <nav class="snav">
+    <div class="ngl">Content</div>
+    <div class="ni on" data-p="products"><span class="material-symbols-outlined ic">inventory_2</span><span class="lbl">Products</span><span class="bdg" id="bdgp">0</span></div>
+    <div class="ni" data-p="categories"><span class="material-symbols-outlined ic">category</span><span class="lbl">Categories</span><span class="bdg" id="bdgc">0</span></div>
+    <div class="ni" data-p="blog"><span class="material-symbols-outlined ic">article</span><span class="lbl">Blog Posts</span><span class="bdg" id="bdgb">0</span></div>
+    <div class="ngl">Pages</div>
+    <div class="ni" data-href="admin-pages.html#page-home"><span class="material-symbols-outlined ic">home</span><span class="lbl">Home Page</span></div>
+    <div class="ni" data-href="admin-pages.html#page-catalog"><span class="material-symbols-outlined ic">grid_view</span><span class="lbl">Catalog Page</span></div>
+    <div class="ni" data-href="admin-pages.html#page-blog"><span class="material-symbols-outlined ic">newspaper</span><span class="lbl">Blog Page</span></div>
+    <div class="ni" data-href="admin-pages.html#page-contacts"><span class="material-symbols-outlined ic">location_on</span><span class="lbl">Contacts</span></div>
+    <div class="ni" data-href="admin-pages.html#page-about"><span class="material-symbols-outlined ic">info</span><span class="lbl">About Us</span></div>
+  </nav>
+  <div class="sft"><div class="av">AD</div><div class="ui"><div class="un">Admin</div><div class="ur">Super Administrator</div></div></div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <button class="tbt" id="dtt" onclick="toggleSidebar()"><span class="material-symbols-outlined">menu</span></button>
+    <button class="tbt" id="mbt" style="display:none" onclick="openMobMenu()"><span class="material-symbols-outlined">menu</span></button>
+    <span class="tt" id="tptitle">Products</span>
+    <span class="tc" id="tpcrumb">/ Content</span>
+    <div class="tr">
+      <button class="btn bg2b bxs bv"><span class="material-symbols-outlined ic" style="font-size:15px">open_in_new</span>Visit Site</button>
+      <div class="av tav">AD</div>
+    </div>
+  </div>
+
+  <div class="ct">
+
+    <!-- PRODUCTS LIST -->
+    <div class="pn on" id="pn-products">
+      <div class="ph">
+        <div class="pht"><h1>Products</h1><p>URL: /en/products/<strong>[category-slug]</strong>/<strong>[product-slug]</strong></p></div>
+        <div class="pha"><button class="btn bp" id="btn-new-prod"><span class="material-symbols-outlined ic">add</span>New Product</button></div>
+      </div>
+      <div class="tw">
+        <div class="ttb">
+          <div class="sbox"><span class="material-symbols-outlined ic">search</span><input type="text" id="search-products" placeholder="Search products…" oninput="filterProducts()"></div>
+          <select class="fs" id="pf-cat" onchange="filterProducts()"><option value="">All categories</option></select>
+          <select class="fs" id="pf-prod-status" onchange="filterProducts()"><option value="">All statuses</option><option>Published</option><option>Draft</option><option>Archived</option></select>
+        </div>
+        <table class="dt">
+          <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Translations</th><th>Status</th><th>URL</th><th>Actions</th></tr></thead>
+          <tbody id="products-tbody"></tbody>
+        </table>
+        <div class="mcl" id="products-mob"></div>
+      </div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="pn" id="pn-categories">
+      <div class="ph">
+        <div class="pht"><h1>Categories</h1><p>URL: /en/products/<strong>[category-slug]</strong>/product-slug</p></div>
+        <div class="pha"><button class="btn bp" onclick="openNewCat()"><span class="material-symbols-outlined ic">add</span>New Category</button></div>
+      </div>
+      <div class="nt"><span class="material-symbols-outlined ic">info</span>Category slug is part of every product URL. Changing it breaks existing links — set up redirects.</div>
+      <div class="cg2" id="catgrid"></div>
+    </div>
+
+    <!-- BLOG POSTS LIST -->
+    <div class="pn" id="pn-blog">
+      <div class="ph">
+        <div class="pht"><h1>Blog Posts</h1><p>URL: /en/blog/<strong>[post-slug]</strong></p></div>
+        <div class="pha"><button class="btn bp" id="btn-new-blog"><span class="material-symbols-outlined ic">add</span>New Post</button></div>
+      </div>
+      <div class="tw">
+        <div class="ttb">
+          <div class="sbox"><span class="material-symbols-outlined ic">search</span><input type="text" id="search-blog" placeholder="Search posts…" oninput="filterBlog()"></div>
+          <select class="fs" id="pf-blog-status" onchange="filterBlog()"><option value="">All statuses</option><option>Published</option><option>Draft</option><option>Archived</option></select>
+        </div>
+        <table class="dt">
+          <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Translations</th><th>Status</th><th>URL</th><th>Actions</th></tr></thead>
+          <tbody id="blog-tbody"></tbody>
+        </table>
+        <div class="mcl" id="blog-mob"></div>
+      </div>
+    </div>
+
+  </div><!-- /ct -->
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- MOBILE NAV -->
+<nav class="mn">
+  <div class="mni2">
+    <button class="mni on" data-p="products"><span class="material-symbols-outlined ic">inventory_2</span><span class="mnl">Products</span></button>
+    <button class="mni" data-p="categories"><span class="material-symbols-outlined ic">category</span><span class="mnl">Categories</span></button>
+    <button class="mni" data-p="blog"><span class="material-symbols-outlined ic">article</span><span class="mnl">Blog</span></button>
+  </div>
+</nav>
+
+<!-- MOBILE GLOBAL MENU -->
+<div class="mob-menu-overlay" id="mob-menu-overlay" onclick="closeMobMenu()"></div>
+<div class="mob-menu" id="mob-menu">
+  <div class="mob-menu-header">
+    <div class="lmark" style="font-size:13px;padding:6px 10px">RK</div>
+    <span style="font-weight:700;font-size:15px">RAKUN Admin</span>
+    <button class="tbt" onclick="closeMobMenu()" style="margin-left:auto"><span class="material-symbols-outlined">close</span></button>
+  </div>
+  <div class="mob-menu-body">
+    <div class="mob-menu-group">Content</div>
+    <button class="mob-menu-item" onclick="goP('products');closeMobMenu()"><span class="material-symbols-outlined ic">inventory_2</span>Products</button>
+    <button class="mob-menu-item" onclick="goP('categories');closeMobMenu()"><span class="material-symbols-outlined ic">category</span>Categories</button>
+    <button class="mob-menu-item" onclick="goP('blog');closeMobMenu()"><span class="material-symbols-outlined ic">article</span>Blog Posts</button>
+    <div class="mob-menu-group">Pages</div>
+    <a class="mob-menu-item" href="admin-pages.html#page-home"><span class="material-symbols-outlined ic">home</span>Home Page</a>
+    <a class="mob-menu-item" href="admin-pages.html#page-catalog"><span class="material-symbols-outlined ic">grid_view</span>Catalog Page</a>
+    <a class="mob-menu-item" href="admin-pages.html#page-blog"><span class="material-symbols-outlined ic">newspaper</span>Blog Page</a>
+    <a class="mob-menu-item" href="admin-pages.html#page-contacts"><span class="material-symbols-outlined ic">location_on</span>Contacts</a>
+    <a class="mob-menu-item" href="admin-pages.html#page-about"><span class="material-symbols-outlined ic">info</span>About Us</a>
+  </div>
+</div>
+
+<style>
+.mob-menu-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1100;backdrop-filter:blur(2px)}
+.mob-menu-overlay.on{display:block}
+.mob-menu{position:fixed;top:0;right:-320px;width:290px;max-width:88vw;height:100%;background:var(--bg2,#1a1d2e);z-index:1101;display:flex;flex-direction:column;transition:right .28s cubic-bezier(.4,0,.2,1);box-shadow:-4px 0 32px rgba(0,0,0,.4)}
+.mob-menu.on{right:0}
+.mob-menu-header{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border2,#2a2d3e)}
+.mob-menu-body{flex:1;overflow-y:auto;padding:8px 0 24px}
+.mob-menu-group{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text2,#6b7280);padding:14px 20px 6px}
+.mob-menu-item{display:flex;align-items:center;gap:12px;width:100%;padding:11px 20px;font-size:14px;font-weight:500;color:var(--text1,#e2e8f0);background:none;border:none;cursor:pointer;text-decoration:none;text-align:left;transition:background .15s}
+.mob-menu-item:hover,.mob-menu-item:active{background:var(--bg3,#252840)}
+.mob-menu-item .ic{font-size:19px;color:var(--text2,#6b7280)}
+/* Tags UI for blog */
+.tags-wrap{display:flex;flex-wrap:wrap;gap:6px;min-height:32px;padding:6px 8px;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;cursor:text;margin-bottom:6px}
+.tags-wrap .tag-chip{display:inline-flex;align-items:center;gap:4px;background:var(--bg4,#2d3148);border:1px solid var(--border2);border-radius:20px;padding:2px 10px;font-size:12px;color:var(--text1);white-space:nowrap}
+.tags-wrap .tag-chip button{background:none;border:none;color:var(--text2);cursor:pointer;padding:0;line-height:1;font-size:14px}
+.tags-input{border:none;background:transparent;color:var(--text1);font-size:13px;min-width:120px;outline:none;padding:2px 4px;flex:1}
+.avatar-preview{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.avatar-color-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.av-swatch{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:border-color .15s}
+.av-swatch.on{border-color:#fff}
+</style>
+
+<!-- ============================================================
+     MODAL: BLOG POST EDITOR
+============================================================ -->
+<div class="mo" id="mblog">
+  <div class="md" style="max-width:960px">
+    <div class="mh">
+      <h2 id="blogtitle">Blog Post Editor</h2>
+      <button class="mc2b" onclick="closeM('mblog')"><span class="material-symbols-outlined" style="font-size:26px">close</span></button>
+    </div>
+
+    <!-- ── GLOBAL FIELDS ─────────────────────────────── -->
+    <div class="gf-block">
+      <div class="gf-title">🌐 Global Fields — shared across all language versions</div>
+
+      <div class="fg3">
+        <div class="fi"><label class="fl">Status</label><select class="fsel" id="blogstat"><option value="Draft">Draft</option><option value="Published">Published</option><option value="Archived">Archived</option></select></div>
+        <div class="fi"><label class="fl">Category <span class="tip">(globalFields.category)</span></label><select class="fsel" id="blogcat"><option value="Technology">Technology</option><option value="Eco &amp; Safety">Eco &amp; Safety</option><option value="Guides">Guides</option><option value="Science">Science</option><option value="Industry">Industry</option></select></div>
+        <div class="fi"><label class="fl">Tag Badge <span class="tip">(label on hero)</span></label><input class="fin" id="blogbadge" placeholder="Eco Science"></div>
+        <div class="fi"><label class="fl">Read Time</label><input class="fin" id="blogread" placeholder="5 min read"></div>
+        <div class="fi"><label class="fl">Publish Date <span class="tip">(globalFields.publishDate)</span></label><input class="fin" id="blogpublishdate" type="date"></div>
+        <div class="fi"><label class="fl">Emoji <span class="tip">(shown on cover card)</span></label><input class="fin" id="blogemoji" placeholder="🧪" maxlength="4" style="font-size:18px"></div>
+        <div class="fi"><label class="fl">Priority <span class="tip">(sitemap 0.1–1.0)</span></label><input class="fin" id="blogprio" placeholder="0.8"></div>
+        <div class="fi"><label class="fl">Change Frequency</label><select class="fsel" id="blogfreq"><option value="weekly">weekly</option><option value="monthly">monthly</option><option value="daily">daily</option><option value="yearly">yearly</option><option value="never">never</option></select></div>
+      </div>
+
+      <div class="fg" style="margin-top:14px">
+        <div class="fi"><label class="fl">URL Slug <span class="tip">(shared across all languages)</span></label><div class="sr2"><div class="sp2">/[lang]/blog/</div><input class="fin si2" id="blogslug" oninput="updBlogUrl()"></div><div class="up" id="blogurlprev"></div></div>
+        <div class="fi"><label class="fl">x-default hreflang <span class="tip">(globalFields.xDefaultHreflang)</span></label><select class="fsel" id="bloghreflang"><option value="en">EN — English</option><option value="ru">RU — Russian</option><option value="ka">KA — Georgian</option><option value="hy">HY — Armenian</option></select></div>
+        <div class="fi"><label class="fl">Region hreflang <span class="tip">(e.g. en-GE)</span></label><input class="fin" id="blogregion" placeholder="en-GE, ru-GE, ka-GE, hy-AM"></div>
+        <div class="fi"><label class="fl">OG Image URL</label><input class="fin" id="blogogimg" placeholder="https://…/og-image.jpg"></div>
+      </div>
+
+      <!-- Author block -->
+      <div class="sec-title" style="margin-top:16px">✍️ Author <span class="tip">(globalFields — shared across all languages)</span></div>
+      <div class="fg3" style="margin-bottom:8px">
+        <div class="fi"><label class="fl">Author Name</label><input class="fin" id="blogauthor" placeholder="Dr. Luka Beridze" oninput="updateAvatarPreview()"></div>
+        <div class="fi"><label class="fl">Author Role <span class="tip">(globalFields.authorRole)</span></label><input class="fin" id="blogauthorrole" placeholder="Head of R&amp;D, RAKUN Labs"></div>
+        <div class="fi"><label class="fl">Author Initials <span class="tip">(shown in avatar)</span></label><input class="fin" id="blogauthorinitials" placeholder="LB" maxlength="3" oninput="updateAvatarPreview()"></div>
+        <div class="fi full"><label class="fl">Author Bio <span class="tip">(shown in sidebar widget)</span></label><textarea class="fta" id="blogauthorbio" placeholder="Brief author description shown under the article…" style="min-height:60px"></textarea></div>
+      </div>
+      <div class="fi" style="margin-bottom:14px">
+        <label class="fl">Avatar Color <span class="tip">(globalFields.authorAvatarColor)</span></label>
+        <div class="avatar-color-row">
+          <div class="avatar-preview" id="blog-avatar-preview" style="background:#3b82f6">LB</div>
+          <div class="av-swatch on" data-ac="blue"  style="background:#3b82f6" onclick="setBlogAvatarColor('blue',this)"   title="blue"></div>
+          <div class="av-swatch"    data-ac="violet" style="background:#8b5cf6" onclick="setBlogAvatarColor('violet',this)" title="violet"></div>
+          <div class="av-swatch"    data-ac="green"  style="background:#10b981" onclick="setBlogAvatarColor('green',this)"  title="green"></div>
+          <div class="av-swatch"    data-ac="amber"  style="background:#f59e0b" onclick="setBlogAvatarColor('amber',this)"  title="amber"></div>
+          <div class="av-swatch"    data-ac="rose"   style="background:#f43f5e" onclick="setBlogAvatarColor('rose',this)"   title="rose"></div>
+          <div class="av-swatch"    data-ac="cyan"   style="background:#06b6d4" onclick="setBlogAvatarColor('cyan',this)"   title="cyan"></div>
+          <span id="blog-avcolor-val" style="font-size:12px;color:var(--text2);font-family:monospace;margin-left:4px">blue</span>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="fi" style="margin-bottom:14px">
+        <label class="fl">Tags <span class="tip">(globalFields.tags — shown in article, used for filtering)</span></label>
+        <div class="tags-wrap" id="blog-tags-wrap" onclick="document.getElementById('blog-tags-input').focus()"></div>
+        <input class="tags-input" id="blog-tags-input" placeholder="Type tag and press Enter or comma…" onkeydown="handleTagInput(event,'blog')" style="border:1px solid var(--border2);border-radius:6px;padding:6px 10px;background:var(--bg3);color:var(--text1);font-size:13px;width:100%">
+        <div style="font-size:11px;color:var(--text2);margin-top:4px">Press <kbd style="background:var(--bg4);border-radius:3px;padding:1px 4px">Enter</kbd> or comma to add. Click tag × to remove.</div>
+      </div>
+
+      <!-- Schema JSON-LD -->
+      <div class="fi">
+        <label class="fl">Schema.org JSON-LD <span class="tip">(globalFields.schemaJsonLd — Article schema)</span></label>
+        <textarea class="fmono" id="blogschema" style="min-height:90px" placeholder='{"@context":"https://schema.org","@type":"Article","headline":"…"}'></textarea>
+      </div>
+    </div>
+
+    <!-- ── LANGUAGE TABS ──────────────────────────────── -->
+    <div class="ltabs-row" id="blog-ltabs">
+      <button class="ltab on" onclick="swBlogLang('en',this)" data-lang="en"><span class="flag">🇬🇧</span><span class="lang-code">EN</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swBlogLang('ru',this)" data-lang="ru"><span class="flag">🇷🇺</span><span class="lang-code">RU</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swBlogLang('ka',this)" data-lang="ka"><span class="flag">🇬🇪</span><span class="lang-code">KA</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swBlogLang('hy',this)" data-lang="hy"><span class="flag">🇦🇲</span><span class="lang-code">HY</span><span class="conf-dot no"></span></button>
+    </div>
+
+    <div class="mb">
+
+      <!-- ══ EN ═══════════════════════════════════════════════ -->
+      <div class="lpane on" id="blog-lp-en">
+        <div class="sec-title">Content (EN)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full"><label class="fl">H1 — Page Heading <span class="tip">(supports &lt;span&gt; HTML)</span></label><input class="fin" id="en-blog-h1" placeholder="How Polymer-Encapsulated Capsule Technology Redefines Laundry"></div>
+          <div class="fi full"><label class="fl">Media URLs <span class="tip">(comma-separated image URLs)</span></label><input class="fin" id="en-blog-mediaUrls" placeholder="https://…/img1.jpg, https://…/img2.jpg"></div>
+          <div class="fi full"><label class="fl">Main Image Alt Text</label><input class="fin" id="en-blog-mainImageAltText" placeholder="Diagram of RAKUN capsule technology EN"></div>
+        </div>
+        <div class="fi full" style="margin-bottom:14px">
+          <label class="fl">Main Page Content <span class="tip">(paste full article HTML — supports h2, h3, p, ul, img)</span></label>
+          <textarea class="fta fin-html" id="en-blog-mainPageContentHtml" placeholder="<h2>Introduction</h2>&#10;<p>Article body here…</p>" style="min-height:180px"></textarea>
+        </div>
+        <div class="sec-title">Card (Blog listing)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" id="en-blog-cardTitle" placeholder="Capsule Technology Redefines Laundry"></div>
+          <div class="fi full"><label class="fl">Card Description</label><input class="fin" id="en-blog-cardDescription" placeholder="A three-chamber capsule dissolves in stages…"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="en-blog-seoTitle" placeholder="Capsule Technology — RAKUN Blog"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="en-blog-metaDescription" placeholder="How RAKUN capsules outperform regular gels…"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="en-blog-ogTitle" placeholder="Capsule Technology — RAKUN"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="en-blog-ogDescription" placeholder="A detailed breakdown of capsule chemistry…"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">EN version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bsuc bxs" onclick="confirmLang('blog','en')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish EN</button></div>
+        </div>
+      </div>
+
+      <!-- ══ RU ═══════════════════════════════════════════════ -->
+      <div class="lpane" id="blog-lp-ru">
+        <div class="sec-title">Content (RU)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full"><label class="fl">H1 — Page Heading <span class="tip">(supports &lt;span&gt; HTML)</span></label><input class="fin" id="ru-blog-h1" placeholder="Как полимерная капсульная технология меняет стирку"></div>
+          <div class="fi full"><label class="fl">Media URLs <span class="tip">(comma-separated image URLs)</span></label><input class="fin" id="ru-blog-mediaUrls" placeholder="https://…/img1-ru.jpg"></div>
+          <div class="fi full"><label class="fl">Main Image Alt Text</label><input class="fin" id="ru-blog-mainImageAltText" placeholder="Диаграмма технологии капсул RAKUN RU"></div>
+        </div>
+        <div class="fi full" style="margin-bottom:14px">
+          <label class="fl">Main Page Content <span class="tip">(paste full article HTML)</span></label>
+          <textarea class="fta fin-html" id="ru-blog-mainPageContentHtml" placeholder="<h2>Введение</h2>&#10;<p>Текст статьи на русском...</p>" style="min-height:180px"></textarea>
+        </div>
+        <div class="sec-title">Card (Blog listing)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" id="ru-blog-cardTitle" placeholder="Капсульная технология RAKUN"></div>
+          <div class="fi full"><label class="fl">Card Description</label><input class="fin" id="ru-blog-cardDescription" placeholder="Трёхкамерная капсула растворяется поэтапно…"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="ru-blog-seoTitle" placeholder="Капсульная технология — Блог RAKUN"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="ru-blog-metaDescription" placeholder="Как капсулы RAKUN превосходят обычные гели…"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="ru-blog-ogTitle" placeholder="Капсульная технология — RAKUN"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="ru-blog-ogDescription" placeholder="Подробный разбор капсульной химии…"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">RU version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bsuc bxs" onclick="confirmLang('blog','ru')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish RU</button></div>
+        </div>
+      </div>
+
+      <!-- ══ KA ═══════════════════════════════════════════════ -->
+      <div class="lpane" id="blog-lp-ka">
+        <div class="nt"><span class="material-symbols-outlined ic">translate</span>Georgian version — empty. Fill in all fields below and confirm to publish.</div>
+        <div class="sec-title">Content (KA)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full"><label class="fl">H1 — Page Heading <span class="tip">(supports &lt;span&gt; HTML)</span></label><input class="fin" id="ka-blog-h1" placeholder="Title in Georgian"></div>
+          <div class="fi full"><label class="fl">Media URLs <span class="tip">(comma-separated image URLs)</span></label><input class="fin" id="ka-blog-mediaUrls" placeholder="https://…/img1-ka.jpg"></div>
+          <div class="fi full"><label class="fl">Main Image Alt Text</label><input class="fin" id="ka-blog-mainImageAltText" placeholder="RAKUN capsule technology diagram KA"></div>
+        </div>
+        <div class="fi full" style="margin-bottom:14px">
+          <label class="fl">Main Page Content <span class="tip">(paste full article HTML)</span></label>
+          <textarea class="fta fin-html" id="ka-blog-mainPageContentHtml" placeholder="<h2>Introduction</h2>&#10;<p>Article content in Georgian...</p>" style="min-height:180px"></textarea>
+        </div>
+        <div class="sec-title">Card (Blog listing)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" id="ka-blog-cardTitle" placeholder="Title in Georgian"></div>
+          <div class="fi full"><label class="fl">Card Description</label><input class="fin" id="ka-blog-cardDescription" placeholder="Short description in Georgian"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="ka-blog-seoTitle" placeholder="SEO Title in Georgian"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="ka-blog-metaDescription" placeholder="Meta Description in Georgian"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="ka-blog-ogTitle" placeholder="OG Title in Georgian"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="ka-blog-ogDescription" placeholder="OG Description in Georgian"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">KA version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bsuc bxs" onclick="confirmLang('blog','ka')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish KA</button></div>
+        </div>
+      </div>
+
+      <!-- ══ HY ═══════════════════════════════════════════════ -->
+      <div class="lpane" id="blog-lp-hy">
+        <div class="nt"><span class="material-symbols-outlined ic">translate</span>Armenian version — empty. Fill in all fields below and confirm to publish.</div>
+        <div class="sec-title">Content (HY)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full"><label class="fl">H1 — Page Heading <span class="tip">(supports &lt;span&gt; HTML)</span></label><input class="fin" id="hy-blog-h1" placeholder="Title in Armenian"></div>
+          <div class="fi full"><label class="fl">Media URLs <span class="tip">(comma-separated image URLs)</span></label><input class="fin" id="hy-blog-mediaUrls" placeholder="https://…/img1-hy.jpg"></div>
+          <div class="fi full"><label class="fl">Main Image Alt Text</label><input class="fin" id="hy-blog-mainImageAltText" placeholder="RAKUN capsule technology diagram HY"></div>
+        </div>
+        <div class="fi full" style="margin-bottom:14px">
+          <label class="fl">Main Page Content <span class="tip">(paste full article HTML)</span></label>
+          <textarea class="fta fin-html" id="hy-blog-mainPageContentHtml" placeholder="<h2>Introduction</h2>&#10;<p>Article content in Armenian...</p>" style="min-height:180px"></textarea>
+        </div>
+        <div class="sec-title">Card (Blog listing)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" id="hy-blog-cardTitle" placeholder="Title in Armenian"></div>
+          <div class="fi full"><label class="fl">Card Description</label><input class="fin" id="hy-blog-cardDescription" placeholder="Short description in Armenian"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="hy-blog-seoTitle" placeholder="SEO Title in Armenian"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="hy-blog-metaDescription" placeholder="Meta Description in Armenian"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="hy-blog-ogTitle" placeholder="OG Title in Armenian"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="hy-blog-ogDescription" placeholder="OG Description in Armenian"></div>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">HY version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bsuc bxs" onclick="confirmLang('blog','hy')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish HY</button></div>
+        </div>
+      </div>
+    </div><!-- /mb -->
+
+    <div class="mf">
+      <div style="display:flex;gap:8px"><button class="btn bg2b" onclick="closeM('mblog')">Cancel</button><button class="btn bd2 bxs" id="blog-delete-btn"><span class="material-symbols-outlined ic">delete</span>Delete</button></div>
+      <div style="display:flex;gap:8px"><button class="btn bp" onclick="saveBlogPost()"><span class="material-symbols-outlined ic">save</span>Save to Firebase</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL: PRODUCT EDITOR
+     NOTE: Price, Region hreflang, OG Image URL, CTA Link,
+     Secondary Button Link, Scent Notes, Available Volumes,
+     Dosage Guide, Ingredients, Schema JSON-LD are now
+     PER-LANGUAGE fields inside each translations[lang] tab.
+============================================================ -->
+<div class="mo" id="mprod">
+  <div class="md" style="max-width:960px">
+    <div class="mh">
+      <h2 id="prodtitle">Product Editor</h2>
+      <button class="mc2b" onclick="closeM('mprod')"><span class="material-symbols-outlined" style="font-size:26px">close</span></button>
+    </div>
+
+    <!-- ── GLOBAL FIELDS ─────────────────────────────── -->
+    <div class="gf-block">
+      <div class="gf-title">🌐 Global Fields — shared across all language versions</div>
+
+      <div class="fg3">
+        <div class="fi"><label class="fl">Status</label><select class="fsel" id="prodstat"><option value="Draft">Draft</option><option value="Published">Published</option><option value="Archived">Archived</option></select></div>
+        <div class="fi"><label class="fl">Category</label><select class="fsel" id="prodcatsel" onchange="updProdUrl()"></select></div>
+        <div class="fi"><label class="fl">SKU</label><input class="fin" id="prodsku" placeholder="RK-LWG-001"></div>
+        <div class="fi"><label class="fl">Stock</label><input class="fin" id="prodstock" type="number" placeholder="150"></div>
+        <div class="fi"><label class="fl">Weight / Volume</label><input class="fin" id="prodvol" placeholder="2 L"></div>
+        <div class="fi"><label class="fl">Badge <span class="tip">(Best Seller, New…)</span></label><input class="fin" id="prodbadge" placeholder="Best Seller"></div>
+        <div class="fi"><label class="fl">Washes / Uses</label><input class="fin" id="prodwashes" placeholder="40"></div>
+        <div class="fi"><label class="fl">Priority <span class="tip">(sitemap 0.1–1.0)</span></label><input class="fin" id="prodprio" placeholder="0.9"></div>
+        <div class="fi"><label class="fl">Change Frequency</label><select class="fsel" id="prodfreq"><option value="monthly">monthly</option><option value="weekly">weekly</option><option value="daily">daily</option><option value="yearly">yearly</option><option value="never">never</option></select></div>
+      </div>
+
+      <div class="fg" style="margin-top:14px">
+        <div class="fi"><label class="fl">URL Slug <span class="tip">(shared — only lang prefix changes)</span></label><div class="sr2"><div class="sp2">/[lang]/products/[cat]/</div><input class="fin si2" id="prodslug" oninput="updProdUrl()"></div><div class="up" id="produp"></div></div>
+        <div class="fi"><label class="fl">x-default hreflang</label><select class="fsel" id="prodhreflang"><option value="en">EN — English</option><option value="ru">RU — Russian</option><option value="ka">KA — Georgian</option><option value="hy">HY — Armenian</option></select></div>
+      </div>
+
+      <!-- Images and Feature Pills are now per-language (inside each lang pane below) -->
+    </div>
+
+    <!-- ── LANGUAGE TABS ──────────────────────────────── -->
+    <div class="ltabs-row">
+      <button class="ltab on" onclick="swProdLang('en',this)" data-lang="en"><span class="flag">🇬🇧</span><span class="lang-code">EN</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swProdLang('ru',this)" data-lang="ru"><span class="flag">🇷🇺</span><span class="lang-code">RU</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swProdLang('ka',this)" data-lang="ka"><span class="flag">🇬🇪</span><span class="lang-code">KA</span><span class="conf-dot no"></span></button>
+      <button class="ltab" onclick="swProdLang('hy',this)" data-lang="hy"><span class="flag">🇦🇲</span><span class="lang-code">HY</span><span class="conf-dot no"></span></button>
+    </div>
+
+    <div class="mb">
+
+      <!-- ══ EN ══════════════════════════════════════════ -->
+      <div class="lpane on" id="prod-lp-en">
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full">
+            <label class="fl">Product Images <span class="tip">(one URL per line — carousel order)</span></label>
+            <textarea class="fta" id="en-images-ta" style="min-height:64px;font-family:'IBM Plex Mono',monospace;font-size:12px" placeholder="https://…/img1.jpg&#10;https://…/img2.jpg"></textarea>
+          </div>
+          <div class="fi full">
+            <label class="fl">Feature Pills <span class="tip">(short feature tags, e.g. "Smart 8X Technology")</span></label>
+            <div class="pb" id="pills-en"></div>
+            <div class="pa"><input class="fin" id="pillin-en" placeholder="Smart 8X Technology…" onkeydown="if(event.key==='Enter'){event.preventDefault();addPill('en');}"><button class="btn bg2b bxs" onclick="addPill('en')"><span class="material-symbols-outlined ic">add</span></button></div>
+          </div>
+          <div class="fi"><label class="fl">Category Label</label><input class="fin" id="en-categoryLabel" placeholder="Washing Gel · Universal"></div>
+          <div class="fi"><label class="fl">Product Name</label><input class="fin" id="en-productName" placeholder="Perfumed Washing Gel"></div>
+          <div class="fi"><label class="fl">Image Alt Text</label><input class="fin" id="en-imageAltText" placeholder="RAKUN Gel 2L front view"></div>
+          <div class="fi"><label class="fl">Price</label><input class="fin" id="en-price" placeholder="12.90 GEL"></div>
+          <div class="fi full"><label class="fl">Short Description</label><textarea class="fta" id="en-shortDescription" style="min-height:70px"></textarea></div>
+          <div class="fi full"><label class="fl">Full Description <span class="tip">(HTML)</span></label><textarea class="fta fin-html" id="en-fullDescriptionHtml" placeholder="<p>Description...</p>" style="min-height:100px"></textarea></div>
+        </div>
+        <div class="sec-title">Description Points <span class="tip">(feature blocks with title + text)</span></div>
+        <div id="en-descpoints-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addDescPoint('en')"><span class="material-symbols-outlined ic">add</span>Add Point</button>
+        <div class="sec-title">CTA Buttons <span class="tip">(Telegram, WhatsApp, email, etc.)</span></div>
+        <div id="en-ctabuttons-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addCtaButton('en')"><span class="material-symbols-outlined ic">add</span>Add Button</button>
+        <div class="sec-title">Card (Catalog listing)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" id="en-cardTitle"></div>
+          <div class="fi full"><label class="fl">Card Description</label><input class="fin" id="en-cardDescription"></div>
+        </div>
+        <div class="sec-title">Scent Notes</div>
+        <div class="fg3" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Top Notes</label><input class="fin" id="en-scentTop" placeholder="Citrus, Grapefruit, Sea Water"></div>
+          <div class="fi"><label class="fl">Middle Notes</label><input class="fin" id="en-scentMid" placeholder="Red Rose, Freesia, Jasmine"></div>
+          <div class="fi"><label class="fl">Base Notes</label><input class="fin" id="en-scentBase" placeholder="Ambergris, Banks Rose"></div>
+        </div>
+        <div class="sec-title">Available Volumes / Variants</div>
+        <div id="en-volumes-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addProdVolume('en')"><span class="material-symbols-outlined ic">add</span>Add Volume</button>
+        <div class="sec-title">Dosage Guide</div>
+        <div id="en-dosage-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addProdDosage('en')"><span class="material-symbols-outlined ic">add</span>Add Dosage Row</button>
+        <div class="sec-title">Ingredients</div>
+        <div id="en-ingren"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addIngr('en')"><span class="material-symbols-outlined ic">add</span>Add Ingredient</button>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Region hreflang <span class="tip">(e.g. en-GE)</span></label><input class="fin" id="en-regionHreflang" placeholder="en-GE"></div>
+          <div class="fi"><label class="fl">OG Image URL</label><input class="fin" id="en-ogImageUrl" placeholder="https://…/og.jpg"></div>
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="en-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="en-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="en-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="en-ogDescription"></div>
+        </div>
+        <div class="fi" style="margin-bottom:14px">
+          <label class="fl">Schema.org JSON-LD <span class="tip">(Product schema for EN)</span></label>
+          <textarea class="fmono" id="en-schemaJsonLd" style="min-height:100px" placeholder='{"@context":"https://schema.org","@type":"Product"}'></textarea>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">EN version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bsuc bxs" onclick="confirmLang('prod','en')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish EN</button></div>
+        </div>
+      </div>
+
+      <!-- ══ RU ══════════════════════════════════════════ -->
+      <div class="lpane" id="prod-lp-ru">
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full">
+            <label class="fl">Product Images <span class="tip">(one URL per line)</span></label>
+            <textarea class="fta" id="ru-images-ta" style="min-height:64px;font-family:'IBM Plex Mono',monospace;font-size:12px" placeholder="https://…/img1.jpg&#10;https://…/img2.jpg"></textarea>
+          </div>
+          <div class="fi full">
+            <label class="fl">Feature Pills</label>
+            <div class="pb" id="pills-ru"></div>
+            <div class="pa"><input class="fin" id="pillin-ru" placeholder="Smart 8X Technology…" onkeydown="if(event.key==='Enter'){event.preventDefault();addPill('ru');}"><button class="btn bg2b bxs" onclick="addPill('ru')"><span class="material-symbols-outlined ic">add</span></button></div>
+          </div>
+          <div class="fi"><label class="fl">Category Label</label><input class="fin" id="ru-categoryLabel" placeholder="Гель для стирки · Универсальный"></div>
+          <div class="fi"><label class="fl">Product Name</label><input class="fin" id="ru-productName"></div>
+          <div class="fi"><label class="fl">Image Alt Text</label><input class="fin" id="ru-imageAltText"></div>
+          <div class="fi"><label class="fl">Price</label><input class="fin" id="ru-price" placeholder="12.90 GEL"></div>
+          <div class="fi full"><label class="fl">Short Description</label><textarea class="fta" id="ru-shortDescription" style="min-height:70px"></textarea></div>
+          <div class="fi full"><label class="fl">Full Description <span class="tip">(HTML)</span></label><textarea class="fta fin-html" id="ru-fullDescriptionHtml" placeholder="<p>Текст...</p>" style="min-height:100px"></textarea></div>
+        </div>
+        <div class="sec-title">Description Points <span class="tip">(feature blocks with title + text)</span></div>
+        <div id="ru-descpoints-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addDescPoint('ru')"><span class="material-symbols-outlined ic">add</span>Add Point</button>
+        <div class="sec-title">CTA Buttons <span class="tip">(Telegram, WhatsApp, email, etc.)</span></div>
+        <div id="ru-ctabuttons-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addCtaButton('ru')"><span class="material-symbols-outlined ic">add</span>Add Button</button>
+        <div class="sec-title">Card (Catalog listing)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" id="ru-cardTitle"></div>
+          <div class="fi full"><label class="fl">Card Description</label><input class="fin" id="ru-cardDescription"></div>
+        </div>
+        <div class="sec-title">Scent Notes</div>
+        <div class="fg3" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Top Notes</label><input class="fin" id="ru-scentTop" placeholder="Цитрус, Грейпфрут, Морская вода"></div>
+          <div class="fi"><label class="fl">Middle Notes</label><input class="fin" id="ru-scentMid" placeholder="Красная роза, Фрезия, Жасмин"></div>
+          <div class="fi"><label class="fl">Base Notes</label><input class="fin" id="ru-scentBase" placeholder="Амбергрис, Банкс роза"></div>
+        </div>
+        <div class="sec-title">Available Volumes / Variants</div>
+        <div id="ru-volumes-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addProdVolume('ru')"><span class="material-symbols-outlined ic">add</span>Add Volume</button>
+        <div class="sec-title">Dosage Guide</div>
+        <div id="ru-dosage-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addProdDosage('ru')"><span class="material-symbols-outlined ic">add</span>Add Dosage Row</button>
+        <div class="sec-title">Ingredients</div>
+        <div id="ru-ingren"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addIngr('ru')"><span class="material-symbols-outlined ic">add</span>Add Ingredient</button>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Region hreflang <span class="tip">(e.g. ru-GE)</span></label><input class="fin" id="ru-regionHreflang" placeholder="ru-GE"></div>
+          <div class="fi"><label class="fl">OG Image URL</label><input class="fin" id="ru-ogImageUrl" placeholder="https://…/og-ru.jpg"></div>
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="ru-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="ru-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="ru-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="ru-ogDescription"></div>
+        </div>
+        <div class="fi" style="margin-bottom:14px">
+          <label class="fl">Schema.org JSON-LD <span class="tip">(Product schema for RU)</span></label>
+          <textarea class="fmono" id="ru-schemaJsonLd" style="min-height:100px" placeholder='{"@context":"https://schema.org","@type":"Product"}'></textarea>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">RU version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bsuc bxs" onclick="confirmLang('prod','ru')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish RU</button></div>
+        </div>
+      </div>
+
+      <!-- ══ KA ══════════════════════════════════════════ -->
+      <div class="lpane" id="prod-lp-ka">
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full">
+            <label class="fl">Product Images <span class="tip">(one URL per line)</span></label>
+            <textarea class="fta" id="ka-images-ta" style="min-height:64px;font-family:'IBM Plex Mono',monospace;font-size:12px" placeholder="https://…/img1.jpg&#10;https://…/img2.jpg"></textarea>
+          </div>
+          <div class="fi full">
+            <label class="fl">Feature Pills</label>
+            <div class="pb" id="pills-ka"></div>
+            <div class="pa"><input class="fin" id="pillin-ka" placeholder="Smart 8X Technology…" onkeydown="if(event.key==='Enter'){event.preventDefault();addPill('ka');}"><button class="btn bg2b bxs" onclick="addPill('ka')"><span class="material-symbols-outlined ic">add</span></button></div>
+          </div>
+          <div class="fi"><label class="fl">Category Label</label><input class="fin" id="ka-categoryLabel" placeholder="სარეცხი გელი · უნივერსალური"></div>
+          <div class="fi"><label class="fl">Product Name</label><input class="fin" id="ka-productName"></div>
+          <div class="fi"><label class="fl">Image Alt Text</label><input class="fin" id="ka-imageAltText"></div>
+          <div class="fi"><label class="fl">Price</label><input class="fin" id="ka-price" placeholder="12.90 GEL"></div>
+          <div class="fi full"><label class="fl">Short Description</label><textarea class="fta" id="ka-shortDescription" style="min-height:70px"></textarea></div>
+          <div class="fi full"><label class="fl">Full Description <span class="tip">(HTML)</span></label><textarea class="fta fin-html" id="ka-fullDescriptionHtml" placeholder="<p>ტექსტი...</p>" style="min-height:100px"></textarea></div>
+        </div>
+        <div class="sec-title">Description Points <span class="tip">(feature blocks with title + text)</span></div>
+        <div id="ka-descpoints-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addDescPoint('ka')"><span class="material-symbols-outlined ic">add</span>Add Point</button>
+        <div class="sec-title">CTA Buttons <span class="tip">(Telegram, WhatsApp, email, etc.)</span></div>
+        <div id="ka-ctabuttons-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addCtaButton('ka')"><span class="material-symbols-outlined ic">add</span>Add Button</button>
+        <div class="sec-title">Card (Catalog listing)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" id="ka-cardTitle"></div>
+          <div class="fi full"><label class="fl">Card Description</label><input class="fin" id="ka-cardDescription"></div>
+        </div>
+        <div class="sec-title">Scent Notes</div>
+        <div class="fg3" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Top Notes</label><input class="fin" id="ka-scentTop" placeholder="ციტრუსი, გრეიფრუტი"></div>
+          <div class="fi"><label class="fl">Middle Notes</label><input class="fin" id="ka-scentMid" placeholder="წითელი ვარდი, ფრეზია"></div>
+          <div class="fi"><label class="fl">Base Notes</label><input class="fin" id="ka-scentBase" placeholder="ამბრა, ბანკს ვარდი"></div>
+        </div>
+        <div class="sec-title">Available Volumes / Variants</div>
+        <div id="ka-volumes-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addProdVolume('ka')"><span class="material-symbols-outlined ic">add</span>Add Volume</button>
+        <div class="sec-title">Dosage Guide</div>
+        <div id="ka-dosage-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addProdDosage('ka')"><span class="material-symbols-outlined ic">add</span>Add Dosage Row</button>
+        <div class="sec-title">Ingredients</div>
+        <div id="ka-ingren"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addIngr('ka')"><span class="material-symbols-outlined ic">add</span>Add Ingredient</button>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Region hreflang <span class="tip">(e.g. ka-GE)</span></label><input class="fin" id="ka-regionHreflang" placeholder="ka-GE"></div>
+          <div class="fi"><label class="fl">OG Image URL</label><input class="fin" id="ka-ogImageUrl" placeholder="https://…/og-ka.jpg"></div>
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="ka-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="ka-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="ka-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="ka-ogDescription"></div>
+        </div>
+        <div class="fi" style="margin-bottom:14px">
+          <label class="fl">Schema.org JSON-LD <span class="tip">(Product schema for KA)</span></label>
+          <textarea class="fmono" id="ka-schemaJsonLd" style="min-height:100px" placeholder='{"@context":"https://schema.org","@type":"Product"}'></textarea>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">KA version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bsuc bxs" onclick="confirmLang('prod','ka')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish KA</button></div>
+        </div>
+      </div>
+
+      <!-- ══ HY ══════════════════════════════════════════ -->
+      <div class="lpane" id="prod-lp-hy">
+        <div class="sec-title">Content</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi full">
+            <label class="fl">Product Images <span class="tip">(one URL per line)</span></label>
+            <textarea class="fta" id="hy-images-ta" style="min-height:64px;font-family:'IBM Plex Mono',monospace;font-size:12px" placeholder="https://…/img1.jpg&#10;https://…/img2.jpg"></textarea>
+          </div>
+          <div class="fi full">
+            <label class="fl">Feature Pills</label>
+            <div class="pb" id="pills-hy"></div>
+            <div class="pa"><input class="fin" id="pillin-hy" placeholder="Smart 8X Technology…" onkeydown="if(event.key==='Enter'){event.preventDefault();addPill('hy');}"><button class="btn bg2b bxs" onclick="addPill('hy')"><span class="material-symbols-outlined ic">add</span></button></div>
+          </div>
+          <div class="fi"><label class="fl">Category Label</label><input class="fin" id="hy-categoryLabel"></div>
+          <div class="fi"><label class="fl">Product Name</label><input class="fin" id="hy-productName"></div>
+          <div class="fi"><label class="fl">Image Alt Text</label><input class="fin" id="hy-imageAltText"></div>
+          <div class="fi"><label class="fl">Price</label><input class="fin" id="hy-price" placeholder="12.90 GEL"></div>
+          <div class="fi full"><label class="fl">Short Description</label><textarea class="fta" id="hy-shortDescription" style="min-height:70px"></textarea></div>
+          <div class="fi full"><label class="fl">Full Description <span class="tip">(HTML)</span></label><textarea class="fta fin-html" id="hy-fullDescriptionHtml" placeholder="<p>Text in Armenian...</p>" style="min-height:100px"></textarea></div>
+        </div>
+        <div class="sec-title">Description Points <span class="tip">(feature blocks with title + text)</span></div>
+        <div id="hy-descpoints-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addDescPoint('hy')"><span class="material-symbols-outlined ic">add</span>Add Point</button>
+        <div class="sec-title">CTA Buttons <span class="tip">(Telegram, WhatsApp, email, etc.)</span></div>
+        <div id="hy-ctabuttons-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addCtaButton('hy')"><span class="material-symbols-outlined ic">add</span>Add Button</button>
+        <div class="sec-title">Card (Catalog listing)</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Card Title</label><input class="fin" id="hy-cardTitle"></div>
+          <div class="fi full"><label class="fl">Card Description</label><input class="fin" id="hy-cardDescription"></div>
+        </div>
+        <div class="sec-title">Scent Notes</div>
+        <div class="fg3" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Top Notes</label><input class="fin" id="hy-scentTop" placeholder="Top Notes in Armenian"></div>
+          <div class="fi"><label class="fl">Middle Notes</label><input class="fin" id="hy-scentMid" placeholder="Middle Notes in Armenian"></div>
+          <div class="fi"><label class="fl">Base Notes</label><input class="fin" id="hy-scentBase" placeholder="Base Notes in Armenian"></div>
+        </div>
+        <div class="sec-title">Available Volumes / Variants</div>
+        <div id="hy-volumes-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addProdVolume('hy')"><span class="material-symbols-outlined ic">add</span>Add Volume</button>
+        <div class="sec-title">Dosage Guide</div>
+        <div id="hy-dosage-body"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addProdDosage('hy')"><span class="material-symbols-outlined ic">add</span>Add Dosage Row</button>
+        <div class="sec-title">Ingredients</div>
+        <div id="hy-ingren"></div>
+        <button class="btn bg2b bxs" style="margin-top:8px;margin-bottom:14px" onclick="addIngr('hy')"><span class="material-symbols-outlined ic">add</span>Add Ingredient</button>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Region hreflang <span class="tip">(e.g. hy-AM)</span></label><input class="fin" id="hy-regionHreflang" placeholder="hy-AM"></div>
+          <div class="fi"><label class="fl">OG Image URL</label><input class="fin" id="hy-ogImageUrl" placeholder="https://…/og-hy.jpg"></div>
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="hy-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="hy-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="hy-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="hy-ogDescription"></div>
+        </div>
+        <div class="fi" style="margin-bottom:14px">
+          <label class="fl">Schema.org JSON-LD <span class="tip">(Product schema for HY)</span></label>
+          <textarea class="fmono" id="hy-schemaJsonLd" style="min-height:100px" placeholder='{"@context":"https://schema.org","@type":"Product"}'></textarea>
+        </div>
+        <div class="conf-bar">
+          <div class="conf-info"><span class="material-symbols-outlined" style="font-size:20px;color:var(--text3)">radio_button_unchecked</span><div><div class="conf-status">HY version — Not started</div><div class="conf-sub">Fill in all fields and confirm to publish</div></div><span class="conf-badge conf-n">— Empty</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn bsuc bxs" onclick="confirmLang('prod','hy')"><span class="material-symbols-outlined ic">check</span>Confirm &amp; Publish HY</button></div>
+        </div>
+      </div>
+
+    </div><!-- /mb -->
+
+    <div class="mf">
+      <div style="display:flex;gap:8px"><button class="btn bg2b" onclick="closeM('mprod')">Cancel</button><button class="btn bd2 bxs" id="prod-delete-btn"><span class="material-symbols-outlined ic">delete</span>Delete</button></div>
+      <div style="display:flex;gap:8px"><button class="btn bp" onclick="saveProduct()"><span class="material-symbols-outlined ic">save</span>Save to Firebase</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CATEGORY -->
+<div class="mo" id="mcat">
+  <div class="md" style="max-width:560px">
+    <div class="mh"><h2 id="cattitle">New Category</h2><button class="mc2b" onclick="closeM('mcat')"><span class="material-symbols-outlined" style="font-size:26px">close</span></button></div>
+    <div class="mb" style="padding:20px">
+      <div class="fg" style="margin-bottom:18px">
+        <div class="fi"><label class="fl">Status</label><select class="fsel" id="catstat"><option value="Active">Active</option><option value="Hidden">Hidden</option></select></div>
+        <div class="fi"><label class="fl">Color Tag</label><div class="sw2" id="swatches"><div class="sw on" data-c="#4f7dff" style="background:#4f7dff"></div><div class="sw" data-c="#f5c842" style="background:#f5c842"></div><div class="sw" data-c="#3ecf8e" style="background:#3ecf8e"></div><div class="sw" data-c="#f04e4e" style="background:#f04e4e"></div><div class="sw" data-c="#f0934e" style="background:#f0934e"></div><div class="sw" data-c="#b57bff" style="background:#b57bff"></div><div class="sw" data-c="#9299b0" style="background:#9299b0"></div></div></div>
+        <div class="fi full" id="catIdRow">
+  <label class="fl">Category ID <span class="tip">(= URL-сегмент и document ID — автозаполняется из EN-названия; менять только если нужен другой URL)</span></label>
+  <div class="sr2"><div class="sp2">/[lang]/products/</div><input class="fin si2" id="catIdInput" placeholder="washing-gels" oninput="updCatUrl()"></div>
+  <div class="up" id="caturlprev"></div>
+</div>
+<div class="fi full" id="catSlugRow" style="display:none">
+  <label class="fl">Slug <span class="tip">(поле slug — не участвует в URL, используется внутренне)</span></label>
+  <input class="fin" id="catslug" placeholder="washing-gels">
+</div>
+      </div>
+      <div class="ltabs-row" style="border-radius:8px 8px 0 0;overflow:hidden">
+        <button class="ltab on" onclick="swCatLang('en',this)"><span class="flag">🇬🇧</span><span class="lang-code">EN</span></button>
+        <button class="ltab" onclick="swCatLang('ru',this)"><span class="flag">🇷🇺</span><span class="lang-code">RU</span></button>
+        <button class="ltab" onclick="swCatLang('ka',this)"><span class="flag">🇬🇪</span><span class="lang-code">KA</span></button>
+        <button class="ltab" onclick="swCatLang('hy',this)"><span class="flag">🇦🇲</span><span class="lang-code">HY</span></button>
+      </div>
+      <div style="background:var(--bg3);border:1px solid var(--border2);border-top:none;border-radius:0 0 8px 8px;padding:16px">
+        <div class="lpane on" id="cat-lang-en"><div class="fg">
+          <div class="fi"><label class="fl">Name (EN)</label><input class="fin" id="cat-en-name" placeholder="Washing Gels" oninput="autoCatId()"></div>
+          <div class="fi"><label class="fl">Description (EN)</label><input class="fin" id="cat-en-description" placeholder="Concentrated gels for all fabric types"></div>
+          <div class="fi"><label class="fl">SEO Title (EN)</label><input class="fin" id="cat-en-seoTitle" placeholder="Washing Gels — RAKUN Catalog"></div>
+          <div class="fi"><label class="fl">SEO Description (EN)</label><input class="fin" id="cat-en-metaDescription" placeholder="Professional-grade washing gels…"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Region hreflang <span class="tip">(e.g. en-GE)</span></label><input class="fin" id="cat-en-regionHreflang" placeholder="en-GE"></div>
+          <div class="fi"><label class="fl">OG Image URL</label><input class="fin" id="cat-en-ogImageUrl" placeholder="https://…/og.jpg"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="cat-en-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="cat-en-ogDescription"></div>
+        </div>
+        <div class="fi" style="margin-bottom:14px">
+          <label class="fl">Schema.org JSON-LD <span class="tip">(CollectionPage schema for EN)</span></label>
+          <textarea class="fmono" id="cat-en-schemaJsonLd" style="min-height:100px" placeholder='{"@context":"https://schema.org","@type":"CollectionPage"}'></textarea>
+        </div></div>
+        <div class="lpane" id="cat-lang-ru"><div class="fg">
+          <div class="fi"><label class="fl">Name (RU)</label><input class="fin" id="cat-ru-name" placeholder="Гели для стирки"></div>
+          <div class="fi"><label class="fl">Description (RU)</label><input class="fin" id="cat-ru-description" placeholder="Концентрированные гели…"></div>
+          <div class="fi"><label class="fl">SEO Title (RU)</label><input class="fin" id="cat-ru-seoTitle" placeholder="Гели для стирки — RAKUN"></div>
+          <div class="fi"><label class="fl">SEO Description (RU)</label><input class="fin" id="cat-ru-metaDescription" placeholder="Профессиональные гели…"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Region hreflang <span class="tip">(e.g. ru-GE)</span></label><input class="fin" id="cat-ru-regionHreflang" placeholder="ru-GE"></div>
+          <div class="fi"><label class="fl">OG Image URL</label><input class="fin" id="cat-ru-ogImageUrl" placeholder="https://…/og-ru.jpg"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="cat-ru-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="cat-ru-ogDescription"></div>
+        </div>
+        <div class="fi" style="margin-bottom:14px">
+          <label class="fl">Schema.org JSON-LD <span class="tip">(CollectionPage schema for RU)</span></label>
+          <textarea class="fmono" id="cat-ru-schemaJsonLd" style="min-height:100px" placeholder='{"@context":"https://schema.org","@type":"CollectionPage"}'></textarea>
+        </div></div>
+        <div class="lpane" id="cat-lang-ka"><div class="fg">
+          <div class="fi"><label class="fl">Name (KA)</label><input class="fin" id="cat-ka-name" placeholder="სარეცხი გელები"></div>
+          <div class="fi"><label class="fl">Description (KA)</label><input class="fin" id="cat-ka-description" placeholder="კონცენტრირებული გელები…"></div>
+          <div class="fi"><label class="fl">SEO Title (KA)</label><input class="fin" id="cat-ka-seoTitle" placeholder="სარეცხი გელები — RAKUN"></div>
+          <div class="fi"><label class="fl">SEO Description (KA)</label><input class="fin" id="cat-ka-metaDescription" placeholder="პროფესიული გელები…"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Region hreflang <span class="tip">(e.g. ka-GE)</span></label><input class="fin" id="cat-ka-regionHreflang" placeholder="ka-GE"></div>
+          <div class="fi"><label class="fl">OG Image URL</label><input class="fin" id="cat-ka-ogImageUrl" placeholder="https://…/og-ka.jpg"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="cat-ka-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="cat-ka-ogDescription"></div>
+        </div>
+        <div class="fi" style="margin-bottom:14px">
+          <label class="fl">Schema.org JSON-LD <span class="tip">(CollectionPage schema for KA)</span></label>
+          <textarea class="fmono" id="cat-ka-schemaJsonLd" style="min-height:100px" placeholder='{"@context":"https://schema.org","@type":"CollectionPage"}'></textarea>
+        </div></div>
+        <div class="lpane" id="cat-lang-hy"><div class="fg">
+          <div class="fi"><label class="fl">Name (HY)</label><input class="fin" id="cat-hy-name" placeholder="Lvacq gelerem"></div>
+          <div class="fi"><label class="fl">Description (HY)</label><input class="fin" id="cat-hy-description" placeholder="Atkagrkaçkan gelerem…"></div>
+          <div class="fi"><label class="fl">SEO Title (HY)</label><input class="fin" id="cat-hy-seoTitle" placeholder="Lvacq gelerem — RAKUN"></div>
+          <div class="fi"><label class="fl">SEO Description (HY)</label><input class="fin" id="cat-hy-metaDescription" placeholder="Professiynal gelerem…"></div>
+        </div>
+        <div class="sec-title">SEO &amp; Meta</div>
+        <div class="fg" style="margin-bottom:14px">
+          <div class="fi"><label class="fl">Region hreflang <span class="tip">(e.g. hy-AM)</span></label><input class="fin" id="cat-hy-regionHreflang" placeholder="hy-AM"></div>
+          <div class="fi"><label class="fl">OG Image URL</label><input class="fin" id="cat-hy-ogImageUrl" placeholder="https://…/og-hy.jpg"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="cat-hy-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="cat-hy-ogDescription"></div>
+        </div>
+        <div class="fi" style="margin-bottom:14px">
+          <label class="fl">Schema.org JSON-LD <span class="tip">(CollectionPage schema for HY)</span></label>
+          <textarea class="fmono" id="cat-hy-schemaJsonLd" style="min-height:100px" placeholder='{"@context":"https://schema.org","@type":"CollectionPage"}'></textarea>
+        </div></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn bg2b" onclick="closeM('mcat')">Cancel</button>
+      <div style="display:flex;gap:8px"><button class="btn bd2 bxs" id="cat-delete-btn"><span class="material-symbols-outlined ic">delete</span>Delete</button><button class="btn bp" onclick="saveCategory()"><span class="material-symbols-outlined ic">save</span>Save Category</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONFIRM DELETE -->
+<div class="mo" id="mconf">
+  <div class="md" style="max-width:400px;padding:32px">
+    <h2 style="margin:0 0 12px">Delete?</h2>
+    <p style="color:var(--text2);margin:0 0 28px">This action cannot be undone.</p>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn bg2b" onclick="closeM('mconf')">Cancel</button>
+      <button class="btn bd2 bxs" id="mconf-confirm-btn"><span class="material-symbols-outlined ic">delete</span>Delete</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="/admin.js"></script>
+</body>
+</html>
