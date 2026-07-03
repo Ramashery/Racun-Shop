@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>RAKUN Admin — Pages</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+<div class="sov" id="sov" onclick="closeMob()"></div>
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sbl"><div class="lmark">RK</div><div class="ltxt">RAKUN<small>Admin Panel</small></div></div>
+  <nav class="snav">
+    <div class="ngl">Content</div>
+    <div class="ni" data-href="admin-content.html#products"><span class="material-symbols-outlined ic">inventory_2</span><span class="lbl">Products</span></div>
+    <div class="ni" data-href="admin-content.html#categories"><span class="material-symbols-outlined ic">category</span><span class="lbl">Categories</span></div>
+    <div class="ni" data-href="admin-content.html#blog"><span class="material-symbols-outlined ic">article</span><span class="lbl">Blog Posts</span></div>
+    <div class="ngl">Pages</div>
+    <div class="ni on" data-p="page-home"><span class="material-symbols-outlined ic">home</span><span class="lbl">Home Page</span></div>
+    <div class="ni" data-p="page-catalog"><span class="material-symbols-outlined ic">grid_view</span><span class="lbl">Catalog Page</span></div>
+    <div class="ni" data-p="page-blog"><span class="material-symbols-outlined ic">newspaper</span><span class="lbl">Blog Page</span></div>
+    <div class="ni" data-p="page-contacts"><span class="material-symbols-outlined ic">location_on</span><span class="lbl">Contacts</span></div>
+    <div class="ni" data-p="page-about"><span class="material-symbols-outlined ic">info</span><span class="lbl">About Us</span></div>
+  </nav>
+  <div class="sft"><div class="av">AD</div><div class="ui"><div class="un">Admin</div><div class="ur">Super Administrator</div></div></div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <button class="tbt" id="dtt" onclick="toggleSidebar()"><span class="material-symbols-outlined">menu</span></button>
+    <button class="tbt" id="mbt" style="display:none" onclick="openMobMenu()"><span class="material-symbols-outlined">menu</span></button>
+    <span class="tt" id="tptitle">Home Page</span>
+    <span class="tc" id="tpcrumb">/ Pages</span>
+    <div class="tr">
+      <button class="btn bg2b bxs bv"><span class="material-symbols-outlined ic" style="font-size:15px">open_in_new</span>Visit Site</button>
+      <div class="av tav">AD</div>
+    </div>
+  </div>
+
+  <div class="ct">
+
+    <!-- ═══════════════════════════════════════════════════
+         HOME PAGE
+    ═══════════════════════════════════════════════════ -->
+    <div class="pn on" id="pn-page-home">
+      <div class="ph">
+        <div class="pht"><h1>Home Page</h1><p>index.html — Hero, Partners, Catalog, Promo Banner</p></div>
+        <div class="pha">
+          <select class="fs" id="home-lang-sel" onchange="switchPageLang('home',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('home')"><span class="material-symbols-outlined ic">save</span>Save</button>
+        </div>
+      </div>
+      <div class="nt"><span class="material-symbols-outlined ic">info</span>Editing: <strong id="hll" style="margin:0 4px">English (EN)</strong> prefix: <code id="hlp" style="font-family:'IBM Plex Mono',monospace;margin-left:4px">/en/</code></div>
+
+      <!-- ── HERO SLIDER ── -->
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">view_carousel</span><h4>Hero Slider</h4><span class="material-symbols-outlined ch">expand_more</span></div>
+        <div class="sb3 on" id="home-slides-body"></div>
+        <div style="padding:0 0 18px 0"><button class="btn bg2b bxs" onclick="addSlide()"><span class="material-symbols-outlined ic">add</span>Add Slide</button></div>
+      </div>
+
+      <!-- ── SECTION TITLES (только каталог) ── -->
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">campaign</span><h4>Section Titles</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">Products — Label</label><input class="fin" id="home-productsLabel"></div>
+        <div class="fi"><label class="fl">Products — Title</label><input class="fin" id="home-productsTitle"></div>
+      </div></div></div>
+
+      <!-- ── PARTNERS STRIP ── -->
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">handshake</span><h4>Partners Strip <span class="tip" style="font-weight:400;font-size:12px">(localized label, global logos)</span></h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div class="fg" style="margin-bottom:16px">
+          <div class="fi full"><label class="fl">Section Label <span class="tip">(localized, e.g. «НАС ВЫБИРАЮТ ЛИДЕРЫ РИТЕЙЛА»)</span></label><input class="fin" id="home-partnersLabel" placeholder="НАС ВЫБИРАЮТ ЛИДЕРЫ РИТЕЙЛА"></div>
+        </div>
+        <div class="nt" style="font-size:11px;margin-bottom:12px"><span class="material-symbols-outlined ic" style="font-size:13px">info</span>Partner logos are <strong>global</strong> (same for all languages). Save them from any language — the label is per-language.</div>
+        <div id="home-partners-body"></div>
+        <div style="padding:4px 0 16px"><button class="btn bg2b bxs" onclick="addPartner()"><span class="material-symbols-outlined ic">add</span>Add Partner</button></div>
+      </div></div>
+
+      <!-- ── PROMO BANNER ── -->
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">sell</span><h4>Promo Banner <span class="tip" style="font-weight:400;font-size:12px">(localized)</span></h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi full"><label class="fl">Headline</label><input class="fin" id="home-pb-headline" placeholder="Есть магазин и хотите протестировать товар?"></div>
+        <div class="fi full"><label class="fl">Description</label><textarea class="fta" id="home-pb-description" style="min-height:72px" placeholder="Не нужно заполнять длинные формы…"></textarea></div>
+        <div class="fi"><label class="fl">Background Image URL <span class="tip">(optional)</span></label><input class="fin" id="home-pb-bgImageUrl" placeholder="https://…"></div>
+        <div class="fi"><label class="fl">Right Image URL <span class="tip">(phone / product photo)</span></label><input class="fin" id="home-pb-imageUrl" placeholder="https://…"></div>
+        <div class="fi"><label class="fl">Button 1 Text <span class="tip">(e.g. WhatsApp)</span></label><input class="fin" id="home-pb-btn1Text" placeholder="Написать в WhatsApp"></div>
+        <div class="fi"><label class="fl">Button 1 URL</label><input class="fin" id="home-pb-btn1Url" placeholder="https://wa.me/…"></div>
+        <div class="fi"><label class="fl">Button 2 Text <span class="tip">(e.g. Telegram)</span></label><input class="fin" id="home-pb-btn2Text" placeholder="Написать в Telegram"></div>
+        <div class="fi"><label class="fl">Button 2 URL</label><input class="fin" id="home-pb-btn2Url" placeholder="https://t.me/…"></div>
+      </div></div></div>
+
+      <!-- ── HREFLANG ── -->
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">language</span><h4>Hreflang <span class="tip" style="font-weight:400;font-size:12px">(global)</span></h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">x-default <span class="tip">→ <code>globalFields.xDefaultHreflang</code></span></label>
+          <select class="fsel" id="home-xDefaultHreflang">
+            <option value="en">en — English</option>
+            <option value="ru">ru — Russian</option>
+            <option value="ka">ka — Georgian</option>
+            <option value="hy">hy — Armenian</option>
+          </select>
+        </div>
+        <div class="fi full" style="margin-top:4px"><div class="nt" style="font-size:11px"><span class="material-symbols-outlined ic" style="font-size:13px">info</span>Regional tag per language (e.g. <code>ru-GE</code>). Leave empty if not needed.</div></div>
+        <div class="fi"><label class="fl">Region hreflang — English (EN)</label><input class="fin" id="home-regionHreflang-en" placeholder="e.g. en-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Russian (RU)</label><input class="fin" id="home-regionHreflang-ru" placeholder="e.g. ru-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Georgian (KA)</label><input class="fin" id="home-regionHreflang-ka" placeholder="e.g. ka-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Armenian (HY)</label><input class="fin" id="home-regionHreflang-hy" placeholder="e.g. hy-AM"></div>
+      </div></div></div>
+
+      <!-- ── SEO & META ── -->
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO &amp; Meta</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div class="fg">
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="home-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="home-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="home-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="home-ogDescription"></div>
+          <div class="fi"><label class="fl">OG Image URL <span class="tip">(global)</span></label><input class="fin" id="home-ogImageUrl"></div>
+        </div>
+        <div class="fi" style="margin-top:14px"><label class="fl">Schema.org JSON-LD <span class="tip">(WebSite / Organization)</span></label><textarea class="fmono" id="home-schemaOrg" style="min-height:110px" placeholder="{&#10;  &quot;@context&quot;: &quot;https://schema.org&quot;,&#10;  &quot;@type&quot;: &quot;WebSite&quot;,&#10;  &quot;name&quot;: &quot;RAKUN&quot;&#10;}"></textarea></div>
+      </div></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         CATALOG PAGE
+    ═══════════════════════════════════════════════════ -->
+    <div class="pn" id="pn-page-catalog">
+      <div class="ph">
+        <div class="pht"><h1>Catalog Page</h1><p>URL: /en/products/</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('catalog',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('catalog')"><span class="material-symbols-outlined ic">save</span>Save</button>
+        </div>
+      </div>
+
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">campaign</span><h4>Catalog Hero</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg">
+        <div class="fi"><label class="fl">Title</label><input class="fin" id="catalog-title"></div>
+        <div class="fi"><label class="fl">Subtitle</label><input class="fin" id="catalog-subtitle"></div>
+        <div class="fi full"><label class="fl">Description</label><textarea class="fta" id="catalog-description" style="min-height:60px"></textarea></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">language</span><h4>Hreflang <span class="tip" style="font-weight:400;font-size:12px">(global)</span></h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">x-default <span class="tip">→ <code>globalFields.xDefaultHreflang</code></span></label>
+          <select class="fsel" id="catalog-xDefaultHreflang">
+            <option value="en">en — English</option><option value="ru">ru — Russian</option>
+            <option value="ka">ka — Georgian</option><option value="hy">hy — Armenian</option>
+          </select>
+        </div>
+        <div class="fi"><label class="fl">Region hreflang — English (EN)</label><input class="fin" id="catalog-regionHreflang-en" placeholder="e.g. en-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Russian (RU)</label><input class="fin" id="catalog-regionHreflang-ru" placeholder="e.g. ru-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Georgian (KA)</label><input class="fin" id="catalog-regionHreflang-ka" placeholder="e.g. ka-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Armenian (HY)</label><input class="fin" id="catalog-regionHreflang-hy" placeholder="e.g. hy-AM"></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO &amp; Meta</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div class="fg">
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="catalog-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="catalog-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="catalog-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="catalog-ogDescription"></div>
+          <div class="fi"><label class="fl">OG Image URL <span class="tip">(global)</span></label><input class="fin" id="catalog-ogImageUrl"></div>
+        </div>
+        <div class="fi" style="margin-top:14px"><label class="fl">Schema.org JSON-LD <span class="tip">(CollectionPage)</span></label><textarea class="fmono" id="catalog-schemaOrg" style="min-height:110px" placeholder="{&#10;  &quot;@context&quot;: &quot;https://schema.org&quot;,&#10;  &quot;@type&quot;: &quot;CollectionPage&quot;&#10;}"></textarea></div>
+      </div></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         BLOG PAGE
+    ═══════════════════════════════════════════════════ -->
+    <div class="pn" id="pn-page-blog">
+      <div class="ph">
+        <div class="pht"><h1>Blog Page</h1><p>URL: /en/blog/</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('blog-page',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('blog-page')"><span class="material-symbols-outlined ic">save</span>Save</button>
+        </div>
+      </div>
+
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">campaign</span><h4>Blog Hero</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg">
+        <div class="fi"><label class="fl">Title</label><input class="fin" id="blog-page-title"></div>
+        <div class="fi"><label class="fl">Subtitle</label><input class="fin" id="blog-page-subtitle"></div>
+        <div class="fi full"><label class="fl">Description</label><textarea class="fta" id="blog-page-description" style="min-height:60px"></textarea></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">label</span><h4>UI Labels</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">All Posts Label</label><input class="fin" id="blog-page-allLabel" placeholder="All"></div>
+        <div class="fi"><label class="fl">Featured Label</label><input class="fin" id="blog-page-featuredLabel" placeholder="Featured"></div>
+        <div class="fi"><label class="fl">Read More Button</label><input class="fin" id="blog-page-readMore" placeholder="Read more"></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">language</span><h4>Hreflang <span class="tip" style="font-weight:400;font-size:12px">(global)</span></h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">x-default <span class="tip">→ <code>globalFields.xDefaultHreflang</code></span></label>
+          <select class="fsel" id="blog-page-xDefaultHreflang">
+            <option value="en">en — English</option><option value="ru">ru — Russian</option>
+            <option value="ka">ka — Georgian</option><option value="hy">hy — Armenian</option>
+          </select>
+        </div>
+        <div class="fi"><label class="fl">Region hreflang — English (EN)</label><input class="fin" id="blog-page-regionHreflang-en" placeholder="e.g. en-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Russian (RU)</label><input class="fin" id="blog-page-regionHreflang-ru" placeholder="e.g. ru-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Georgian (KA)</label><input class="fin" id="blog-page-regionHreflang-ka" placeholder="e.g. ka-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Armenian (HY)</label><input class="fin" id="blog-page-regionHreflang-hy" placeholder="e.g. hy-AM"></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO &amp; Meta</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div class="fg">
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="blog-page-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="blog-page-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="blog-page-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="blog-page-ogDescription"></div>
+          <div class="fi"><label class="fl">OG Image URL <span class="tip">(global)</span></label><input class="fin" id="blog-page-ogImageUrl"></div>
+        </div>
+        <div class="fi" style="margin-top:14px"><label class="fl">Schema.org JSON-LD <span class="tip">(Blog)</span></label><textarea class="fmono" id="blog-page-schemaOrg" style="min-height:110px" placeholder="{&#10;  &quot;@context&quot;: &quot;https://schema.org&quot;,&#10;  &quot;@type&quot;: &quot;Blog&quot;&#10;}"></textarea></div>
+      </div></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         CONTACTS PAGE
+    ═══════════════════════════════════════════════════ -->
+    <div class="pn" id="pn-page-contacts">
+      <div class="ph">
+        <div class="pht"><h1>Contacts Page</h1><p>URL: /en/contacts/</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('contacts',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('contacts')"><span class="material-symbols-outlined ic">save</span>Save</button>
+        </div>
+      </div>
+      <div class="nt"><span class="material-symbols-outlined ic">info</span>Standalone Contacts page <code>/[lang]/contacts/</code>. The contacts block on the Home page is managed separately.</div>
+
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">campaign</span><h4>Page Hero</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg">
+        <div class="fi"><label class="fl">Label <span class="tip">(localized)</span></label><input class="fin" id="contacts-label"></div>
+        <div class="fi"><label class="fl">Title <span class="tip">(localized, HTML)</span></label><input class="fin" id="contacts-title"></div>
+        <div class="fi full"><label class="fl">Hero Description <span class="tip">(localized)</span></label><textarea class="fta" id="contacts-heroDescription" style="min-height:60px"></textarea></div>
+        <div class="fi"><label class="fl">Working Hours <span class="tip">(localized)</span></label><input class="fin" id="contacts-workingHours"></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">contact_phone</span><h4>Contact Details</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">Phone <span class="tip">(global)</span></label><input class="fin" id="contacts-phone"></div>
+        <div class="fi"><label class="fl">Email <span class="tip">(global)</span></label><input class="fin" id="contacts-email"></div>
+        <div class="fi"><label class="fl">CTA Title <span class="tip">(localized, HTML)</span></label><input class="fin" id="contacts-ctaTitle"></div>
+        <div class="fi"><label class="fl">CTA Button Text <span class="tip">(localized)</span></label><input class="fin" id="contacts-ctaButton"></div>
+        <div class="fi"><label class="fl">CTA Email <span class="tip">(global)</span></label><input class="fin" id="contacts-ctaEmail"></div>
+        <div class="fi full"><label class="fl">Logistics Terms <span class="tip">(localized)</span></label><textarea class="fta" id="contacts-logisticsTerms" style="min-height:60px"></textarea></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">share</span><h4>Social &amp; Messengers <span class="tip" style="font-weight:400;font-size:12px">(global)</span></h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">WhatsApp Handle</label><input class="fin" id="contacts-whatsappHandle"></div>
+        <div class="fi"><label class="fl">WhatsApp Link</label><input class="fin" id="contacts-whatsappLink"></div>
+        <div class="fi"><label class="fl">Telegram Handle</label><input class="fin" id="contacts-telegramHandle"></div>
+        <div class="fi"><label class="fl">Telegram Link</label><input class="fin" id="contacts-telegramLink"></div>
+        <div class="fi"><label class="fl">Viber Handle</label><input class="fin" id="contacts-viberHandle"></div>
+        <div class="fi"><label class="fl">Viber Link</label><input class="fin" id="contacts-viberLink"></div>
+        <div class="fi"><label class="fl">Instagram Handle</label><input class="fin" id="contacts-instagramHandle"></div>
+        <div class="fi"><label class="fl">Instagram Link</label><input class="fin" id="contacts-instagramLink"></div>
+        <div class="fi"><label class="fl">Facebook Handle</label><input class="fin" id="contacts-facebookHandle"></div>
+        <div class="fi"><label class="fl">Facebook Link</label><input class="fin" id="contacts-facebookLink"></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">store</span><h4>Stores</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div id="contacts-stores-body"></div>
+        <div style="padding:8px 0 18px"><button class="btn bg2b bxs" onclick="addContactStore()"><span class="material-symbols-outlined ic">add</span>Add Store</button></div>
+      </div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">help_outline</span><h4>FAQ <span class="tip" style="font-weight:400;font-size:12px">(localized)</span></h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div id="contacts-faq-body"></div>
+        <div style="padding:8px 0 18px"><button class="btn bg2b bxs" onclick="addContactFaq()"><span class="material-symbols-outlined ic">add</span>Add FAQ Item</button></div>
+      </div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">language</span><h4>Hreflang <span class="tip" style="font-weight:400;font-size:12px">(global)</span></h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">x-default <span class="tip">→ <code>globalFields.xDefaultHreflang</code></span></label>
+          <select class="fsel" id="contacts-xDefaultHreflang">
+            <option value="en">en — English</option><option value="ru">ru — Russian</option>
+            <option value="ka">ka — Georgian</option><option value="hy">hy — Armenian</option>
+          </select>
+        </div>
+        <div class="fi"><label class="fl">Region hreflang — English (EN)</label><input class="fin" id="contacts-regionHreflang-en" placeholder="e.g. en-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Russian (RU)</label><input class="fin" id="contacts-regionHreflang-ru" placeholder="e.g. ru-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Georgian (KA)</label><input class="fin" id="contacts-regionHreflang-ka" placeholder="e.g. ka-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Armenian (HY)</label><input class="fin" id="contacts-regionHreflang-hy" placeholder="e.g. hy-AM"></div>
+      </div></div></div>
+
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO &amp; Meta</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div class="fg">
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="contacts-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="contacts-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="contacts-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="contacts-ogDescription"></div>
+          <div class="fi"><label class="fl">OG Image URL <span class="tip">(global)</span></label><input class="fin" id="contacts-ogImageUrl"></div>
+        </div>
+        <div class="fi" style="margin-top:14px"><label class="fl">Schema.org JSON-LD</label><textarea class="fmono" id="contacts-schemaOrg" style="min-height:110px"></textarea></div>
+      </div></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         ABOUT PAGE
+    ═══════════════════════════════════════════════════ -->
+    <div class="pn" id="pn-page-about">
+      <div class="ph">
+        <div class="pht"><h1>About Us</h1><p>URL: /en/about/ — Hero Banner, Intro, Trust Section, Promo Banner</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('about',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('about')"><span class="material-symbols-outlined ic">save</span>Save</button>
+        </div>
+      </div>
+
+      <!-- ── HERO BANNER ── -->
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">panorama</span><h4>Hero Banner <span class="tip" style="font-weight:400;font-size:12px">(full-width background, merges with header)</span></h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg">
+        <div class="fi"><label class="fl">H1 Title</label><input class="fin" id="about-heroTitle" placeholder="О нас"></div>
+        <div class="fi full"><label class="fl">Description <span class="tip">(short text under the title)</span></label><textarea class="fta" id="about-heroDescription" style="min-height:64px" placeholder="Мы не просто продаем капсулы для стирки…"></textarea></div>
+        <div class="fi full"><label class="fl">Background Image URL <span class="tip">(global — same image for all languages)</span></label><input class="fin" id="about-heroImageUrl" placeholder="https://…"></div>
+      </div></div></div>
+
+      <!-- ── INTRO SECTION ("Про Rakun") ── -->
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">auto_stories</span><h4>Intro Section <span class="tip" style="font-weight:400;font-size:12px">(«Про Rakun: как мы упрощаем стирку»)</span></h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi full"><label class="fl">Title</label><input class="fin" id="about-introTitle" placeholder="Про Rakun: как мы упрощаем стирку в Грузии"></div>
+        <div class="fi full"><label class="fl">Content HTML <span class="tip">(paragraphs; &lt;b&gt;…&lt;/b&gt; for bold words)</span></label><textarea class="fta fin-html" id="about-introContentHtml" style="min-height:140px" placeholder="<p>…</p>&#10;<p>…</p>"></textarea></div>
+        <div class="fi full"><label class="fl">Image URL <span class="tip">(global — same image for all languages)</span></label><input class="fin" id="about-introImageUrl" placeholder="https://…"></div>
+      </div></div></div>
+
+      <!-- ── TRUST SECTION ("Почему нам доверяют") ── -->
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">shield</span><h4>Trust Section <span class="tip" style="font-weight:400;font-size:12px">(«Почему нам доверяют» — 3 cards)</span></h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div class="fg" style="margin-bottom:16px">
+          <div class="fi full"><label class="fl">Section Title</label><input class="fin" id="about-trustTitle" placeholder="Почему нам доверяют"></div>
+        </div>
+        <div id="about-trustcards-body"></div>
+        <div style="padding:4px 0 16px"><button class="btn bg2b bxs" onclick="addTrustCard()"><span class="material-symbols-outlined ic">add</span>Add Card</button></div>
+      </div></div>
+
+      <!-- ── PROMO BANNER ── -->
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">sell</span><h4>Promo Banner <span class="tip" style="font-weight:400;font-size:12px">(localized — «Есть магазин и хотите протестировать товар?»)</span></h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi full"><label class="fl">Headline</label><input class="fin" id="about-pb-headline" placeholder="Есть магазин и хотите протестировать товар?"></div>
+        <div class="fi full"><label class="fl">Description</label><textarea class="fta" id="about-pb-description" style="min-height:72px" placeholder="Не нужно заполнять длинные формы…"></textarea></div>
+        <div class="fi"><label class="fl">Background Image URL</label><input class="fin" id="about-pb-bgImageUrl" placeholder="https://…"></div>
+        <div class="fi"><label class="fl">Right Image URL <span class="tip">(optional — phone / product photo)</span></label><input class="fin" id="about-pb-imageUrl" placeholder="https://…"></div>
+        <div class="fi"><label class="fl">Button 1 Text <span class="tip">(e.g. WhatsApp)</span></label><input class="fin" id="about-pb-btn1Text" placeholder="Написать в WhatsApp"></div>
+        <div class="fi"><label class="fl">Button 1 URL</label><input class="fin" id="about-pb-btn1Url" placeholder="https://wa.me/…"></div>
+        <div class="fi"><label class="fl">Button 2 Text <span class="tip">(e.g. Telegram)</span></label><input class="fin" id="about-pb-btn2Text" placeholder="Написать в Telegram"></div>
+        <div class="fi"><label class="fl">Button 2 URL</label><input class="fin" id="about-pb-btn2Url" placeholder="https://t.me/…"></div>
+      </div></div></div>
+
+      <!-- ── HREFLANG ── -->
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">language</span><h4>Hreflang <span class="tip" style="font-weight:400;font-size:12px">(global)</span></h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3"><div class="fg">
+        <div class="fi"><label class="fl">x-default <span class="tip">→ <code>globalFields.xDefaultHreflang</code></span></label>
+          <select class="fsel" id="about-xDefaultHreflang">
+            <option value="en">en — English</option><option value="ru">ru — Russian</option>
+            <option value="ka">ka — Georgian</option><option value="hy">hy — Armenian</option>
+          </select>
+        </div>
+        <div class="fi"><label class="fl">Region hreflang — English (EN)</label><input class="fin" id="about-regionHreflang-en" placeholder="e.g. en-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Russian (RU)</label><input class="fin" id="about-regionHreflang-ru" placeholder="e.g. ru-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Georgian (KA)</label><input class="fin" id="about-regionHreflang-ka" placeholder="e.g. ka-GE"></div>
+        <div class="fi"><label class="fl">Region hreflang — Armenian (HY)</label><input class="fin" id="about-regionHreflang-hy" placeholder="e.g. hy-AM"></div>
+      </div></div></div>
+
+      <!-- ── SEO & META ── -->
+      <div class="se"><div class="sh2" onclick="togSec(this)"><span class="material-symbols-outlined ic">tune</span><h4>SEO &amp; Meta</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3">
+        <div class="fg">
+          <div class="fi"><label class="fl">SEO Title</label><input class="fin" id="about-seoTitle"></div>
+          <div class="fi"><label class="fl">Meta Description</label><input class="fin" id="about-metaDescription"></div>
+          <div class="fi"><label class="fl">OG Title</label><input class="fin" id="about-ogTitle"></div>
+          <div class="fi"><label class="fl">OG Description</label><input class="fin" id="about-ogDescription"></div>
+          <div class="fi"><label class="fl">OG Image URL <span class="tip">(global)</span></label><input class="fin" id="about-ogImageUrl"></div>
+        </div>
+        <div class="fi" style="margin-top:14px"><label class="fl">Schema.org JSON-LD</label><textarea class="fmono" id="about-schema" style="min-height:110px"></textarea></div>
+      </div></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         FOOTER / NAV (accessed from sidebar only)
+    ═══════════════════════════════════════════════════ -->
+    <div class="pn" id="pn-footer-nav" style="display:none">
+      <div class="ph">
+        <div class="pht"><h1>Navigation &amp; Footer</h1><p>Shared nav labels across all pages</p></div>
+        <div class="pha">
+          <select class="fs" onchange="switchPageLang('footer-nav',this.value)">
+            <option value="en">EN</option><option value="ru">RU</option><option value="ka">KA</option><option value="hy">HY</option>
+          </select>
+          <button class="btn bp" onclick="savePageDoc('footer-nav')"><span class="material-symbols-outlined ic">save</span>Save</button>
+        </div>
+      </div>
+      <div class="se"><div class="sh2 on" onclick="togSec(this)"><span class="material-symbols-outlined ic">link</span><h4>Navigation Labels</h4><span class="material-symbols-outlined ch">expand_more</span></div><div class="sb3 on"><div class="fg">
+        <div class="fi"><label class="fl">Home</label><input class="fin" id="footer-nav-home"></div>
+        <div class="fi"><label class="fl">About Us</label><input class="fin" id="footer-nav-about"></div>
+        <div class="fi"><label class="fl">Catalog</label><input class="fin" id="footer-nav-catalog"></div>
+        <div class="fi"><label class="fl">Blog</label><input class="fin" id="footer-nav-blog"></div>
+        <div class="fi"><label class="fl">Contacts</label><input class="fin" id="footer-nav-contacts"></div>
+        <div class="fi"><label class="fl">Footer Link 1</label><input class="fin" id="footer-nav-link1"></div>
+        <div class="fi"><label class="fl">Footer Link 2</label><input class="fin" id="footer-nav-link2"></div>
+        <div class="fi"><label class="fl">Footer Link 3</label><input class="fin" id="footer-nav-link3"></div>
+        <div class="fi full"><label class="fl">Copyright</label><input class="fin" id="footer-nav-copyright"></div>
+      </div></div></div>
+    </div>
+
+  </div><!-- /ct -->
+</div><!-- /main -->
+</div><!-- /shell -->
+
+<!-- MOBILE NAV -->
+<nav class="mn">
+  <div class="mni2">
+    <button class="mni on" data-p="page-home"><span class="material-symbols-outlined ic">home</span><span class="mnl">Home</span></button>
+    <button class="mni" data-p="page-catalog"><span class="material-symbols-outlined ic">grid_view</span><span class="mnl">Catalog</span></button>
+    <button class="mni" data-p="page-blog"><span class="material-symbols-outlined ic">newspaper</span><span class="mnl">Blog</span></button>
+    <button class="mni" data-p="page-contacts"><span class="material-symbols-outlined ic">location_on</span><span class="mnl">Contacts</span></button>
+    <button class="mni" data-p="page-about"><span class="material-symbols-outlined ic">info</span><span class="mnl">About</span></button>
+  </div>
+</nav>
+
+<!-- MOBILE GLOBAL MENU -->
+<div class="mob-menu-overlay" id="mob-menu-overlay" onclick="closeMobMenu()"></div>
+<div class="mob-menu" id="mob-menu">
+  <div class="mob-menu-header">
+    <div class="lmark" style="font-size:13px;padding:6px 10px">RK</div>
+    <span style="font-weight:700;font-size:15px">RAKUN Admin</span>
+    <button class="tbt" onclick="closeMobMenu()" style="margin-left:auto"><span class="material-symbols-outlined">close</span></button>
+  </div>
+  <div class="mob-menu-body">
+    <div class="mob-menu-group">Content</div>
+    <a class="mob-menu-item" href="admin-content.html#products"><span class="material-symbols-outlined ic">inventory_2</span>Products</a>
+    <a class="mob-menu-item" href="admin-content.html#categories"><span class="material-symbols-outlined ic">category</span>Categories</a>
+    <a class="mob-menu-item" href="admin-content.html#blog"><span class="material-symbols-outlined ic">article</span>Blog Posts</a>
+    <div class="mob-menu-group">Pages</div>
+    <button class="mob-menu-item" onclick="goP('page-home');closeMobMenu()"><span class="material-symbols-outlined ic">home</span>Home Page</button>
+    <button class="mob-menu-item" onclick="goP('page-catalog');closeMobMenu()"><span class="material-symbols-outlined ic">grid_view</span>Catalog Page</button>
+    <button class="mob-menu-item" onclick="goP('page-blog');closeMobMenu()"><span class="material-symbols-outlined ic">newspaper</span>Blog Page</button>
+    <button class="mob-menu-item" onclick="goP('page-contacts');closeMobMenu()"><span class="material-symbols-outlined ic">location_on</span>Contacts</button>
+    <button class="mob-menu-item" onclick="goP('page-about');closeMobMenu()"><span class="material-symbols-outlined ic">info</span>About Us</button>
+  </div>
+</div>
+
+<style>
+.mob-menu-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1100;backdrop-filter:blur(2px)}
+.mob-menu-overlay.on{display:block}
+.mob-menu{position:fixed;top:0;right:-320px;width:290px;max-width:88vw;height:100%;background:var(--bg2,#1a1d2e);z-index:1101;display:flex;flex-direction:column;transition:right .28s cubic-bezier(.4,0,.2,1);box-shadow:-4px 0 32px rgba(0,0,0,.4)}
+.mob-menu.on{right:0}
+.mob-menu-header{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border2,#2a2d3e)}
+.mob-menu-body{flex:1;overflow-y:auto;padding:8px 0 24px}
+.mob-menu-group{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text2,#6b7280);padding:14px 20px 6px}
+.mob-menu-item{display:flex;align-items:center;gap:12px;width:100%;padding:11px 20px;font-size:14px;font-weight:500;color:var(--text1,#e2e8f0);background:none;border:none;cursor:pointer;text-decoration:none;text-align:left;transition:background .15s}
+.mob-menu-item:hover,.mob-menu-item:active{background:var(--bg3,#252840)}
+.mob-menu-item .ic{font-size:19px;color:var(--text2,#6b7280)}
+</style>
+
+<script type="module" src="/admin.js"></script>
+</body>
+</html>
