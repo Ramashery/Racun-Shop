@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="{{ (page.regionHreflangMap or {})[lang] or lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{{ page.seoTitle or ui_contactsLabel }}</title>
+  {% if page.metaDescription %}<meta name="description" content="{{ page.metaDescription }}">{% endif %}
+  {% if page.ogTitle %}<meta property="og:title" content="{{ page.ogTitle }}">{% endif %}
+  {% if page.ogDescription %}<meta property="og:description" content="{{ page.ogDescription }}">{% endif %}
+  {% if page.ogImageUrl %}<meta property="og:image" content="{{ page.ogImageUrl }}">{% endif %}
+  <meta property="og:type" content="website">
+
+  <link rel="canonical" href="{{ BASE_URL }}/{{ lang }}/contacts">
+  <!-- hreflang -->
+  {% for l in SUPPORTED_LANGS %}
+  <link rel="alternate" hreflang="{{ (page.regionHreflangMap or {})[l] or l }}" href="{{ BASE_URL }}/{{ l }}/contacts">
+  {% endfor %}
+  <link rel="alternate" hreflang="x-default" href="{{ BASE_URL }}/{{ page.xDefaultHreflang or 'en' }}/contacts">
+  {% if page.schemaOrg %}
+  <script type="application/ld+json">{{ page.schemaOrg | safe }}</script>
+  {% endif %}
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .store-map-link { display: block; position: relative; cursor: pointer; border-radius: 12px 12px 0 0; overflow: hidden; }
+    .store-map-link::after { content: ""; position: absolute; inset: 0; background: transparent; transition: background 0.2s; pointer-events: none; }
+    .store-map-link:hover::after { background: rgba(0,0,0,0.07); }
+    .store-map-link iframe { pointer-events: none; display: block; width: 100%; }
+
+    /* ── H1 / description sized and positioned to match the About Us hero ── */
+    .catalog-hero h1 {
+      font-size: clamp(2rem, 4.5vw, 3.6rem);
+      line-height: 1.05;
+    }
+    .catalog-hero-inner p {
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.7);
+      max-width: 480px;
+    }
+
+    /* ── Optional hero background image (falls back to the original solid design when unset) ──
+       Mirrors .about-hero exactly: full-bleed image, flex-centered content, no grid/glow decor. ── */
+    .catalog-hero.has-hero-image {
+      background-size: cover;
+      background-position: center;
+      padding: 0;
+      min-height: 620px;
+      display: flex;
+      align-items: center;
+    }
+    .catalog-hero.has-hero-image::before,
+    .catalog-hero.has-hero-image::after { content: none; }
+    .catalog-hero.has-hero-image .catalog-hero-inner {
+      width: 100%;
+      padding: 140px 56px 64px;
+    }
+    .contacts-hero-overlay {
+      position: absolute; inset: 0; z-index: 0;
+      background: linear-gradient(100deg, rgba(13,16,30,0.92) 0%, rgba(13,16,30,0.78) 35%, rgba(13,16,30,0.4) 68%, rgba(13,16,30,0.15) 100%);
+    }
+    @media (max-width: 1024px) {
+      .catalog-hero.has-hero-image .catalog-hero-inner { padding: 120px 32px 48px; }
+    }
+    @media (max-width: 768px) {
+      .catalog-hero.has-hero-image { min-height: 460px; }
+      .catalog-hero.has-hero-image .catalog-hero-inner { padding: 100px 24px 40px; }
+    }
+
+    /* ── Promo banner — identical to the About Us page ── */
+    .promo-banner {
+      position: relative;
+      background: var(--brand-blue);
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+      margin: 0 56px 96px;
+      border-radius: 20px;
+    }
+    .promo-banner-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(17,20,36,0.88) 0%, rgba(17,20,36,0.55) 60%, rgba(17,20,36,0.2) 100%);
+      z-index: 1;
+    }
+    .promo-banner-inner {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 60px 64px; gap: 40px;
+    }
+    .promo-banner-text { max-width: 520px; }
+    .promo-banner-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+      font-weight: 800; color: #fff; line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .promo-banner-desc {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem; line-height: 1.6;
+      margin-bottom: 32px;
+    }
+    .promo-banner-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+    .promo-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 24px; border-radius: 50px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem; font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .promo-btn:hover { opacity: 0.88; transform: translateY(-2px); }
+    .promo-btn-wa { background: #25D366; color: #fff; }
+    .promo-btn-tg { background: #2AABEE; color: #fff; }
+    .promo-banner-img {
+      flex-shrink: 0; max-width: 420px;
+      display: flex; align-items: center;
+    }
+    .promo-banner-img img {
+      width: 100%; max-height: 360px; object-fit: contain;
+    }
+    @media (max-width: 1024px) {
+      .promo-banner { margin: 0 32px 72px; }
+      .promo-banner-inner { padding: 48px 40px; }
+      .promo-banner-img { max-width: 300px; }
+    }
+    @media (max-width: 768px) {
+      .promo-banner { margin: 0 20px 56px; border-radius: 16px; }
+      .promo-banner-inner { flex-direction: column; padding: 40px 28px; }
+      .promo-banner-img { max-width: 100%; }
+      .promo-banner-img img { max-height: 220px; }
+    }
+  </style>
+</head>
+<body>
+
+{# ── UI strings: статичные метки + страновые названия ─────────── #}
+{% if lang == 'ru' %}
+  {% set ui_contactsLabel     = 'Где купить' %}
+  {% set ui_filterBy          = 'Фильтр' %}
+  {% set ui_allStores         = 'Все' %}
+  {% set ui_storesEyebrow     = 'Точки продаж' %}
+  {% set ui_storesTitle       = 'Наши <em>магазины</em>' %}
+  {% set ui_storesSub         = 'Выберите страну, чтобы увидеть адреса и часы работы магазинов.' %}
+  {% set ui_getDirections     = 'Маршрут' %}
+  {% set ui_connectEyebrow    = 'Свяжитесь с нами' %}
+  {% set ui_connectTitle      = 'Пишите нам <em>везде</em>' %}
+  {% set ui_connectSub        = 'Мы отвечаем быстро. Выберите наиболее удобный для вас канал.' %}
+  {% set ui_howToOrderEyebrow = 'Как купить' %}
+  {% set ui_howToOrderTitle   = 'Оформление <em>заказа</em>' %}
+  {% set ui_faqEyebrow        = 'FAQ' %}
+  {% set ui_faqTitle          = 'Частые <em>вопросы</em>' %}
+  {% set ui_faqSub            = 'Всё, что нужно знать о заказе, доставке и наших магазинах.' %}
+  {% set ui_step1Title = 'Выберите товары' %}
+  {% set ui_step1Desc  = 'Ознакомьтесь с каталогом на сайте или посетите наши партнерские магазины.' %}
+  {% set ui_step2Title = 'Свяжитесь с нами' %}
+  {% set ui_step2Desc  = 'Напишите в любой мессенджер или позвоните. Мы поможем с наличием и доставкой.' %}
+  {% set ui_step3Title = 'Оплатите' %}
+  {% set ui_step3Desc  = 'Принимаем карты и наличные. Для онлайн-заказов — перевод или оплата по ссылке.' %}
+  {% set ui_step4Title = 'Получите' %}
+  {% set ui_step4Desc  = 'Заберите из магазина или оформите доставку. Доставляем по городу и миру.' %}
+  {% set ui_countries  = {'georgia': 'Грузия', 'armenia': 'Армения', 'belarus': 'Беларусь'} %}
+{% elif lang == 'ka' %}
+  {% set ui_contactsLabel     = 'სად ვიყიდოთ' %}
+  {% set ui_filterBy          = 'ფილტრი' %}
+  {% set ui_allStores         = 'ყველა' %}
+  {% set ui_storesEyebrow     = 'გაყიდვის წერტილები' %}
+  {% set ui_storesTitle       = 'ჩვენი <em>მაღაზიები</em>' %}
+  {% set ui_storesSub         = 'აირჩიეთ ქვეყანა მისამართების სანახავად.' %}
+  {% set ui_getDirections     = 'მარშრუტი' %}
+  {% set ui_connectEyebrow    = 'დაგვიკავშირდით' %}
+  {% set ui_connectTitle      = 'მოგვწერეთ <em>ნებისმიერგან</em>' %}
+  {% set ui_connectSub        = 'ჩვენ სწრაფად ვპასუხობთ.' %}
+  {% set ui_howToOrderEyebrow = 'როგორ ვიყიდოთ' %}
+  {% set ui_howToOrderTitle   = 'შეკვეთის <em>გაფორმება</em>' %}
+  {% set ui_faqEyebrow        = 'FAQ' %}
+  {% set ui_faqTitle          = 'ხშირად დასმული <em>კითხვები</em>' %}
+  {% set ui_faqSub            = 'ყველაფერი მიტანის და შეკვეთის შესახებ.' %}
+  {% set ui_step1Title = 'აირჩიეთ პროდუქცია' %}
+  {% set ui_step1Desc  = 'დაათვალიერეთ ჩვენი კატალოგი საიტზე ან ეწვიეთ მაღაზიებს.' %}
+  {% set ui_step2Title = 'დაგვიკავშირდით' %}
+  {% set ui_step2Desc  = 'მოგვწერეთ მესენჯერში ან დაგვირეკეთ.' %}
+  {% set ui_step3Title = 'გადაიხადეთ' %}
+  {% set ui_step3Desc  = 'ვიღებთ ბარათს და ნაღდ ფულს.' %}
+  {% set ui_step4Title = 'მიიღეთ' %}
+  {% set ui_step4Desc  = 'აიღეთ მაღაზიიდან ან ისარგებლეთ მიტანის სერვისით.' %}
+  {% set ui_countries  = {'georgia': 'საქართველო', 'armenia': 'სომხეთი', 'belarus': 'ბელორუსია'} %}
+  
+  {% elif lang == 'hy' %}
+  {% set ui_contactsLabel     = 'Որտեղ գնել' %}
+  {% set ui_filterBy          = 'Ֆիլտր' %}
+  {% set ui_allStores         = 'Բոլորը' %}
+  {% set ui_storesEyebrow     = 'Վաճառքի կետեր' %}
+  {% set ui_storesTitle       = 'Մեր <em>խանութները</em>' %}
+  {% set ui_storesSub         = 'Ընտրեք երկիրը հասցեները տեսնելու համար:' %}
+  {% set ui_getDirections     = 'Ուղեգիծ' %}
+  {% set ui_connectEyebrow    = 'Կապ մեզ հետ' %}
+  {% set ui_connectTitle      = 'Գրեք մեզ <em>ցանկացած տեղ</em>' %}
+  {% set ui_connectSub        = 'Մենք արագ ենք պատասխանում:' %}
+  {% set ui_howToOrderEyebrow = 'Ինչպես գնել' %}
+  {% set ui_howToOrderTitle   = 'Պատվերի <em>ձևակերպում</em>' %}
+  {% set ui_faqEyebrow        = 'ՀՏՀ' %}
+  {% set ui_faqTitle          = 'Հաճախ տրվող <em>հարցեր</em>' %}
+  {% set ui_faqSub            = 'Ամեն ինչ պատվերի և առաքման մասին:' %}
+  {% set ui_step1Title = 'Ընտրեք ապրանքներ' %}
+  {% set ui_step1Desc  = 'Ծանոթացեք մեր տեսականուն կայքում կամ այցելեք խանութներ:' %}
+  {% set ui_step2Title = 'Կապվեք մեզ հետ' %}
+  {% set ui_step2Desc  = 'Գրեք մեզ մեսենջերով կամ զանգահարեք:' %}
+  {% set ui_step3Title = 'Վճարեք' %}
+  {% set ui_step3Desc  = 'Ընդունում ենք քարտ և կանխիկ:' %}
+  {% set ui_step4Title = 'Ստացեք' %}
+  {% set ui_step4Desc  = 'Վերցրեք խանութից կամ պատվիրեք առաքում:' %}
+  {% set ui_countries  = {'georgia': 'Վրաստան', 'armenia': 'Հայաստան', 'belarus': 'Բելառուս'} %}
+  
+{% else %}
+  {% set ui_contactsLabel     = 'Where to buy' %}
+  {% set ui_filterBy          = 'Filter' %}
+  {% set ui_allStores         = 'All' %}
+  {% set ui_storesEyebrow     = 'Points of sale' %}
+  {% set ui_storesTitle       = 'Our <em>stores</em>' %}
+  {% set ui_storesSub         = 'Select a country to see store locations, addresses and working hours.' %}
+  {% set ui_getDirections     = 'Directions' %}
+  {% set ui_connectEyebrow    = 'Connect with us' %}
+  {% set ui_connectTitle      = 'Write us <em>anywhere</em>' %}
+  {% set ui_connectSub        = 'We reply quickly. Choose the channel most convenient for you.' %}
+  {% set ui_howToOrderEyebrow = 'How to buy' %}
+  {% set ui_howToOrderTitle   = 'Placing an <em>order</em>' %}
+  {% set ui_faqEyebrow        = 'FAQ' %}
+  {% set ui_faqTitle          = 'Frequently asked <em>questions</em>' %}
+  {% set ui_faqSub            = 'Everything you need to know about ordering, delivery and our stores.' %}
+  {% set ui_step1Title = 'Choose products' %}
+  {% set ui_step1Desc  = 'Browse our catalogue on the website or visit any of our partner stores and choose what you like.' %}
+  {% set ui_step2Title = 'Contact us' %}
+  {% set ui_step2Desc  = 'Write to us in any messenger or call. We will help you confirm availability, size, and delivery details.' %}
+  {% set ui_step3Title = 'Pay' %}
+  {% set ui_step3Desc  = 'We accept card and cash payment. For online orders — bank transfer or card via a secure link.' %}
+  {% set ui_step4Title = 'Receive' %}
+  {% set ui_step4Desc  = 'Pick up from the store or get it delivered. We ship within the country and internationally.' %}
+  {% set ui_countries  = {'georgia': 'Georgia', 'armenia': 'Armenia', 'belarus': 'Belarus'} %}
+{% endif %}
+
+
+  <!-- NAV DESKTOP -->
+  <nav id="main-nav"{% if page.heroImageUrl %} class="transparent-start"{% endif %}>
+    <a href="/{{ lang }}" class="nav-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo">
+    </a>
+    <ul class="nav-links">
+      <li><a href="/{{ lang }}">Home</a></li>
+      <li><a href="/{{ lang }}/about">About Us</a></li>
+      <li><a href="/{{ lang }}/catalog">Catalog</a></li>
+      <li><a href="/{{ lang }}/blog">Blog</a></li>
+      <li><a href="/{{ lang }}/contacts" class="active">Contacts</a></li>
+    </ul>
+    <div class="lang-switcher">
+      {% for l in SUPPORTED_LANGS %}
+      <a href="/{{ l }}/contacts"{% if l == lang %} class="active"{% endif %}>{{ l | upper }}</a>
+      {% if not loop.last %}<span class="lang-separator">|</span>{% endif %}
+      {% endfor %}
+    </div>
+  </nav>
+
+  <!-- MOBILE HEADER & MENU -->
+  <header class="mobile-header{% if page.heroImageUrl %} transparent-start{% endif %}" id="mobile-header">
+    <a href="/{{ lang }}" class="nav-logo"><img src="{{ LOGO_URL }}" alt="RAKUN Logo" style="height:24px;display:block;"></a>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()"><span class="line-1"></span><span class="line-2"></span></button>
+  </header>
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay">
+    <div class="mobile-menu-top">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo" style="height:24px;display:block;">
+      <button class="mobile-close" onclick="toggleMobileMenu()"><span class="material-symbols-outlined" style="font-size:32px;">close</span></button>
+    </div>
+    <nav class="mobile-menu-nav">
+      <a href="/{{ lang }}">Home</a>
+      <a href="/{{ lang }}/about">About Us</a>
+      <a href="/{{ lang }}/catalog">Catalog</a>
+      <a href="/{{ lang }}/blog">Blog</a>
+      <a href="/{{ lang }}/contacts" class="active">Contacts</a>
+    </nav>
+    <div class="mobile-menu-bottom">
+      <div class="mobile-lang">
+        {% for l in SUPPORTED_LANGS %}<a href="/{{ l }}/contacts"{% if l == lang %} class="active"{% endif %}>{{ l | upper }}</a>{% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO (Styled like catalog/blog hero; optional background image like About Us — falls back to the original solid design when no image is set) -->
+  <section class="catalog-hero{% if page.heroImageUrl %} has-hero-image{% endif %}"
+    {% if page.heroImageUrl %}style="background-image:url('{{ page.heroImageUrl }}');"{% endif %}>
+    {% if page.heroImageUrl %}<div class="contacts-hero-overlay"></div>{% endif %}
+    <div class="catalog-hero-inner">
+      <div>
+        <div class="breadcrumb" style="padding:0 0 28px;">
+          <a href="/{{ lang }}">Home</a><span class="breadcrumb-sep">/</span><span>Contacts</span>
+        </div>
+        <span class="catalog-hero-label">{{ page.label or ui_contactsLabel }}</span>
+        <h1>{{ page.title | safe }}</h1>
+        <p>{{ page.heroDescription }}</p>
+      </div>
+      <div class="catalog-hero-tags contact-pills">
+        {% if page.whatsappLink %}<a href="{{ page.whatsappLink }}" target="_blank" rel="noopener" class="contact-pill"><div class="contact-pill-icon whatsapp-bg"><svg viewBox="0 0 24 24" fill="#fff" style="width:17px;height:17px;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></div><div class="contact-pill-text"><span class="contact-pill-label">WhatsApp</span><span class="contact-pill-value">{{ page.whatsappHandle }}</span></div></a>{% endif %}
+        {% if page.telegramLink %}<a href="{{ page.telegramLink }}" target="_blank" rel="noopener" class="contact-pill"><div class="contact-pill-icon telegram-bg"><svg viewBox="0 0 24 24" fill="#fff" style="width:17px;height:17px;"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></div><div class="contact-pill-text"><span class="contact-pill-label">Telegram</span><span class="contact-pill-value">{{ page.telegramHandle }}</span></div></a>{% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- COUNTRY FILTER (Styled like blog filter) -->
+  <div class="blog-filter-bar" style="position: sticky; top: 64px; z-index: 200;">
+    <div class="blog-filter-inner">
+      <span class="blog-filter-label">{{ ui_filterBy }}</span>
+      <div class="blog-tabs">
+        {% set countries = stores | map(attribute='country') | unique | list %}
+        <button class="blog-tab-btn active" onclick="showCountry('all', this)"><span class="btn-text">{{ ui_allStores }}</span></button>
+        {% for c in countries %}
+        <button class="blog-tab-btn" onclick="showCountry('{{ c }}', this)"><span class="btn-text">{{ ui_countries[c] or (c | capitalize) }}</span></button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- STORES SECTION -->
+  <section class="contacts-section">
+    <div class="contacts-wrap">
+      <div class="section-eyebrow">{{ ui_storesEyebrow }}</div>
+      <h2 class="section-title">{{ ui_storesTitle | safe }}</h2>
+      <p class="section-sub">{{ ui_storesSub }}</p>
+
+      <!-- ALL block -->
+      <div class="country-block active" id="country-all">
+        {% set countries_seen = [] %}
+        {% for store in stores %}
+          {% if store.country not in countries_seen %}
+            {% set _ = countries_seen.append(store.country) %}
+            <div class="country-heading">{{ ui_countries[store.country] or (store.country | capitalize) }}</div>
+          {% endif %}
+          {% if loop.index0 == 0 or stores[loop.index0 - 1].country != store.country %}<div class="stores-grid" style="margin-bottom: 32px;">{% endif %}
+          <div class="store-card">
+            {% if store.mapsEmbed %}
+            {% if store.mapsLink %}
+            <a href="{{ store.mapsLink }}" target="_blank" rel="noopener" class="store-map-link" aria-label="{{ ui_getDirections }}">
+              <iframe class="store-map" src="{{ store.mapsEmbed | maps_embed_url }}" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="pointer-events:none;"></iframe>
+            </a>
+            {% else %}
+            <div class="store-map-link">
+              <iframe class="store-map" src="{{ store.mapsEmbed | maps_embed_url }}" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="pointer-events:none;"></iframe>
+            </div>
+            {% endif %}
+            {% endif %}
+            <div class="store-info">
+              <div class="store-name">{{ store.name }}</div>
+              <div class="store-details">
+                <div class="store-detail"><span class="material-symbols-outlined">location_on</span><span class="store-detail-text">{{ store.address }}</span></div>
+                <div class="store-detail"><span class="material-symbols-outlined">schedule</span><span class="store-detail-text">{{ store.hours }}</span></div>
+                {% if store.phone %}<div class="store-detail"><span class="material-symbols-outlined">call</span><span class="store-detail-text"><a href="tel:{{ store.phone | replace(' ', '') }}">{{ store.phone }}</a></span></div>{% endif %}
+              </div>
+              <div class="store-footer">
+                <span class="store-badge">{{ store.badge }}</span>
+                {% if store.mapsLink %}<a href="{{ store.mapsLink }}" target="_blank" rel="noopener" class="store-cta-link">{{ ui_getDirections }}<span class="material-symbols-outlined">open_in_new</span></a>{% endif %}
+              </div>
+            </div>
+          </div>
+          {% if loop.last or stores[loop.index0 + 1].country != store.country %}</div>{% endif %}
+        {% endfor %}
+      </div>
+
+      <!-- Per-country blocks -->
+      {% for c in countries %}
+      <div class="country-block" id="country-{{ c }}">
+        <div class="country-heading">{{ ui_countries[c] or (c | capitalize) }}</div>
+        <div class="stores-grid">
+          {% for store in stores %}{% if store.country == c %}
+          <div class="store-card">
+            {% if store.mapsEmbed %}
+            {% if store.mapsLink %}
+            <a href="{{ store.mapsLink }}" target="_blank" rel="noopener" class="store-map-link" aria-label="{{ ui_getDirections }}">
+              <iframe class="store-map" src="{{ store.mapsEmbed | maps_embed_url }}" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="pointer-events:none;"></iframe>
+            </a>
+            {% else %}
+            <div class="store-map-link">
+              <iframe class="store-map" src="{{ store.mapsEmbed | maps_embed_url }}" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="pointer-events:none;"></iframe>
+            </div>
+            {% endif %}
+            {% endif %}
+            <div class="store-info">
+              <div class="store-name">{{ store.name }}</div>
+              <div class="store-details">
+                <div class="store-detail"><span class="material-symbols-outlined">location_on</span><span class="store-detail-text">{{ store.address }}</span></div>
+                <div class="store-detail"><span class="material-symbols-outlined">schedule</span><span class="store-detail-text">{{ store.hours }}</span></div>
+                {% if store.phone %}<div class="store-detail"><span class="material-symbols-outlined">call</span><span class="store-detail-text"><a href="tel:{{ store.phone | replace(' ', '') }}">{{ store.phone }}</a></span></div>{% endif %}
+              </div>
+              <div class="store-footer">
+                <span class="store-badge">{{ store.badge }}</span>
+                {% if store.mapsLink %}<a href="{{ store.mapsLink }}" target="_blank" rel="noopener" class="store-cta-link">{{ ui_getDirections }}<span class="material-symbols-outlined">open_in_new</span></a>{% endif %}
+              </div>
+            </div>
+          </div>
+          {% endif %}{% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- FAQ + CTA -->
+  <section class="contacts-section bg-light">
+    <div class="contacts-wrap">
+      {% if page.faq and page.faq | length > 0 %}
+      <div class="section-eyebrow">{{ ui_faqEyebrow }}</div>
+      <h2 class="section-title">{{ ui_faqTitle | safe }}</h2>
+      <p class="section-sub">{{ ui_faqSub }}</p>
+      <div class="faq-list">
+        {% for item in page.faq %}
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFaq(this.parentElement)"><span class="faq-question-text">{{ item.q }}</span><span class="faq-icon"><span class="material-symbols-outlined">add</span></span></button>
+          <div class="faq-answer">{{ item.a }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- PROMO BANNER — "Есть магазин и хотите протестировать товар?" (identical to About Us) -->
+  {% set promo = page.promoBanner | default({}) %}
+  <section id="contacts-promo-banner" class="promo-banner fade-in"
+    {% if promo.bgImageUrl %}style="background-image:url('{{ promo.bgImageUrl }}');"{% endif %}>
+    <div class="promo-banner-overlay"></div>
+    <div class="promo-banner-inner">
+      <div class="promo-banner-text">
+        <h2 class="promo-banner-title">{{ promo.headline or 'Есть магазин и хотите протестировать товар?' }}</h2>
+        {% if promo.description %}
+        <p class="promo-banner-desc">{{ promo.description }}</p>
+        {% endif %}
+        {% if promo.btn1Text or promo.btn2Text %}
+        <div class="promo-banner-btns">
+          {% if promo.btn1Text %}
+          <a href="{{ promo.btn1Url or '#' }}" class="promo-btn promo-btn-wa" target="_blank" rel="noopener">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            {{ promo.btn1Text }}
+          </a>
+          {% endif %}
+          {% if promo.btn2Text %}
+          <a href="{{ promo.btn2Url or '#' }}" class="promo-btn promo-btn-tg" target="_blank" rel="noopener">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            {{ promo.btn2Text }}
+          </a>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+      {% if promo.imageUrl %}
+      <div class="promo-banner-img">
+        <img src="{{ promo.imageUrl }}" alt="{{ promo.headline or '' }}" loading="lazy">
+      </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+    <footer>
+    <span class="footer-logo"><img src="{{ LOGO_URL }}" alt="RAKUN Logo"></span>
+    <div class="footer-links">
+      <a href="/{{ lang }}">Home</a>
+      <a href="/{{ lang }}/about">About Us</a>
+      <a href="/{{ lang }}/catalog">Catalog</a>
+      <a href="/{{ lang }}/blog">Blog</a>
+      <a href="/{{ lang }}/contacts">Contacts</a>
+    </div>
+    <span class="footer-copy">© 2026 RAKUN. All rights reserved.</span>
+    <span class="footer-produced">Produced by <a href="https://digital-craft-tbilisi.site" target="_blank" rel="noopener">Digital Craft Tbilisi</a></span>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    window.toggleMobileMenu = function () {
+      var menu = document.getElementById('mobile-menu-overlay');
+      var isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    };
+    window.showCountry = function (country, btn) {
+      document.querySelectorAll('.blog-tab-btn').forEach(function (t) { t.classList.remove('active'); });
+      document.querySelectorAll('.country-block').forEach(function (b) { b.classList.remove('active'); });
+      if (btn) btn.classList.add('active');
+      var block = document.getElementById('country-' + country);
+      if (block) block.classList.add('active');
+    };
+    window.toggleFaq = function (item) {
+      var isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(function (el) {
+        if (el !== item) el.classList.remove('open');
+      });
+      item.classList.toggle('open', !isOpen);
+    };
+
+    // ── Nav scroll (merges header with hero until scrolled) — same as About Us ───
+    var mainNav   = document.getElementById('main-nav');
+    var mobileHdr = document.getElementById('mobile-header');
+    window.addEventListener('scroll', function () {
+      if (mainNav)   mainNav.classList.toggle('scrolled',   window.scrollY > 50);
+      if (mobileHdr) mobileHdr.classList.toggle('scrolled', window.scrollY > 50);
+    }, { passive: true });
+
+    // ── Fade-in on scroll — same as About Us (fixes promo banner never appearing) ─
+    var fadeEls = document.querySelectorAll('.fade-in');
+    var fadeObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('visible'); fadeObserver.unobserve(e.target); }
+      });
+    }, { threshold: 0.15 });
+    fadeEls.forEach(function (el) { fadeObserver.observe(el); });
+  </script>
+
+</body>
+</html>
