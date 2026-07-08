@@ -1,0 +1,25 @@
+# RAKUN
+
+> RAKUN — wholesale supplier of professional household chemicals (laundry, dishwashing and cleaning products), based in Tbilisi, Georgia.
+
+RAKUN serves wholesale and retail customers across Georgia, Armenia, Azerbaijan and the wider Caucasus region. Supported languages: {{ supported_langs | join(', ') }}. Routing rule: every page is served under a language-prefixed path (e.g. `/en/`, `/ru/`, `/ka/`, `/hy/`); the bare root `/` redirects to `/en/`. Contact channels (phone, WhatsApp, Telegram) and retail points are listed on the Contacts page.
+Structured data: Organization, WebSite, WebPage, CollectionPage, Product, ItemList, BreadcrumbList, BlogPosting, ContactPage, AboutPage, FAQPage.
+
+{% for section_name, groups in collections.items() %}
+{% if groups %}
+## {{ section_name }}
+
+{% for group_key, items in groups.items() %}
+{% set en_item = items | selectattr('lang', 'equalto', 'en') | first %}
+### {{ en_item.title if en_item else items[0].title }}
+{% for item in items %}
+- [{{ item.title }}]({{ item.url }}) `lang:{{ item.lang }}` `modified:{{ item.lastModified }}`: {{ item.description }}
+{% endfor %}
+
+{% endfor %}
+{% endif %}
+{% endfor %}
+## Technical
+
+- [Sitemap]({{ base_url }}/sitemap.xml)
+- [Robots.txt]({{ base_url }}/robots.txt)
