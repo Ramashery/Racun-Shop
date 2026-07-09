@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="{{ (page.regionHreflangMap or {})[lang] or lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{{ page.seoTitle or 'RAKUN — High-Tech Household Chemicals' }}</title>
+  <meta name="description" content="{{ page.metaDescription or 'Professional household chemicals: washing gels, capsules, sprays. Wholesale from Tbilisi.' }}">
+  <link rel="canonical" href="{{ BASE_URL }}/{{ lang }}">
+
+  <!-- hreflang -->
+  {% for l in SUPPORTED_LANGS %}
+  <link rel="alternate" hreflang="{{ (page.regionHreflangMap or {})[l] or l }}" href="{{ BASE_URL }}/{{ l }}">
+  {% endfor %}
+  <link rel="alternate" hreflang="x-default" href="{{ BASE_URL }}/{{ page.xDefaultHreflang or 'en' }}">
+
+  <!-- OG -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="{{ BASE_URL }}/{{ lang }}">
+  <meta property="og:title"       content="{{ page.ogTitle or page.seoTitle or 'RAKUN' }}">
+  <meta property="og:description" content="{{ page.ogDescription or page.metaDescription or '' }}">
+  <meta property="og:image"       content="{{ page.ogImageUrl or LOGO_URL }}">
+
+  <!-- Schema.org JSON-LD: заполняется из Firestore (globalFields.schemaOrg),
+       либо, если поле пустое, автоматически собирается в generate_site.py
+       (см. build_home_schema) -->
+  {% if page.schemaOrg %}
+  <script type="application/ld+json">{{ page.schemaOrg | safe }}</script>
+  {% endif %}
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+{# ── UI strings — статичные метки интерфейса, не требуют БД ───── #}
+{% if lang == 'ru' %}
+  {% set ui_buy = 'Купить' %}
+  {% set ui_catalog_title = 'Каталог RAKUN' %}
+{% elif lang == 'ka' %}
+  {% set ui_buy = 'ყიდვა' %}
+  {% set ui_catalog_title = 'RAKUN-ის კატალოგი' %}
+{% elif lang == 'hy' %}
+  {% set ui_buy = 'Գնել' %}
+  {% set ui_catalog_title = 'RAKUN-ի կատալոգ' %}
+{% else %}
+  {% set ui_buy = 'Buy' %}
+  {% set ui_catalog_title = 'RAKUN Catalog' %}
+{% endif %}
+
+  <!-- ── NAV DESKTOP ──────────────────────────────────────────── -->
+  <nav id="main-nav" class="transparent-start">
+    <a href="/{{ lang }}" class="nav-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo">
+    </a>
+    <ul class="nav-links">
+      <li><a href="/{{ lang }}">{{ nav.home or 'Home' }}</a></li>
+      <li><a href="/{{ lang }}/about">{{ nav.about or 'About us' }}</a></li>
+      <li><a href="/{{ lang }}/catalog">{{ nav.catalog or 'Catalog' }}</a></li>
+      <li><a href="/{{ lang }}/blog">{{ nav.blog or 'Blog' }}</a></li>
+      <li><a href="/{{ lang }}/contacts">{{ nav.contacts or 'Contacts' }}</a></li>
+    </ul>
+    <div class="lang-switcher">
+      {% for l in SUPPORTED_LANGS %}
+      <a href="/{{ l }}"{% if l == lang %} class="active"{% endif %}>{{ l | upper }}</a>
+      {% if not loop.last %}<span class="lang-separator">|</span>{% endif %}
+      {% endfor %}
+    </div>
+  </nav>
+
+  <!-- ── MOBILE HEADER ────────────────────────────────────────── -->
+  <header class="mobile-header transparent-start" id="mobile-header">
+    <a href="/{{ lang }}" class="mobile-logo">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo" style="height:24px;display:block;">
+    </a>
+    <button class="mobile-hamburger" onclick="toggleMobileMenu()">
+      <span class="line-1"></span>
+      <span class="line-2"></span>
+    </button>
+  </header>
+
+  <!-- ── MOBILE MENU ──────────────────────────────────────────── -->
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay">
+    <div class="mobile-menu-top">
+      <img src="{{ LOGO_URL }}" alt="RAKUN Logo" style="height:24px;display:block;">
+      <button class="mobile-close" onclick="toggleMobileMenu()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <nav class="mobile-menu-nav">
+      <a href="/{{ lang }}"          onclick="toggleMobileMenu()">{{ nav.home     or 'Home' }}</a>
+      <a href="/{{ lang }}/about"    onclick="toggleMobileMenu()">{{ nav.about    or 'About us' }}</a>
+      <a href="/{{ lang }}/catalog"  onclick="toggleMobileMenu()">{{ nav.catalog  or 'Catalog' }}</a>
+      <a href="/{{ lang }}/blog"     onclick="toggleMobileMenu()">{{ nav.blog     or 'Blog' }}</a>
+      <a href="/{{ lang }}/contacts" onclick="toggleMobileMenu()">{{ nav.contacts or 'Contacts' }}</a>
+    </nav>
+    <div class="mobile-menu-bottom">
+      <div class="mobile-lang">
+        {% for l in SUPPORTED_LANGS %}
+        <a href="/{{ l }}"{% if l == lang %} class="active"{% endif %}>{{ l | upper }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HERO SLIDER (DESKTOP) ────────────────────────────────── -->
+  <section id="hero" class="hero-desktop-only">
+    <div class="hero-slider" data-carousel>
+      {% if slides %}
+        {% for slide in slides %}
+        <div class="carousel-cell" style="background-image:url('{{ slide.bgImage }}');">
+          <div class="overlay-minimal"></div>
+          <div class="inner inner-right">
+            <span class="subtitle">{{ slide.subtitle }}</span>
+            {% if loop.first %}
+            <h1 class="title">{{ slide.headline | replace('\n', '<br>') | safe }}</h1>
+            {% else %}
+            <div class="title" role="heading" aria-level="2">{{ slide.headline | replace('\n', '<br>') | safe }}</div>
+            {% endif %}
+            {% if slide.description %}
+            <p class="hero-description">{{ slide.description }}</p>
+            {% endif %}
+            {% if slide.btnText or slide.btn2Text %}
+            <div class="hero-btns">
+              {% if slide.btnText %}
+              <a href="{{ slide.btnUrl or '#' }}" class="btn btn-primary">
+                {{ slide.btnText }}
+                {% if slide.btnSubtext %}<span class="btn-sub">{{ slide.btnSubtext }}</span>{% endif %}
+              </a>
+              {% endif %}
+              {% if slide.btn2Text %}
+              <a href="{{ slide.btn2Url or '#' }}" class="btn btn-secondary">
+                {{ slide.btn2Text }}
+                {% if slide.btn2Subtext %}<span class="btn-sub">{{ slide.btn2Subtext }}</span>{% endif %}
+              </a>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="carousel-cell" style="background-image:url('https://i.postimg.cc/NjMphFGx/Rome-banner-na-glavnoi-jpeg.webp');">
+          <div class="overlay-minimal"></div>
+          <div class="inner inner-right">
+            <span class="subtitle">Smart 8X Technology</span>
+            <h1 class="title">Чисто.<br>Просто.<br>Доступно.</h1>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ── HERO SLIDER (MOBILE ONLY) ────────────────────────────────
+       Тот же слайдер, но рендерится только на мобильных устройствах.
+       Картинка берётся из slide.mobileBgImage (отдельное поле в Firestore,
+       загружается через админку); если его ещё не заполнили — используется
+       обычная десктопная картинка как запасной вариант. ──────────────── -->
+  <section id="hero-mobile" class="hero-mobile-only">
+    <div class="hero-slider" data-carousel>
+      {% if slides %}
+        {% for slide in slides %}
+        <div class="carousel-cell" style="background-image:url('{{ slide.mobileBgImage or slide.bgImage }}');">
+          <div class="overlay-minimal"></div>
+          <div class="inner inner-right">
+            <span class="subtitle">{{ slide.subtitle }}</span>
+            {% if loop.first %}
+            <h1 class="title">{{ slide.headline | replace('\n', '<br>') | safe }}</h1>
+            {% else %}
+            <div class="title" role="heading" aria-level="2">{{ slide.headline | replace('\n', '<br>') | safe }}</div>
+            {% endif %}
+            {% if slide.description %}
+            <p class="hero-description">{{ slide.description }}</p>
+            {% endif %}
+            {% if slide.btnText or slide.btn2Text %}
+            <div class="hero-btns">
+              {% if slide.btnText %}
+              <a href="{{ slide.btnUrl or '#' }}" class="btn btn-primary">
+                {{ slide.btnText }}
+                {% if slide.btnSubtext %}<span class="btn-sub">{{ slide.btnSubtext }}</span>{% endif %}
+              </a>
+              {% endif %}
+              {% if slide.btn2Text %}
+              <a href="{{ slide.btn2Url or '#' }}" class="btn btn-secondary">
+                {{ slide.btn2Text }}
+                {% if slide.btn2Subtext %}<span class="btn-sub">{{ slide.btn2Subtext }}</span>{% endif %}
+              </a>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="carousel-cell" style="background-image:url('https://i.postimg.cc/NjMphFGx/Rome-banner-na-glavnoi-jpeg.webp');">
+          <div class="overlay-minimal"></div>
+          <div class="inner inner-right">
+            <span class="subtitle">Smart 8X Technology</span>
+            <h1 class="title">Чисто.<br>Просто.<br>Доступно.</h1>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- ── PARTNERS STRIP ──────────────────────────────────────── -->
+  {% if partners_section %}
+  <section id="partners" class="partners-section fade-in">
+    <div class="partners-inner">
+      <div class="partners-label">{{ partners_section.label or 'НАС ВЫБИРАЮТ ЛИДЕРЫ РИТЕЙЛА' }}</div>
+      <div class="partners-logos">
+        {% if partners %}
+          {% for p in partners %}
+          <div class="partner-logo-wrap">
+            {% if p.link %}<a href="{{ p.link }}" target="_blank" rel="noopener">{% endif %}
+            <img src="{{ p.logoUrl }}" alt="{{ p.name }}" loading="lazy">
+            {% if p.link %}</a>{% endif %}
+          </div>
+          {% endfor %}
+        {% else %}
+          {# Плейсхолдер если нет партнёров в БД #}
+          <div class="partner-logo-wrap partner-placeholder">
+            <span>FIXprice</span>
+          </div>
+          <div class="partner-logo-wrap partner-placeholder">
+            <span>GG house</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- ── PRODUCTS CROSS-FADE SLIDER ──────────────────────────── -->
+  <section id="products" class="rakun-slider-section">
+    <div class="section-header fade-in">
+      <span class="section-label">{{ products_section.label or 'Professional Line' }}</span>
+      <h2 class="section-title section-title-link">
+        <a href="/{{ lang }}/catalog" class="section-title-anchor">{{ products_section.title or ui_catalog_title }}</a>
+      </h2>
+      <div class="section-divider"></div>
+    </div>
+
+    <!-- ДЕСКТОП: По 3 карточки в слайде -->
+    <div class="rakun-desktop-wrapper fade-in">
+      <div class="rakun-slider-container">
+        {% for slideGroup in products | batch(3) %}
+        <div class="rakun-slide {% if loop.first %}active{% endif %}">
+          <div class="products-grid">
+            {% for p in slideGroup %}
+            <a class="card-room-new" href="/{{ lang }}/products/{{ p._cat_slug }}/{{ p._slug }}" style="text-decoration:none;">
+              <div class="card-img-wrap">
+                {% if p.firstImage %}
+                <img src="{{ p.firstImage }}" alt="{{ p.name }}" loading="lazy" draggable="false">
+                {% endif %}
+              </div>
+              <div class="card-body">
+                {% if p.categoryLabel or p._cat_slug %}
+                <span class="card-category">{{ p.categoryLabel or p._cat_slug }}</span>
+                {% endif %}
+                <h3 class="card-title">{{ p.name }}</h3>
+                {% if p.shortDescription %}
+                <p class="card-desc">{{ p.shortDescription }}</p>
+                {% endif %}
+              </div>
+              {% if p.price %}
+              <div class="card-footer">
+                <span class="card-price">{{ p.priceRaw }}</span>
+                <span class="card-link">{{ ui_buy }} <span>&#8594;</span></span>
+              </div>
+              {% endif %}
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="rakun-slider-nav">
+        {% for slideGroup in products | batch(3) %}
+        <span class="rakun-dot {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}"></span>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- МОБАЙЛ: По 1 карточке в слайде -->
+    <div class="rakun-mobile-wrapper fade-in">
+      <div class="rakun-slider-container">
+        {% for p in products %}
+        <div class="rakun-slide {% if loop.first %}active{% endif %}">
+          <a class="card-room-new" href="/{{ lang }}/products/{{ p._cat_slug }}/{{ p._slug }}" style="text-decoration:none;">
+            <div class="card-img-wrap">
+              {% if p.firstImage %}
+              <img src="{{ p.firstImage }}" alt="{{ p.name }}" loading="lazy" draggable="false">
+              {% endif %}
+            </div>
+            <div class="card-body">
+              {% if p.categoryLabel or p._cat_slug %}
+              <span class="card-category">{{ p.categoryLabel or p._cat_slug }}</span>
+              {% endif %}
+              <h3 class="card-title">{{ p.name }}</h3>
+              {% if p.shortDescription %}
+              <p class="card-desc">{{ p.shortDescription }}</p>
+              {% endif %}
+            </div>
+            {% if p.price %}
+            <div class="card-footer">
+              <span class="card-price">{{ p.priceRaw }}</span>
+              <span class="card-link">{{ ui_buy }} <span>&#8594;</span></span>
+            </div>
+            {% endif %}
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="rakun-slider-nav">
+        {% for p in products %}
+        <span class="rakun-dot {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}"></span>
+        {% endfor %}
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── PROMO BANNER ─────────────────────────────────────────── -->
+  {% if promo_banner %}
+  <section id="promo-banner" class="promo-banner fade-in"
+    {% if promo_banner.bgImageUrl %}style="background-image:url('{{ promo_banner.bgImageUrl }}');"{% endif %}>
+    <div class="promo-banner-overlay"></div>
+    <div class="promo-banner-inner">
+      <div class="promo-banner-text">
+        <h2 class="promo-banner-title">{{ promo_banner.headline or 'Есть магазин и желаете протестировать товар?' }}</h2>
+        {% if promo_banner.description %}
+        <p class="promo-banner-desc">{{ promo_banner.description }}</p>
+        {% endif %}
+        {% if promo_banner.btn1Text or promo_banner.btn2Text %}
+        <div class="promo-banner-btns">
+          {% if promo_banner.btn1Text %}
+          <a href="{{ promo_banner.btn1Url or '#' }}" class="promo-btn promo-btn-wa" target="_blank" rel="noopener">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            {{ promo_banner.btn1Text }}
+          </a>
+          {% endif %}
+          {% if promo_banner.btn2Text %}
+          <a href="{{ promo_banner.btn2Url or '#' }}" class="promo-btn promo-btn-tg" target="_blank" rel="noopener">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            {{ promo_banner.btn2Text }}
+          </a>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+      {% if promo_banner.imageUrl %}
+      <div class="promo-banner-img">
+        <img src="{{ promo_banner.imageUrl }}" alt="{{ promo_banner.headline or '' }}" loading="lazy">
+      </div>
+      {% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- ── CONTACTS SLIDER ──────────────────────────────────────── -->
+  <section id="contacts" class="rakun-slider-section">
+    <div class="section-header fade-in">
+      <span class="section-label">{{ contacts.label or 'Where to buy' }}</span>
+      <h2 class="section-title section-title-link">
+        <a href="/{{ lang }}/contacts" class="section-title-anchor">{{ contacts.title or 'Find us near you' }}</a>
+      </h2>
+      <div class="section-divider"></div>
+    </div>
+
+    {% set contact_slides = [] %}
+    {% if contacts.stores %}
+      {% for store in contacts.stores %}
+        {% set _ = contact_slides.append({
+          'type':      'store',
+          'name':      store.name,
+          'badge':     store.badge,
+          'address':   store.address,
+          'phone':     store.phone,
+          'hours':     store.hours,
+          'mapsEmbed': store.mapsEmbed,
+          'mapsLink':  store.mapsLink
+        }) %}
+      {% endfor %}
+    {% endif %}
+
+    <!-- ДЕСКТОП -->
+    <div class="rakun-desktop-wrapper fade-in">
+      <div class="rakun-slider-container">
+        {% for slide in contact_slides %}
+        <div class="rakun-slide contact-slide {% if loop.first %}active{% endif %}">
+          {% if slide.type == 'store' %}
+          <div class="contact-slide-inner contact-slide-map">
+            <div class="contact-slide-map-frame">
+              {% if slide.mapsEmbed %}
+              {% if slide.mapsLink %}
+              <a href="{{ slide.mapsLink }}" target="_blank" rel="noopener" class="store-map-link" aria-label="Open in Google Maps">
+                <iframe src="{{ slide.mapsEmbed | maps_embed_url }}" width="100%" height="100%" style="border:0;pointer-events:none;" allowfullscreen="" loading="lazy"></iframe>
+              </a>
+              {% else %}
+              <div class="store-map-link">
+                <iframe src="{{ slide.mapsEmbed | maps_embed_url }}" width="100%" height="100%" style="border:0;pointer-events:none;" allowfullscreen="" loading="lazy"></iframe>
+              </div>
+              {% endif %}
+              {% else %}
+              <div class="contact-map-placeholder">
+                <span class="material-symbols-outlined" style="font-size:3rem;color:var(--accent);">location_on</span>
+              </div>
+              {% endif %}
+            </div>
+            <div class="contact-slide-info">
+              {% if slide.badge %}<span class="section-label">{{ slide.badge }}</span>{% endif %}
+              <h3 class="contact-store-name">{{ slide.name }}</h3>
+              <div class="section-divider"></div>
+              {% if slide.address %}
+              <div class="contact-detail" style="margin-top:24px;">
+                <div class="contact-detail-label"><span class="material-symbols-outlined" style="font-size:1rem;vertical-align:-2px;margin-right:4px;">location_on</span>Address</div>
+                <span class="contact-detail-value">{{ slide.address }}</span>
+              </div>
+              {% endif %}
+              {% if slide.hours %}
+              <div class="contact-detail">
+                <div class="contact-detail-label"><span class="material-symbols-outlined" style="font-size:1rem;vertical-align:-2px;margin-right:4px;">schedule</span>Hours</div>
+                <span class="contact-detail-value">{{ slide.hours }}</span>
+              </div>
+              {% endif %}
+              {% if slide.phone %}
+              <div class="contact-detail">
+                <div class="contact-detail-label"><span class="material-symbols-outlined" style="font-size:1rem;vertical-align:-2px;margin-right:4px;">call</span>Phone</div>
+                <a href="tel:{{ slide.phone | replace(' ','') }}" class="contact-detail-value">{{ slide.phone }}</a>
+              </div>
+              {% endif %}
+              {% if contacts.phone and not slide.phone %}
+              <div class="contact-detail">
+                <div class="contact-detail-label"><span class="material-symbols-outlined" style="font-size:1rem;vertical-align:-2px;margin-right:4px;">call</span>Phone</div>
+                <a href="tel:{{ contacts.phone | replace(' ','') }}" class="contact-detail-value">{{ contacts.phone }}</a>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      <div class="rakun-slider-nav">
+        {% for slide in contact_slides %}
+        <span class="rakun-dot {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}"></span>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- МОБАЙЛ -->
+    <div class="rakun-mobile-wrapper fade-in">
+      <div class="rakun-slider-container">
+        {% for slide in contact_slides %}
+        <div class="rakun-slide contact-slide {% if loop.first %}active{% endif %}">
+          {% if slide.type == 'store' %}
+          <div class="contact-slide-inner contact-slide-map contact-slide-mobile">
+            {% if slide.mapsEmbed %}
+            <div class="contact-slide-map-frame contact-slide-map-frame-mobile">
+              {% if slide.mapsLink %}
+              <a href="{{ slide.mapsLink }}" target="_blank" rel="noopener" class="store-map-link" aria-label="Open in Google Maps">
+                <iframe src="{{ slide.mapsEmbed | maps_embed_url }}" width="100%" height="100%" style="border:0;pointer-events:none;" allowfullscreen="" loading="lazy"></iframe>
+              </a>
+              {% else %}
+              <div class="store-map-link">
+                <iframe src="{{ slide.mapsEmbed | maps_embed_url }}" width="100%" height="100%" style="border:0;pointer-events:none;" allowfullscreen="" loading="lazy"></iframe>
+              </div>
+              {% endif %}
+            </div>
+            {% endif %}
+            <div class="contact-slide-info">
+              {% if slide.badge %}<span class="section-label">{{ slide.badge }}</span>{% endif %}
+              <h3 class="contact-store-name">{{ slide.name }}</h3>
+              <div class="section-divider"></div>
+              {% if slide.address %}
+              <div class="contact-detail" style="margin-top:20px;">
+                <div class="contact-detail-label"><span class="material-symbols-outlined" style="font-size:1rem;vertical-align:-2px;margin-right:4px;">location_on</span>Address</div>
+                <span class="contact-detail-value">{{ slide.address }}</span>
+              </div>
+              {% endif %}
+              {% if slide.hours %}
+              <div class="contact-detail">
+                <div class="contact-detail-label"><span class="material-symbols-outlined" style="font-size:1rem;vertical-align:-2px;margin-right:4px;">schedule</span>Hours</div>
+                <span class="contact-detail-value">{{ slide.hours }}</span>
+              </div>
+              {% endif %}
+              {% if slide.phone %}
+              <div class="contact-detail">
+                <div class="contact-detail-label"><span class="material-symbols-outlined" style="font-size:1rem;vertical-align:-2px;margin-right:4px;">call</span>Phone</div>
+                <a href="tel:{{ slide.phone | replace(' ','') }}" class="contact-detail-value">{{ slide.phone }}</a>
+              </div>
+              {% endif %}
+              {% if contacts.phone and not slide.phone %}
+              <div class="contact-detail">
+                <div class="contact-detail-label"><span class="material-symbols-outlined" style="font-size:1rem;vertical-align:-2px;margin-right:4px;">call</span>Phone</div>
+                <a href="tel:{{ contacts.phone | replace(' ','') }}" class="contact-detail-value">{{ contacts.phone }}</a>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      <div class="rakun-slider-nav">
+        {% for slide in contact_slides %}
+        <span class="rakun-dot {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}"></span>
+        {% endfor %}
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── NEW BLOCKS CSS ─────────────────────────────────────── -->
+  <style>
+    /* ── Hero: убираем тёмный оверлей, оставляем лёгкое затемнение для читаемости текста слева */
+    .overlay-minimal {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(17,20,36,0.72) 0%, rgba(17,20,36,0.45) 45%, rgba(17,20,36,0.0) 80%);
+      z-index: 1;
+    }
+    /* ── Hero: показываем десктопный слайдер только на десктопе,
+       мобильный слайдер — только на мобильных устройствах */
+    .hero-mobile-only { display: none; }
+    @media (max-width: 768px) {
+      .hero-desktop-only { display: none; }
+      .hero-mobile-only  { display: block; }
+    }
+    /* ── Inner content — правая колонка (левый край правой половины) */
+    .hero-slider .inner.inner-right {
+      position: absolute;
+      top: 50%;
+      left: 6%;
+      transform: translateY(-50%);
+      text-align: left;
+      max-width: 520px;
+      width: 45%;
+      padding: 0;
+      z-index: 2;
+    }
+    .hero-slider .inner.inner-right .subtitle {
+      text-align: left;
+    }
+    .hero-slider .inner.inner-right .title {
+      margin-bottom: 20px;
+      font-size: clamp(1.33rem, 3vw, 2.8rem);
+      font-family: 'Montserrat', sans-serif;
+    }
+    .hero-description {
+      color: rgba(255,255,255,0.85);
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 32px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+    }
+    /* ── Hero buttons row */
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+    .hero-slider .inner.inner-right .hero-btns .btn {
+      display: inline-flex;
+      flex: 1 1 0;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: none;
+      letter-spacing: normal;
+      padding: 13px 24px;
+      text-decoration: none;
+      border-radius: 50px;
+      border: 1px solid #ffffff;
+      background: transparent;
+      color: #ffffff;
+      transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+      line-height: 1.2;
+      min-width: 180px;
+    }
+    .hero-slider .inner.inner-right .hero-btns .btn:hover {
+      background: var(--brand-yellow);
+      border-color: var(--brand-yellow);
+      color: var(--brand-blue);
+      transform: none;
+      box-shadow: none;
+    }
+    .hero-btns .btn-sub {
+      display: none;
+    }
+
+    /* ── Partners strip */
+    .partners-section {
+      background: #fff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 48px 56px;
+    }
+    .partners-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 36px;
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .partners-label {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+    .partners-logos {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 64px;
+      flex-wrap: wrap;
+    }
+    .partner-logo-wrap img {
+      max-height: 144px;
+      max-width: 480px;
+      width: auto;
+      object-fit: contain;
+    }
+    .partner-placeholder {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Promo banner */
+    .promo-banner {
+      position: relative;
+      background: var(--brand-blue);
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+      margin: 0 56px 0;
+      border-radius: 20px;
+      margin-bottom: 0;
+    }
+    .promo-banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(17,20,36,0.88) 0%, rgba(17,20,36,0.55) 60%, rgba(17,20,36,0.2) 100%);
+      z-index: 1;
+    }
+    .promo-banner-inner {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 60px 64px;
+      gap: 40px;
+    }
+    .promo-banner-text {
+      max-width: 520px;
+    }
+    .promo-banner-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .promo-banner-desc {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+    .promo-banner-btns {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .promo-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 24px;
+      border-radius: 50px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .promo-btn:hover { opacity: 0.88; transform: translateY(-2px); }
+    .promo-btn-wa { background: #25D366; color: #fff; }
+    .promo-btn-tg { background: #2AABEE; color: #fff; }
+    .promo-banner-img {
+      flex-shrink: 0;
+      max-width: 420px;
+      display: flex;
+      align-items: center;
+    }
+    .promo-banner-img img {
+      width: 100%;
+      max-height: 360px;
+      object-fit: contain;
+      drop-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    /* ── Responsive tweaks for new blocks */
+    @media (max-width: 1024px) {
+      .hero-slider .inner.inner-right {
+        width: 55%;
+        left: 5%;
+      }
+      .promo-banner { margin: 0 24px; }
+      .promo-banner-inner { padding: 48px 40px; }
+      .promo-banner-img { max-width: 300px; }
+    }
+    @media (max-width: 768px) {
+      .hero-slider .inner.inner-right {
+        width: 88%;
+        left: 6%;
+        transform: translateY(-50%);
+        text-align: left;
+      }
+      .hero-slider .inner.inner-right .subtitle { text-align: left; }
+      .hero-slider .inner.inner-right .title { font-size: clamp(2rem, 4.5vw, 4.2rem); }
+      .hero-btns { flex-direction: column; align-items: stretch; justify-content: flex-start; }
+      .partners-section { padding: 28px 24px; }
+      .partners-inner { gap: 24px; }
+      .partners-logos { justify-content: center; gap: 24px; }
+      .partner-logo-wrap img { max-height: 48px; max-width: 160px; }
+      .promo-banner { margin: 0 16px; border-radius: 16px; }
+      .promo-banner-inner { flex-direction: column; padding: 40px 28px; }
+      .promo-banner-img { max-width: 100%; }
+      .promo-banner-img img { max-height: 220px; }
+    }
+  </style>
+
+  <!-- ── CONTACT SLIDER STYLES ───────────────────────────────── -->
+  <style>
+    #contacts.rakun-slider-section { display: block !important; background: var(--bg-light, #f8f9fa); }
+    #contacts .rakun-desktop-wrapper { padding: 0 64px; }
+    .contact-slide .rakun-slide { min-height: 480px; }
+    .contact-slide-inner {
+      display: flex; gap: 0; width: 100%; min-height: 480px;
+      border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+    .contact-slide-map-frame { flex: 1 1 55%; min-height: 480px; position: relative; }
+    .contact-slide-map-frame iframe { display: block; width: 100%; height: 100%; min-height: 480px; }
+    .contact-map-placeholder {
+      width: 100%; height: 100%; min-height: 480px;
+      display: flex; align-items: center; justify-content: center; background: #e8eaed;
+    }
+    .contact-slide-info {
+      flex: 1 1 45%; padding: 40px 36px; background: #fff;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .contact-store-name {
+      font-family: var(--font-head, 'Montserrat', sans-serif);
+      font-size: 1.4rem; font-weight: 700; margin: 8px 0 0; color: var(--text-dark, #1a1a1a);
+    }
+    .contact-messengers-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+    .contact-messenger-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: 50px; font-size: 0.9rem; font-weight: 600;
+      text-decoration: none; transition: opacity 0.2s, transform 0.2s;
+    }
+    .contact-messenger-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .contact-messenger-wa { background: #25D366; color: #fff; }
+    .contact-messenger-tg { background: #2AABEE; color: #fff; }
+    .contact-slide-mobile .contact-slide-inner,
+    .contact-slide-mobile { flex-direction: column; min-height: auto; }
+    .contact-slide-map-frame-mobile { height: 220px; min-height: 220px; flex: none; }
+    .contact-slide-map-frame-mobile iframe { min-height: 220px; }
+    .contact-slide-mobile .contact-slide-info { padding: 24px 20px; flex: none; }
+    @media (max-width: 768px) {
+      .contact-slide-inner { flex-direction: column; }
+      .contact-slide-map-frame { min-height: 220px; }
+      .contact-slide-map-frame iframe { min-height: 220px; }
+      .contact-slide-info { padding: 24px 20px; }
+      .contact-store-name { font-size: 1.15rem; }
+    }
+    .store-map-link { display: block; width: 100%; height: 100%; position: relative; cursor: pointer; }
+    .store-map-link::after { content: ""; position: absolute; inset: 0; background: transparent; transition: background 0.2s; pointer-events: none; }
+    .store-map-link:hover::after { background: rgba(0,0,0,0.07); }
+    .store-map-link iframe { pointer-events: none; display: block; }
+  </style>
+
+  <!-- ── FOOTER ───────────────────────────────────────────────── -->
+    <footer>
+    <span class="footer-logo"><img src="{{ LOGO_URL }}" alt="RAKUN Logo"></span>
+    <div class="footer-links">
+      <a href="/{{ lang }}">Home</a>
+      <a href="/{{ lang }}/about">About Us</a>
+      <a href="/{{ lang }}/catalog">Catalog</a>
+      <a href="/{{ lang }}/blog">Blog</a>
+      <a href="/{{ lang }}/contacts">Contacts</a>
+    </div>
+    <span class="footer-copy">© 2026 RAKUN. All rights reserved.</span>
+    <span class="footer-produced">Produced by <a href="https://digital-craft-tbilisi.site" target="_blank" rel="noopener">Digital Craft Tbilisi</a></span>
+  </footer>
+
+  <!-- ── SCRIPTS ──────────────────────────────────────────────── -->
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+
+    // ── Hero carousel (Flickity) — десктопный и мобильный слайдеры ──
+    // Каждый слайдер инициализируется независимо (try/catch), чтобы ошибка
+    // на скрытом в данный момент слайдере (display:none по media-запросу)
+    // не мешала запуску видимого.
+    var pendingCarousels = [];
+
+    function initHeroCarousel(carousel) {
+      try {
+        new Flickity(carousel, {
+          accessibility: true,
+          prevNextButtons: false,
+          pageDots: true,
+          setGallerySize: false,
+          wrapAround: true,
+          autoPlay: 3500,              // интервал автолистания — 3.5 секунды
+          pauseAutoPlayOnHover: false  // наведение курсора больше не останавливает автолистание
+        });
+        return true;
+      } catch (err) {
+        console.warn('Flickity init skipped for hidden/zero-size carousel:', err);
+        return false;
+      }
+    }
+
+    document.querySelectorAll('[data-carousel]').forEach(function(carousel) {
+      if (!initHeroCarousel(carousel)) pendingCarousels.push(carousel);
+    });
+
+    // Если слайдер не смог стартовать, потому что был скрыт (например, десктопный
+    // блок на мобильном экране), пробуем ещё раз при изменении размера окна —
+    // на случай поворота экрана или ресайза окна браузера через брейкпоинт.
+    if (pendingCarousels.length) {
+      var resizeTimer;
+      window.addEventListener('resize', function() {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+          pendingCarousels = pendingCarousels.filter(function(carousel) {
+            if (carousel.offsetWidth > 0) {
+              return !initHeroCarousel(carousel);
+            }
+            return true;
+          });
+        }, 200);
+      });
+    }
+
+    // ── Nav scroll ───────────────────────────────────────────────
+    var mainNav     = document.getElementById('main-nav');
+    var mobileHdr   = document.getElementById('mobile-header');
+    window.addEventListener('scroll', function() {
+      if (mainNav)   mainNav.classList.toggle('scrolled',   window.scrollY > 50);
+      if (mobileHdr) mobileHdr.classList.toggle('scrolled', window.scrollY > 50);
+    }, { passive: true });
+
+    // ── Mobile menu ──────────────────────────────────────────────
+    window.toggleMobileMenu = function() {
+      var menu   = document.getElementById('mobile-menu-overlay');
+      if (!menu) return;
+      var isOpen = menu.classList.contains('open');
+      menu.classList.toggle('open');
+      document.body.style.overflow = isOpen ? '' : 'hidden';
+    };
+
+    // ── RAKUN Cross-Fade Sliders ─────────────────────────────────
+    function initRakunSliders(wrapperSelector) {
+      document.querySelectorAll(wrapperSelector).forEach(function(wrapper) {
+        var container = wrapper.querySelector('.rakun-slider-container');
+        var slides    = container.querySelectorAll('.rakun-slide');
+        var nav       = wrapper.querySelector('.rakun-slider-nav');
+        var dots      = nav ? nav.querySelectorAll('.rakun-dot') : [];
+
+        if (slides.length <= 1) { if (nav) nav.style.display = 'none'; return; }
+
+        var cur = 0, timer;
+
+        function go(idx) {
+          cur = (idx + slides.length) % slides.length;
+          slides.forEach(function(s, i) { s.classList.toggle('active', i === cur); });
+          dots.forEach(function(d, i)   { d.classList.toggle('active', i === cur); });
+        }
+        function start() { stop(); timer = setInterval(function() { go(cur + 1); }, 5000); }
+        function stop()  { if (timer) clearInterval(timer); }
+
+        if (nav) {
+          nav.addEventListener('click', function(e) {
+            if (e.target.classList.contains('rakun-dot')) {
+              stop(); go(parseInt(e.target.getAttribute('data-index'))); start();
+            }
+          });
+        }
+
+        var sx = 0, sy = 0;
+        container.addEventListener('touchstart', function(e) {
+          sx = e.changedTouches[0].screenX; sy = e.changedTouches[0].screenY; stop();
+        }, { passive: true });
+        container.addEventListener('touchend', function(e) {
+          var dx = sx - e.changedTouches[0].screenX;
+          var dy = Math.abs(sy - e.changedTouches[0].screenY);
+          if (Math.abs(dx) > 50 && Math.abs(dx) > dy) go(dx > 0 ? cur + 1 : cur - 1);
+          start();
+        }, { passive: true });
+
+        go(0); start();
+      });
+    }
+
+    initRakunSliders('.rakun-desktop-wrapper');
+    initRakunSliders('.rakun-mobile-wrapper');
+
+    // ── Fade-in on scroll ────────────────────────────────────────
+    var fadeEls = document.querySelectorAll('.fade-in');
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.15 });
+    fadeEls.forEach(function(el) { observer.observe(el); });
+
+  });
+  </script>
+</body>
+</html>
