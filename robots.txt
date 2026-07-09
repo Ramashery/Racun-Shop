@@ -1,0 +1,65 @@
+# Эти правила предназначены для всех поисковых роботов.
+User-agent: *
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /*//
+
+# Разрешаем поиск ChatGPT (обязательно!)
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /*//
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /*//
+
+# Обучение (по желанию)
+User-agent: GPTBot
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /*//
+
+# Разрешаем Perplexity
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /*//
+
+# Разрешаем краулер Claude (индексация)
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /*//
+
+# Разрешаем прямые переходы из Claude по ссылкам
+User-agent: Anthropic-User
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /*//
+
+# Обучение Google Gemini (по желанию)
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin-
+Disallow: /index
+Disallow: /index.html
+Disallow: /*//
+
+# Указать путь к карте сайта.
+Sitemap: https://rakun-official.com/sitemap.xml
