@@ -19,14 +19,6 @@ Disallow: /index
 Disallow: /index.html
 Disallow: /*//
 
-
-User-agent: GoogleBot
-Allow: /
-Disallow: /admin-
-Disallow: /index
-Disallow: /index.html
-Disallow: /*//
-
 # Эти правила предназначены для всех поисковых роботов.
 User-agent: *
 Allow: /
